@@ -1,0 +1,95 @@
+<meta name="viewport" content="width=device-width, initial-scale=1"
+	charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- Meta, title, CSS, favicons, etc. -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<script src="../js/jquery.min.js"></script>
+<script src="../js/jquery-ui.js"></script>
+<script src="../js/ajax.js"></script>
+<script src="../js/dataTables.min.js"></script>
+<script src="../js/dataTables.buttons.min.js"></script>
+<script src="../js/dataTables.select.min.js"></script>
+
+
+<div id="form" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	<div id="row">
+		<div id="conteudoRegistro">
+			<div class="row">
+				<div id="title" class="text-center">
+					<h1 style="color: #2A3F54;">Usuário</h1>
+				</div>
+				<form class="form-horizontal" method="post">
+					<div class="form-group">
+						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+							<input class="hid" id="id"> <input type="text"
+								class="form-control" id="inputNivelLogin" placeholder="Nivel"
+								required maxlength="3">
+						</div>
+						<div class="col-xs-4 col-sm-4 col-md-4 col-lg-2">
+							<select id="isActive" class="form-control">
+								<option value="1" selected>Ativo</option>
+								<option value="0">Não Ativo</option>
+							</select>
+						</div>
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-8" id="familias">
+
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+							<input type="text" class="form-control" id="inputUsernameLogin"
+								placeholder="Nome Completo" required maxlength="45">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+							<input type="email" class="form-control" id="inputEmailLogin"
+								placeholder="E-mail" required maxlength="45">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<input type="password" class="form-control"
+								id="inputPasswordLogin" placeholder="Senha" required
+								maxlength="10">
+						</div>
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<input type="password" class="form-control"
+								id="inputPasswordLoginConfirmation" placeholder="Confirma Senha"
+								required>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+							<button type="reset" class="btn btn-danger buttom">Limpa</button>
+						</div>
+						<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+							<button type="button" class="btn btn-success buttom"
+								onclick="CFINAC.usuario.add()">Enviar</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<table id="example" class="display" cellspacing="0" width="100%">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Nível</th>
+			<th>Nome de usuário</th>
+			<th>Família</th>
+			<th>@Email</th>
+			<th>Ativo</th>
+			<th>Ações</th>
+		</tr>
+	</thead>
+</table>
+<!--<div id="table" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<div class="table-responsive">
+						<div id="listaUsuarios"></div>
+					</div>
+				</div>  -->

@@ -1,0 +1,19 @@
+.link {
+	cursor: pointer;
+}
+
+table th {
+	text-align: center;
+}
+
+table td {
+	text-align: center;
+}
+
+.hid {
+	display: none;
+}
+
+.paging_full_numbers{
+	width: auto !important;
+}

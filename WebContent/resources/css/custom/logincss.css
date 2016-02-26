@@ -1,0 +1,139 @@
+#footer{
+	bottom: 0px; 
+	background-color: #2A3F54;
+	text-align: center;
+	color: #E7E7E7;
+	position: absolute;
+}
+
+body{
+	font-family: myFirstFont;
+}
+
+.container{
+	background-color: #E7E7E7;
+	height: 100%;
+}
+
+#conteudo{
+	background-color: rgba(0, 0, 0, 0.5);
+	height: 65%;
+	margin-top: 2%;
+	border-radius: 5px;
+}
+#loginForm{
+	height:100%;
+	border-right: 1px solid #2A3F54;
+}
+
+#registerForm{
+
+	height:100%;
+}
+
+
+.fa-sign-in{
+	color: #2A3F54;
+}
+
+.fa-pencil-square-o{
+	color: #2A3F54;
+}
+
+#conteudoRegistro{
+	height: 95%;
+	padding: 5%;
+}
+
+#counteudoLogin{
+	height: 95%;
+	padding: 5%;
+}
+
+#icon{
+	height: 5%;
+}
+
+label{
+	color: white;
+}
+
+.buttom{
+	width: 100%;
+}
+
+h1{
+	color: #2A3F54;
+}
+
+
+.form-group{
+	margin-top: 20px;
+	margin-bottom: 20px;
+
+}
+
+@font-face {
+    font-family: myFirstFont;
+    src: url(../../fonts/fonts/Arkhip_font.otf);
+}
+
+@font-face{
+	font-family: mySecondFont;
+	src: url(../../fonts/fonts/Monthoers.otf);
+}
+
+.btn-primary{
+	background-color: #2A3F54;
+	border-color: #2A3F54;
+}
+
+#logoText h1{
+	font-family: mySecondFont;
+	color: #2A3F54;
+}
+
+.btn-success{
+	background-color: #2A3F54;
+	border-color: #2A3F54;
+}
+
+.btn-success:hover, 
+.btn-success:focus, 
+.btn-success:active, 
+.btn-success.active, 
+.open 
+.dropdown-toggle.btn-success{
+	background-color: #5cb85c;
+	border-color: #4cae4c;
+}
+
+.btn-danger{
+	background-color: #2A3F54;
+	border-color: #2A3F54;
+}
+
+.btn-danger:hover, 
+.btn-danger:focus, 
+.btn-danger:active, 
+.btn-danger.active, 
+.open 
+.dropdown-toggle.btn-danger{
+	background-color: #d9534f;
+	border-color: #d9534f;
+}
+
+.btn-warning{
+	background-color: #2A3F54;
+	border-color: #2A3F54;	
+}
+
+.btn-warning:hover, 
+.btn-warning:focus, 
+.btn-warning:active, 
+.btn-warning.active, 
+.open 
+.dropdown-toggle.btn-warning{
+	background-color: #f0ad4e;
+	border-color: #f0ad4e;
+}
