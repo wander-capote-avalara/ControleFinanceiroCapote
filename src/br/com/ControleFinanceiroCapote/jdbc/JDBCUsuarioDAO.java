@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import javax.swing.text.html.parser.Parser;
 
 import org.apache.catalina.User;
+import org.omg.CORBA.COMM_FAILURE;
 
 import com.sun.org.apache.xalan.internal.utils.FeatureManager.Feature;
 
@@ -59,7 +60,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				rs = p.getGeneratedKeys();
 				if (rs.next() && familyId != 0) {
 					id = rs.getInt(1);
-					setFamily(id, familyId);
+					setFamily(id, familyId, true);
 				}
 				
 			} catch (Exception e) {
@@ -96,12 +97,16 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		}
 	}
 
-	private void setFamily(int id, int familyId) {
+	private void setFamily(int id, int familyId, boolean iOu) {
 		StringBuilder comando = new StringBuilder();
-		
+		if (iOu) {
 			comando.append("insert into usuarios ");
-			comando.append("(Familia_Id, Usuario_Id) values(?,?)");
-
+			comando.append("(Familia_Id, Usuario_Id) values(?,?)");	
+		}else {
+			comando.append("update user_family ");
+			comando.append("set Familia_Id = ?");
+			comando.append("where Usuario_Id = ?");
+		}
 
 		PreparedStatement p;
 
