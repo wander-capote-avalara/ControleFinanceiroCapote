@@ -45,9 +45,10 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 					+ "values(?,?,?,?,?)";
 
 			PreparedStatement p;
+			ResultSet rs = null;
 
 			try {
-				p = this.conexao.prepareStatement(comando);
+				p = this.conexao.prepareStatement(comando, Statement.RETURN_GENERATED_KEYS);
 				p.setString(1, user.getUsuario());
 				p.setString(2, user.getSenha());
 				p.setString(3, user.getEmail());
@@ -55,10 +56,11 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				p.setInt(5, user.getAtivo());
 
 				p.execute();
-
-				if (familyId != 0)
-					setFamily();
-
+				rs = p.getGeneratedKeys();
+				if (rs.next() && familyId != 0) {
+					id = rs.getInt(1);
+					setFamily(id, familyId);
+				}
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -94,9 +96,25 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		}
 	}
 
-	private void setFamily() {
-		// TODO Auto-generated method stub
+	private void setFamily(int id, int familyId) {
+		StringBuilder comando = new StringBuilder();
 		
+			comando.append("insert into usuarios ");
+			comando.append("(Familia_Id, Usuario_Id) values(?,?)");
+
+
+		PreparedStatement p;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, familyId);
+			p.setInt(2, id);
+
+			p.execute();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
 	}
 
 	@Override
