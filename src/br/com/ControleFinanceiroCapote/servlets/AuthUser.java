@@ -74,9 +74,9 @@ public class AuthUser extends HttpServlet {
 				response.sendRedirect(context+"/resources/admin/admin.html");
 			}else{	
 				HttpSession sessao = request.getSession();
-				sessao.setAttribute("msg", "Usuário e/ou senha incorretos");
+				sessao.setAttribute("msg", "Usuï¿½rio e/ou senha incorretos");
 				response.sendRedirect(context+"/Admin.html");
-				//msg.put("msg", "Usuário e/ou senha incorretos");
+				//msg.put("msg", "Usuï¿½rio e/ou senha incorretos");
 			}
 			String json = new Gson().toJson(msg);	
 			response.setContentType("application/json");

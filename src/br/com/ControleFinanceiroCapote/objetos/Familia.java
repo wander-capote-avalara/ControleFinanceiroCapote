@@ -1,15 +1,24 @@
 package br.com.ControleFinanceiroCapote.objetos;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Familia implements Serializable{
-
+		
 		private static final long serialVersionUID = 1L;
 		
 		private int id;
 		private String name;
 		private String owner;
+		private List<Integer> users;
+		private String usersName;
 		
+		public String getUsersName() {
+			return usersName;
+		}
+		public void setUsersName(String usersName) {
+			this.usersName = usersName;
+		}
 		public int getId() {
 			return id;
 		}
@@ -28,8 +37,10 @@ public class Familia implements Serializable{
 		public void setOwner(String owner) {
 			this.owner = owner;
 		}
-		
-		
-		
+		public List<Integer> getUsers() {
+			return users;
+		}
+		public void setUsers(List<Integer> users) {
+			this.users = users;
+		}	
 	}
-

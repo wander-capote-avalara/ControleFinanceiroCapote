@@ -20,6 +20,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -55,9 +56,9 @@ public class UsuarioRest extends UtilRest {
 		try {
 			Usuario usuario = new ObjectMapper().readValue(usuarioParam, Usuario.class);
 			service.AddUser(usuario);
-			return this.buildResponse("Operação feita com sucesso!");
+			return this.buildResponse("Operaï¿½ï¿½o feita com sucesso!");
 		} catch (Exception e) {
-			return this.buildErrorResponse("Ocorreu um erro ao fazer a operação!");
+			return this.buildErrorResponse("Ocorreu um erro ao fazer a operaï¿½ï¿½o!");
 		}
 	}
 
@@ -79,9 +80,9 @@ public class UsuarioRest extends UtilRest {
 	public Response deletaUsuario(@PathParam("id") int id) throws ValidationException {
 		try {
 			service.DeleteUser(id);
-			return this.buildResponse("Usuário deletado com sucesso.");
+			return this.buildResponse("Usuï¿½rio deletado com sucesso.");
 		} catch (Exception e) {
-			return this.buildErrorResponse("Não foi possível deletar o usuário.");
+			return this.buildErrorResponse("Nï¿½o foi possï¿½vel deletar o usuï¿½rio.");
 		}
 	}
 
@@ -90,9 +91,9 @@ public class UsuarioRest extends UtilRest {
 	public Response ativaUsuario(@PathParam("id") int id) throws ValidationException {
 		try {
 			service.ActiveUser(id);
-			return this.buildResponse("Usuário ativado com sucesso.");
+			return this.buildResponse("Usuï¿½rio ativado com sucesso.");
 		} catch (Exception e) {
-			return this.buildErrorResponse("Não foi possível ativar o usuário.");
+			return this.buildErrorResponse("Nï¿½o foi possï¿½vel ativar o usuï¿½rio.");
 		}
 	}
 
@@ -100,7 +101,7 @@ public class UsuarioRest extends UtilRest {
 	@Produces("text/plain")
 	public Response getUsers() {
 		try {
-			return this.buildResponse(new DataTable(service.GetUsers()));
+			return this.buildResponse(new DataTable(service.GetUsers("")));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());

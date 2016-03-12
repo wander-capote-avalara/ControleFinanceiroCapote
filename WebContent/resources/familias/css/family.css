@@ -1,0 +1,8 @@
+.Tokenize {
+	width: 100%;
+	line-height: 30px;
+}
+
+.Tokenize ul.TokensContainer {
+	width: 100% !important;
+}

@@ -37,9 +37,12 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 
 	public boolean inserir(Usuario user) throws ValidationException {
 		valid.insertValidation(user);
-		if (user.getId() == 0) {
-			String comando = "insert into usuarios " + "(Usuario, Senha, Email, Nivel, Ativo, Id_Familia) "
-					+ "values(?,?,?,?,?,?)";
+		int id = user.getId(),
+			familyId = user.getId_familia();
+		
+		if (id == 0) {
+			String comando = "insert into usuarios " + "(Usuario, Senha, Email, Nivel, Ativo) "
+					+ "values(?,?,?,?,?)";
 
 			PreparedStatement p;
 
@@ -51,12 +54,12 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				p.setInt(4, user.getNivel());
 				p.setInt(5, user.getAtivo());
 
-				if (user.getId_familia() == 0)
-					p.setNull(6, Types.INTEGER);
-				else
-					p.setInt(6, user.getId_familia());
-
 				p.execute();
+
+				if (familyId != 0)
+					setFamily();
+
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
@@ -91,10 +94,17 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		}
 	}
 
-	@Override
-	public List<Usuario> getUsers() {
-		String comando = "select *, familias.Nome as NomeFamilia from usuarios left join familias on familias.Id_Familias = usuarios.Id_Familia";
+	private void setFamily() {
+		// TODO Auto-generated method stub
+		
+	}
 
+	@Override
+	public List<Usuario> getUsers(String text) {
+		String comando = "select *, familias.Nome as NomeFamilia from usuarios left join familias on familias.Id_Familias = usuarios.Id_Familia ";
+		if (!text.equals("") && !text.equals(null)) {
+			comando += "where Usuario like '%"+text+"%'";
+		}
 		List<Usuario> listUsuario = new ArrayList<Usuario>();
 		Usuario usuario = null;
 		try {

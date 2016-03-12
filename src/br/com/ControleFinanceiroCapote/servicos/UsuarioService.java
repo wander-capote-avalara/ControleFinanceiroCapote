@@ -71,13 +71,13 @@ public class UsuarioService {
 
 		return data;
 	}
-
-	public List<Usuario> GetUsers() {
+	
+	public List<Usuario> GetUsers(String text) {
 		List<Usuario> data = new ArrayList<Usuario>();
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCUsuarioDAO jdbcContato = new JDBCUsuarioDAO(conexao);
-		data = jdbcContato.getUsers();
+		data = jdbcContato.getUsers(text);
 		conec.fecharConexao();
 
 		return data;

@@ -105,74 +105,58 @@ var iniciaUsuario = function() {
 						};
 
 						var table = $('#example')
-								.DataTable(
-										{
-											aLengthMenu : [ [ 5, 10, 100 ],
-													[ 5, 10, 100 ] ],
-											iDisplayLength : 5,
-											language : {
-												url : "../js/Portuguese.json"
-											},
-											sPaginationType : "full_numbers",
-											processing : true,
-											ajax : {
-												url : "../../rest/usuario/",
-												type : "GET"
-											},
-											select : {
-												style : 'os',
-												selector : 'td:first-child'
-											},
-											columns : [
-													{
-														data : "id",
-														className : "center"
-													},
-													{
-														data : "nivel",
-														className : "center"
-													},
-													{
-														data : "usuario",
-														className : "center"
-													},
-													{
-														data : "nomeFamilia",
-														className : "center",
-														mRender : function(data) {
-															return data == null ? "Sem familia"
-																	: data;
-														}
-													},
-													{
-														data : "email",
-														className : "center"
-													},
-													{
-														data : "ativo",
-														className : "center",
-														mRender : function(data) {
-															return data == "0" ? "Não Ativo"
-																	: "Ativo";
-														}
-													},
-													{
-														data : "id",
-														className : "center",
-														bSortable : false,
-														mRender : function(id) {
-															return "<a class='link' onclick='CFINAC.usuario.deletaUsuario("
-																	+ id
-																	+ ", true)'>Ativar</a> /"
-																	+ " <a class='link' onclick='CFINAC.usuario.editarUsuario("
-																	+ id
-																	+ ")'>Editar</a> /"
-																	+ " <a class='link' onclick='CFINAC.usuario.deletaUsuario("
-																	+ id
-																	+ ", false)'>Deletar</a>";
-														}
-													} ]
-										});
+					    .DataTable({
+					        aLengthMenu: [
+					            [5, 10, 100],
+					            [5, 10, 100]
+					        ],
+					        iDisplayLength: 5,
+					        language: {
+					            url: "../js/Portuguese.json"
+					        },
+					        sPaginationType: "full_numbers",
+					        processing: true,
+					        ajax: {
+					            url: "../../rest/usuario/",
+					            type: "GET"
+					        },
+					        select: {
+					            style: 'os',
+					            selector: 'td:first-child'
+					        },
+					        columns: [{
+					            data: "id",
+					            className: "center"
+					        }, {
+					            data: "nivel",
+					            className: "center"
+					        }, {
+					            data: "usuario",
+					            className: "center"
+					        }, {
+					            data: "nomeFamilia",
+					            className: "center",
+					            mRender: function(data) {
+					                return data == null ? "Sem familia" : data;
+					            }
+					        }, {
+					            data: "email",
+					            className: "center"
+					        }, {
+					            data: "ativo",
+					            className: "center",
+					            mRender: function(data) {
+					                return data == "0" ? "Não Ativo" : "Ativo";
+					            }
+					        }, {
+					            data: "id",
+					            className: "center",
+					            bSortable: false,
+					            mRender: function(id) {
+					                return "<a class='link' onclick='CFINAC.usuario.deletaUsuario(" + id + ", true)'>Ativar</a> /" + " <a class='link' onclick='CFINAC.usuario.editarUsuario(" + id + ")'>Editar</a> /" + " <a class='link' onclick='CFINAC.usuario.deletaUsuario(" + id + ", false)'>Deletar</a>";
+					            }
+					        }]
+					    });
 
 						CFINAC.usuario.deletaUsuario = function(id, doa) {
 							var type = doa ? 'ativar' : 'excluir', msg = 'Você deseja realmente '

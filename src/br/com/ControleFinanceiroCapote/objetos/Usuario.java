@@ -1,6 +1,7 @@
 package br.com.ControleFinanceiroCapote.objetos;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Usuario implements Serializable{
 
