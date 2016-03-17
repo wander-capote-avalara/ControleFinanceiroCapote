@@ -9,6 +9,7 @@ $(document).bind({
 	}
 });
 
+
 function alertPopUp(msg) {
 	cfg = {
 		title : "Mensagem",

@@ -72,7 +72,7 @@ $(document).ready(function() {
             className: "center",
             bSortable: false,
             mRender: function(id) {
-                return "<a class='link' onclick='CFINAC.usuario.deletaUsuario(" + id + ", true)'>Ativar</a> /" + " <a class='link' onclick='CFINAC.usuario.editarUsuario(" + id + ")'>Editar</a> /" + " <a class='link' onclick='CFINAC.usuario.deletaUsuario(" + id + ", false)'>Deletar</a>";
+                return "<a class='link' onclick='CFINAC.usuario.editarUsuario(" + id + ")'>Editar</a> /" + " <a class='link' onclick='CFINAC.usuario.deletaUsuario(" + id + ", false)'>Deletar</a>";
             }
         }]
     	// # sourceURL=sourcees.coffeee
@@ -99,6 +99,7 @@ $(document).ready(function() {
 				data : newFamily,
 				success : function(msg) {
 					alertPopUp(msg);
+					table.ajax.reload(null, false);
 				},
 				error : function(err) {
 					alert("Erro na ação!"

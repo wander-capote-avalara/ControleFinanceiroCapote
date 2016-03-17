@@ -100,11 +100,11 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	private void setFamily(int id, int familyId, boolean iOu) {
 		StringBuilder comando = new StringBuilder();
 		if (iOu) {
-			comando.append("insert into usuarios ");
+			comando.append("insert into user_family ");
 			comando.append("(Familia_Id, Usuario_Id) values(?,?)");	
 		}else {
 			comando.append("update user_family ");
-			comando.append("set Familia_Id = ?");
+			comando.append("set Familia_Id = ? ");
 			comando.append("where Usuario_Id = ?");
 		}
 
@@ -124,15 +124,21 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 
 	@Override
 	public List<Usuario> getUsers(String text) {
-		String comando = "select *, familias.Nome as NomeFamilia from usuarios left join familias on familias.Id_Familias = usuarios.Id_Familia ";
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT *, familias.Nome AS NomeFamilia from usuarios ");
+		comando.append("LEFT JOIN user_family ON user_family.Usuario_Id = usuarios.Id_Usuarios ");
+		comando.append("LEFT JOIN familias ON familias.Id_Familias = user_family.Familia_Id ");
 		if (!text.equals("") && !text.equals(null)) {
-			comando += "where Usuario like '%"+text+"%'";
+			comando.append("WHERE usuarios.Usuario LIKE '%"+text+"%'");
+			comando.append(" AND usuarios.Id_Usuarios NOT IN ");
+			comando.append("(SELECT user_family.Usuario_Id FROM user_family)");
 		}
+		
 		List<Usuario> listUsuario = new ArrayList<Usuario>();
 		Usuario usuario = null;
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
-			ResultSet rs = stmt.executeQuery(comando);
+			ResultSet rs = stmt.executeQuery(comando.toString());
 			while (rs.next()) {
 				usuario = new Usuario();
 				int idUsuario = rs.getInt("Id_Usuarios");

@@ -16,9 +16,7 @@
 <script src="resources/js/jquery.min.js"></script>
 <script src="resources/js/jquery-ui.js"></script>
 <script src="resources/js/ajax.js"></script>
-<script src="resources/usuarios/js/usuario.js">
-
-</script>
+<script src="resources/usuarios/js/usuario.js"></script>
 <link href="resources/css/custom/logincss.css" rel="stylesheet">
 <link href="resources/css/jquery-ui.css" rel="stylesheet">
 <link href="resources/css/jquery-ui.structure.css" rel="stylesheet">
@@ -26,6 +24,8 @@
 <link rel="stylesheet" type="text/css" href="resources/css/css.css">
 <script>
 $(document).ready(function() {
+	iniciaUsuario();
+	
     $("#rbutton").click(function() {
         if ($("#registerForm").hasClass("col-xs-1")) {
             $("#registerForm").removeClass("col-xs-1").addClass("col-xs-11");
