@@ -18,6 +18,7 @@ import org.apache.catalina.User;
 import org.omg.CORBA.COMM_FAILURE;
 
 import com.sun.org.apache.xalan.internal.utils.FeatureManager.Feature;
+import com.sun.org.apache.xalan.internal.xsltc.trax.SAX2StAXStreamWriter;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.UsuarioDAO;
@@ -56,9 +57,9 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				p.setInt(4, user.getNivel());
 				p.setInt(5, user.getAtivo());
 
-				p.execute();
+				p.executeUpdate();
 				rs = p.getGeneratedKeys();
-				if (rs.next() && familyId != 0) {
+				if (familyId != 0 && rs.next()) {
 					id = rs.getInt(1);
 					setFamily(id, familyId, true);
 				}
@@ -69,7 +70,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			}
 			return true;
 		} else {
-			String comando = "Update usuarios set Usuario=?, Senha=?, Email=?, Nivel=?, Ativo=?, Id_Familia=? ";
+			String comando = "Update usuarios set Usuario=?, Senha=?, Email=?, Nivel=?, Ativo=? ";
 			comando += "where Id_Usuarios=?";
 
 			PreparedStatement p;
@@ -81,14 +82,12 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				p.setString(3, user.getEmail());
 				p.setInt(4, user.getNivel());
 				p.setInt(5, user.getAtivo());
-
-				if (user.getId_familia() == 0)
-					p.setNull(6, Types.INTEGER);
-				else
-					p.setInt(6, user.getId_familia());
-
-				p.setInt(7, user.getId());
+				p.setInt(6, user.getId());
+				
 				p.execute();
+				if (familyId != 0) {
+					setFamily(id, familyId, getFamilyByUserID(id) == 0 ? true : false);					
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
@@ -246,23 +245,23 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 
 	@Override
 	public Usuario getUserById(int id) throws ValidationException {
-		
+		StringBuilder comando = new StringBuilder();
 		valid.userValidation(id);
 		
-		String comando = "select * from usuarios where Id_Usuarios=" + id;
+		comando.append("SELECT * from usuarios ");
+		comando.append("WHERE Id_Usuarios=" + id);
 		Usuario user = new Usuario();
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
-			ResultSet rs = stmt.executeQuery(comando);
+			ResultSet rs = stmt.executeQuery(comando.toString());
 			while (rs.next()) {
 				int idUser = rs.getInt("Id_Usuarios");
-				int idFamily = rs.getInt("Id_Familia");
 				String username = rs.getString("Usuario");
 				int level = rs.getInt("Nivel");
 				String email = rs.getString("Email");
 				int ativo = rs.getInt("Ativo");
 				user.setId(idUser);
-				user.setId_familia(idFamily);
+				user.setId_familia(getFamilyByUserID(idUser));
 				user.setUsuario(username);
 				user.setNivel(level);
 				user.setEmail(email);
@@ -272,6 +271,25 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			e.printStackTrace();
 		}
 		return user;
+	}
+
+	private int getFamilyByUserID(int idUser) {
+		
+		StringBuilder comandoSQL = new StringBuilder();
+		int idFamilia = 0;
+		comandoSQL.append("SELECT * FROM user_family ");
+		comandoSQL.append("WHERE Usuario_Id = "+idUser);
+		comandoSQL.append(" LIMIT 1");
+		try {
+			java.sql.Statement stmtt = conexao.createStatement();
+			ResultSet rss = stmtt.executeQuery(comandoSQL.toString());
+			while (rss.next()) {				
+				idFamilia = rss.getInt("Familia_Id");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return idFamilia;
 	}
 
 }
