@@ -25,15 +25,23 @@ public class FamiliaService {
 		conec.fecharConexao();
 	}
 	
-	public List<Familia> getFamilies() {
+	public List<Familia> getFamilies(int id) {
 		
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
-		List<Familia> families = jdbcFamilia.getFamily();
+		List<Familia> families = jdbcFamilia.getFamily(id);
 		conec.fecharConexao();
 		
 		return families;	
+	}
+
+	public void deleteFamily(int id) throws Exception {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
+		jdbcFamilia.deletaFamilia(id);
+		conec.fecharConexao();
 	}
 
 }

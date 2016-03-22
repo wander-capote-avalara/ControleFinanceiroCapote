@@ -10,9 +10,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.catalina.User;
 import org.apache.jasper.tagplugins.jstl.core.ForEach;
 
 import com.mysql.jdbc.Statement;
+import com.sun.istack.internal.Nullable;
 import com.sun.javafx.scene.layout.region.Margins.Converter;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
@@ -30,6 +32,11 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 
 	@Override
 	public void inserir(Familia family) throws ValidationException {
+
+		if (!listUserValidadeById(family.getUsers())) {
+			throw new ValidationException("Insira somente usuários existentes!!");
+		}
+
 		if (family.getId() == 0) {
 			String comando = "insert into familias " + "(Nome, Id_Usuario) " + "values(?,?)";
 
@@ -52,10 +59,33 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		}
 	}
 
+	public boolean listUserValidadeById(List<Integer> usersId) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT Id_Usuarios FROM usuarios ");
+		comando.append("WHERE Id_Usuarios = ?");
+
+		PreparedStatement p;
+		ResultSet rs = null;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			for (Integer id : usersId) {
+				p.setInt(1, id);
+				rs = p.executeQuery();
+				if (!rs.next()) {
+					return false;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+
 	public void updateFamilies(List<Integer> users, int idFamilia) {
-		
+
 		beforeInsert(idFamilia);
-		
+
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("INSERT INTO user_family (Familia_Id, Usuario_Id)");
@@ -80,7 +110,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 
 		comando.append("DELETE FROM user_family ");
 		comando.append("WHERE Familia_Id = ?");
-		
+
 		PreparedStatement p;
 
 		try {
@@ -94,13 +124,17 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 	}
 
 	@Override
-	public List<Familia> getFamily() {
+	public List<Familia> getFamily(int id) {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT fa.Id_Familias as idfamilia, ");
 		comando.append("fa.Nome as nomeFamilia, us.Usuario as owner FROM familias fa ");
 		comando.append("INNER JOIN user_family uf on uf.Familia_Id = fa.Id_Familias ");
 		comando.append("INNER JOIN usuarios us ON us.Id_Usuarios = uf.Usuario_Id ");
 		comando.append("WHERE fa.Id_Usuario = uf.Usuario_Id ");
+		if (id != 0) {
+			comando.append("AND ");
+			comando.append("fa.Id_Familias = "+id);
+		}
 
 		List<Familia> listFamilias = new ArrayList<Familia>();
 		Familia familia = null;
@@ -123,7 +157,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				try {
 					fam.setUsersName(getUserByFamilyId(fam.getId()));
 				} catch (Exception e) {
-					fam.setUsersName("Sem integrantes");
+					fam.setUsersName(null);
 				}
 			}
 
@@ -133,32 +167,78 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		return listFamilias;
 	}
 
-	public String getUserByFamilyId(int id) {
+	public List<Usuario> getUserByFamilyId(int id) {
 
+		List<Usuario> listUser = null;
+		
 		StringBuilder comando2 = new StringBuilder();
-		comando2.append("SELECT uss.Usuario as user from usuarios uss ");
+		comando2.append("SELECT uss.Id_Usuarios as userId, uss.Usuario as user from usuarios uss ");
 		comando2.append("INNER join user_family uf on uf.Usuario_Id = uss.Id_Usuarios ");
 		comando2.append("INNER JOIN familias faa ON faa.Id_Familias = uf.Familia_Id ");
 		if (id != 0) {
 			comando2.append("WHERE faa.Id_Familias = " + id);
 		}
-		List<String> names = new ArrayList<String>();
+		
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
 			ResultSet rs2 = stmt.executeQuery(comando2.toString());
 			while (rs2.next()) {
-				names.add(rs2.getString("user"));
+				Usuario user = new Usuario();
+				user.setId(rs2.getInt("userId"));
+				user.setUsuario(rs2.getString("user"));
+				listUser.add(user);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		String user = names.get(0);
-		for (int i = 1; i < names.size(); i++) {
-			user += ", ";
-			user += names.get(i);
-		}
-
-		return user;
+		return listUser;
 	}
+
+	public void deletaFamilia(int id) throws Exception {
+		if (getUserByFamilyId(id) == null) {
+			throw new Exception("Família inexistente");
+		}
+		
+		beforeInsert(id);
+		
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("DELETE FROM familias ");
+		comando.append("WHERE Id_Familias = ?");
+
+		PreparedStatement p;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, id);
+
+			p.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public Familia getFamilyById(int id) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT * FROM familias ");
+		comando.append("WHERE Id_Familias = ?");
+
+		PreparedStatement p;
+		ResultSet rs = null;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, id);
+			rs = p.executeQuery();
+			if (!rs.next()) {
+				Familia newFamily = new Familia();
+				newFamily.setName(rs.getString("Nome"));
+				return newFamily;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

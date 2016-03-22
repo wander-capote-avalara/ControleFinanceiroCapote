@@ -8,5 +8,5 @@ import br.com.ControleFinanceiroCapote.objetos.Familia;
 public interface FamiliaDAO {
 
 	public void inserir(Familia family) throws ValidationException;
-	public List<Familia> getFamily();
+	public List<Familia> getFamily(int id);
 }

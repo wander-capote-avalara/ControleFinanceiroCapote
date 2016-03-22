@@ -11,12 +11,12 @@ public class Familia implements Serializable{
 		private String name;
 		private String owner;
 		private List<Integer> users;
-		private String usersName;
+		private List<Usuario> usersName;
 		
-		public String getUsersName() {
+		public List<Usuario> getUsersName() {
 			return usersName;
 		}
-		public void setUsersName(String usersName) {
+		public void setUsersName(List<Usuario> usersName) {
 			this.usersName = usersName;
 		}
 		public int getId() {
