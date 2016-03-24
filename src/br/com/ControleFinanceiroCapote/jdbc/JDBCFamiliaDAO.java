@@ -56,6 +56,25 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		} else {
+			StringBuilder comando = new StringBuilder();
+			comando.append("UPDATE familias set Nome = ?, Id_Usuario = ? ");
+			comando.append("WHERE Id_Familias = ?");
+
+			PreparedStatement p;
+			ResultSet rs = null;
+
+			try {
+				p = this.conexao.prepareStatement(comando.toString());
+				p.setString(1, family.getName());
+				p.setString(2, family.getOwner());
+				p.setInt(3, family.getId());
+				p.execute();
+
+				updateFamilies(family.getUsers(), family.getId());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -133,7 +152,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		comando.append("WHERE fa.Id_Usuario = uf.Usuario_Id ");
 		if (id != 0) {
 			comando.append("AND ");
-			comando.append("fa.Id_Familias = "+id);
+			comando.append("fa.Id_Familias = " + id);
 		}
 
 		List<Familia> listFamilias = new ArrayList<Familia>();
@@ -155,9 +174,9 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 
 			for (Familia fam : listFamilias) {
 				try {
-					fam.setUsersName(getUserByFamilyId(fam.getId()));
+					fam.setNames(getUserByFamilyId(fam.getId()));
 				} catch (Exception e) {
-					fam.setUsersName(null);
+					fam.setNames("Sem integrantes");
 				}
 			}
 
@@ -167,40 +186,46 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		return listFamilias;
 	}
 
-	public List<Usuario> getUserByFamilyId(int id) {
+	public String getUserByFamilyId(int id) {
 
-		List<Usuario> listUser = null;
-		
+		List<Usuario> listUser = new ArrayList<Usuario>();
+
 		StringBuilder comando2 = new StringBuilder();
-		comando2.append("SELECT uss.Id_Usuarios as userId, uss.Usuario as user from usuarios uss ");
+		comando2.append("SELECT uss.Usuario as user from usuarios uss ");
 		comando2.append("INNER join user_family uf on uf.Usuario_Id = uss.Id_Usuarios ");
 		comando2.append("INNER JOIN familias faa ON faa.Id_Familias = uf.Familia_Id ");
 		if (id != 0) {
 			comando2.append("WHERE faa.Id_Familias = " + id);
 		}
-		
+
+		List<String> names = new ArrayList<String>();
+
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
 			ResultSet rs2 = stmt.executeQuery(comando2.toString());
 			while (rs2.next()) {
-				Usuario user = new Usuario();
-				user.setId(rs2.getInt("userId"));
-				user.setUsuario(rs2.getString("user"));
-				listUser.add(user);
+				names.add(rs2.getString("user"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return listUser;
+
+		String user = names.get(0);
+		for (int i = 1; i < names.size(); i++) {
+			user += ", ";
+			user += names.get(i);
+		}
+
+		return user;
 	}
 
 	public void deletaFamilia(int id) throws Exception {
 		if (getUserByFamilyId(id) == null) {
 			throw new Exception("Família inexistente");
 		}
-		
+
 		beforeInsert(id);
-		
+
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("DELETE FROM familias ");
@@ -225,20 +250,49 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 
 		PreparedStatement p;
 		ResultSet rs = null;
+		Familia newFamily = null;
 
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 			p.setInt(1, id);
 			rs = p.executeQuery();
-			if (!rs.next()) {
-				Familia newFamily = new Familia();
+			if (rs.next()) {
+				newFamily = new Familia();
+				newFamily.setId(id);
 				newFamily.setName(rs.getString("Nome"));
-				return newFamily;
+				newFamily.setUsersName(getUserAndId(id));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return newFamily;
+	}
+
+	public List<Usuario> getUserAndId(int id) {
+
+		List<Usuario> listUser = new ArrayList<Usuario>();
+
+		StringBuilder comando2 = new StringBuilder();
+		comando2.append("SELECT uss.Id_Usuarios as userId, uss.Usuario as user from usuarios uss ");
+		comando2.append("INNER join user_family uf on uf.Usuario_Id = uss.Id_Usuarios ");
+		comando2.append("INNER JOIN familias faa ON faa.Id_Familias = uf.Familia_Id ");
+		if (id != 0) {
+			comando2.append("WHERE faa.Id_Familias = " + id);
+		}
+
+		try {
+			java.sql.Statement stmt = conexao.createStatement();
+			ResultSet rs2 = stmt.executeQuery(comando2.toString());
+			while (rs2.next()) {
+				Usuario user = new Usuario();
+				user.setId(rs2.getInt("userId"));
+				user.setUsuario(rs2.getString("user"));
+				listUser.add(user);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listUser;
 	}
 
 }

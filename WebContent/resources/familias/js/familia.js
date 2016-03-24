@@ -16,6 +16,10 @@ function alertPopUp(msg) {
 	$("#msg").dialog(cfg);
 }
 
+$("#tokenizeClean").click(function(){
+	$("#tokenize").tokenize().clear();
+});
+
 $(document).bind({
 	ajaxStart : function() {
 		$(".loadModal").css("display", "block");
@@ -70,7 +74,7 @@ $(document)
 													className : "center"
 												},
 												{
-													data : "usersName.usuario",
+													data : "names",
 													className : "center",
 												},
 												{
@@ -94,21 +98,22 @@ $(document)
 						$("#tokenize").tokenize().clear();
 						var cfg = {
 							type : "POST",
-							url : "../../rest/familia/getUserById/" + id,
-							success : function(userData) {
-								$("#id").val(userData.id);
-								$("#inputUsernameLogin").val(userData.usuario);
-								$("#inputEmailLogin").val(userData.email);
-								$("#inputNivelLogin").val(userData.nivel);
-								$("#isActive").val(userData.ativo);
-								$("#families").val(userData.id_familia);
-
+							url : "../../rest/familia/getFamilyById/" + id,
+							data : "id = "+id,
+							success : function(familyData) {
+								console.dir(familyData);
+								$("#id").val(familyData.id);
+								$("#inputFamilyName").val(familyData.name);
+								for (i = 0; i < familyData.usersName.length; i++) { 
+									$("#tokenize").tokenize().tokenAdd(familyData.usersName[i].id, familyData.usersName[i].usuario);
+								}
 							},
 							error : function(rest) {
 								alert("Erro ao editar o usuário");
 							}
 						};
 						CFINAC.ajax.post(cfg);
+						//# sourceURL=sourcsees.js
 					}
 
 					CFINAC.familia.deletaFamilia = function(id) {
@@ -148,7 +153,7 @@ $(document)
 
 					CFINAC.familia.add = function() {
 						var nomeFamilia = $("#inputFamilyName").val(), listaUsers = $(
-								"#tokenize").val();
+								"#tokenize").val(), idFamily = $("#id").val();
 
 						if (nomeFamilia == "" || nomeFamilia == null) {
 							alertPopUp("Preencha corretamente o campo Nome da Familia!")
@@ -157,6 +162,7 @@ $(document)
 						}
 
 						var newFamily = new Object();
+						newFamily.id = idFamily;
 						newFamily.name = nomeFamilia;
 						newFamily.owner = listaUsers[0];
 						newFamily.users = listaUsers;
@@ -168,6 +174,8 @@ $(document)
 							success : function(msg) {
 								alertPopUp(msg);
 								table.ajax.reload(null, false);
+								$("#tokenize").tokenize().clear();
+								$("#conteudoRegistro .btn-danger").click();
 							},
 							error : function(err) {
 								alert("Erro na ação!" + err.responseText);
@@ -175,6 +183,6 @@ $(document)
 						};
 						CFINAC.ajax.post(cfg);
 					};
-					// # sourceURL=sourcees.coffeee
+					//# sourceURL=sourcees.js
 				})
 // # sourceURL=sourcees.coffee

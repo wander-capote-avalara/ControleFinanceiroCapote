@@ -90,5 +90,18 @@ public class FamiliaRest extends UtilRest {
 		}
 	}
 	
-	
+	@POST
+	@Path("/getFamilyById/{id}")
+	@Produces({ MediaType.APPLICATION_JSON })
+
+	public Response getFamilyById(@PathParam("id") int id) {
+		try {
+			Familia teste = serviceFamily.getFamilyById(id);
+			return this.buildResponse(teste);
+			//return this.buildResponse(serviceFamily.getFamilyById(id));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
 }
