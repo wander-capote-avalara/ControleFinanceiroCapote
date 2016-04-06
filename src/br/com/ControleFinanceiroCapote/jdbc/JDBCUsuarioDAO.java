@@ -1,31 +1,22 @@
 package br.com.ControleFinanceiroCapote.jdbc;
 
 import java.sql.Connection;
-import java.sql.JDBCType;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.sql.Statement;
-import java.sql.Types;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-import java.util.stream.Stream;
-
-import javax.swing.text.html.parser.Parser;
-
-import org.apache.catalina.User;
-import org.omg.CORBA.COMM_FAILURE;
-
-import com.sun.org.apache.xalan.internal.utils.FeatureManager.Feature;
-import com.sun.org.apache.xalan.internal.xsltc.trax.SAX2StAXStreamWriter;
-
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.UsuarioDAO;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
 import br.com.ControleFinanceiroCapote.objetos.Usuario;
 import br.com.ControleFinanceiroCapote.validacao.ValidaUsuario;
-import sun.print.resources.serviceui;
 
 public class JDBCUsuarioDAO implements UsuarioDAO {
 
@@ -39,12 +30,10 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 
 	public boolean inserir(Usuario user) throws ValidationException {
 		valid.insertValidation(user);
-		int id = user.getId(),
-			familyId = user.getId_familia();
-		
+		int id = user.getId(), familyId = user.getId_familia();
+
 		if (id == 0) {
-			String comando = "insert into usuarios " + "(Usuario, Senha, Email, Nivel, Ativo) "
-					+ "values(?,?,?,?,?)";
+			String comando = "insert into usuarios " + "(Usuario, Senha, Email, Nivel, Ativo) " + "values(?,?,?,?,?)";
 
 			PreparedStatement p;
 			ResultSet rs = null;
@@ -63,7 +52,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 					id = rs.getInt(1);
 					setFamily(id, familyId, true);
 				}
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
@@ -83,10 +72,10 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				p.setInt(4, user.getNivel());
 				p.setInt(5, user.getAtivo());
 				p.setInt(6, user.getId());
-				
+
 				p.execute();
 				if (familyId != 0) {
-					setFamily(id, familyId, getFamilyByUserID(id) == 0 ? true : false);					
+					setFamily(id, familyId, getFamilyByUserID(id) == 0 ? true : false);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -100,8 +89,8 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		StringBuilder comando = new StringBuilder();
 		if (iOu) {
 			comando.append("insert into user_family ");
-			comando.append("(Familia_Id, Usuario_Id) values(?,?)");	
-		}else {
+			comando.append("(Familia_Id, Usuario_Id) values(?,?)");
+		} else {
 			comando.append("update user_family ");
 			comando.append("set Familia_Id = ? ");
 			comando.append("where Usuario_Id = ?");
@@ -115,10 +104,10 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			p.setInt(2, id);
 
 			p.execute();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 
 	@Override
@@ -128,11 +117,11 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		comando.append("LEFT JOIN user_family ON user_family.Usuario_Id = usuarios.Id_Usuarios ");
 		comando.append("LEFT JOIN familias ON familias.Id_Familias = user_family.Familia_Id ");
 		if (!text.equals("") && !text.equals(null)) {
-			comando.append("WHERE usuarios.Usuario LIKE '%"+text+"%'");
+			comando.append("WHERE usuarios.Usuario LIKE '%" + text + "%'");
 			comando.append(" AND usuarios.Id_Usuarios NOT IN ");
 			comando.append("(SELECT user_family.Usuario_Id FROM user_family)");
 		}
-		
+
 		List<Usuario> listUsuario = new ArrayList<Usuario>();
 		Usuario usuario = null;
 		try {
@@ -163,11 +152,12 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 
 	@Override
 	public boolean deletaUsuario(int id) throws ValidationException {
-		//getUsers().forEach((user) -> user.getId());
-		//getUsers().stream().filter(user -> user.getId() == id).findAny().isPresent();
-		
+		// getUsers().forEach((user) -> user.getId());
+		// getUsers().stream().filter(user -> user.getId() ==
+		// id).findAny().isPresent();
+
 		valid.userValidation(id);
-		
+
 		String comando = "UPDATE usuarios SET Ativo = 0 WHERE Id_Usuarios =" + id;
 		Statement p;
 		try {
@@ -181,30 +171,157 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	}
 
 	@Override
-	public boolean authUser(Usuario user) throws SQLException {
-		String comando = "select * from usuarios ";
+	public Usuario authUser(Usuario user) throws SQLException {
+		StringBuilder comando = new StringBuilder();
+		comando.append(
+				"SELECT usuarios.Id_Usuarios as userid, usuarios.Usuario as user, usuarios.Email as email, usuarios.Nivel as nivel");
+		comando.append(" FROM usuarios ");
 		if (!user.equals("null") || !user.equals("")) {
-			comando += "where Usuario=? && Senha=?";
+			comando.append("WHERE Usuario=? && Senha=?");
+			comando.append(" AND ");
+			comando.append("Ativo > 0");
 		}
 		PreparedStatement p;
 		ResultSet rs = null;
+		Usuario usuario = null;
+
 		try {
-			p = this.conexao.prepareStatement(comando);
+			p = this.conexao.prepareStatement(comando.toString());
 			p.setString(1, user.getUsuario());
 			p.setString(2, user.getSenha());
 			rs = p.executeQuery();
 
+			while (rs.next()) {
+				usuario = new Usuario();
+				usuario.setId(rs.getInt("userid"));
+				usuario.setUsuario(rs.getString("user"));
+				usuario.setEmail(rs.getString("email"));
+				usuario.setNivel(rs.getInt("nivel"));
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return rs.next() ? true : false;
+		return usuario;
+	}
+
+	public Usuario getUserInfoById(int id) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT a.Usuario as userName, c.Nome as familyName  FROM usuarios a ");
+		comando.append("LEFT JOIN user_family b ON b.Usuario_Id = a.Id_Usuarios ");
+		comando.append("LEFT JOIN familias c ON c.Id_Familias = b.Familia_Id ");
+		comando.append("WHERE a.Id_Usuarios = " + id);
+
+		Usuario user = null;
+		try {
+			java.sql.Statement stmt = conexao.createStatement();
+			ResultSet rs = stmt.executeQuery(comando.toString());
+			
+			while (rs.next()) {
+				user = new Usuario();
+				
+				user.setUsuario(rs.getString("userName"));
+				user.setNomeFamilia(rs.getString("familyName") == null ? "Sem familia" : rs.getString("familyName"));
+				user.setSaldoAtual(getActualBalanceById(id));
+				user.setNext(getNextBill(id));
+				user.setSaldoProx(getNextBalanceById(id));
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return user;
+	}
+
+	private int getNextBalanceById(int id) {
+		int todaysBalance = getActualBalanceById(id);
+		return (getActualBalanceById(id) + getNextMonthBalance(id)) - getNextMonthBill(id);
+	}
+
+	private int getNextMonthBill(int id) {
+		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2;
+		return nextMonth;
+
+	}
+
+	private int getNextMonthBalance(int id) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private String getNextBill(int id) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT a.Data_Vencimento as lastDate FROM contas a ");
+		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Conta = 1 ");
+		comando.append("ORDER BY lastDate ASC LIMIT 1");
+
+		Date lastDate = null;
+		try {
+			java.sql.Statement stmt = conexao.createStatement();
+			ResultSet rs = stmt.executeQuery(comando.toString());
+			
+			while (rs.next()) {
+				lastDate = rs.getDate("lastDate");
+			}
+			return new SimpleDateFormat("dd/MM/yyyy").format(lastDate);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private int getActualBalanceById(int id) {
+		return getActualRentsById(id) - getActualBillsById(id, false);
+	}
+	
+	private int getActualBillsById(int id, boolean next) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT Valor_Contas as vlrConta FROM contas a ");
+		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Conta = 1 ");
+		comando.append(next ? "AND MONTH(a.Data_Vencimento) = "+Calendar.getInstance().get(Calendar.MONTH) + 2 : "");
+
+		int balance = 0;
+		try {
+			java.sql.Statement stmt = conexao.createStatement();
+			ResultSet rs = stmt.executeQuery(comando.toString());
+			
+			while (rs.next()) {
+				balance += (int)rs.getInt("vlrConta");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}
+		return balance;
+	}
+	
+	
+	private int getActualRentsById(int id) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT Valor_Rendas as vlrRenda FROM rendas a ");
+		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Renda = 1");
+
+		int balance = 0;
+		try {
+			java.sql.Statement stmt = conexao.createStatement();
+			ResultSet rs = stmt.executeQuery(comando.toString());
+			
+			while (rs.next()) {
+				balance += (int)rs.getInt("vlrRenda");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}
+		return balance;
 	}
 
 	@Override
 	public boolean ativaUsuario(int id) throws ValidationException {
-		
+
 		valid.userValidation(id);
-		
+
 		String comando = "UPDATE usuarios SET Ativo = 1 WHERE Id_Usuarios =" + id;
 		Statement p;
 		try {
@@ -247,7 +364,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	public Usuario getUserById(int id) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 		valid.userValidation(id);
-		
+
 		comando.append("SELECT * from usuarios ");
 		comando.append("WHERE Id_Usuarios=" + id);
 		Usuario user = new Usuario();
@@ -274,16 +391,16 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	}
 
 	private int getFamilyByUserID(int idUser) {
-		
+
 		StringBuilder comandoSQL = new StringBuilder();
 		int idFamilia = 0;
 		comandoSQL.append("SELECT * FROM user_family ");
-		comandoSQL.append("WHERE Usuario_Id = "+idUser);
+		comandoSQL.append("WHERE Usuario_Id = " + idUser);
 		comandoSQL.append(" LIMIT 1");
 		try {
 			java.sql.Statement stmtt = conexao.createStatement();
 			ResultSet rss = stmtt.executeQuery(comandoSQL.toString());
-			while (rss.next()) {				
+			while (rss.next()) {
 				idFamilia = rss.getInt("Familia_Id");
 			}
 		} catch (Exception e) {

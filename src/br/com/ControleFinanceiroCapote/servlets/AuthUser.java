@@ -20,6 +20,7 @@ import java.util.Base64.Encoder;
 
 import com.google.gson.Gson;
 import com.mysql.jdbc.util.Base64Decoder;
+import com.sun.javafx.scene.layout.region.Margins.Converter;
 
 import br.com.ControleFinanceiroCapote.bd.conexao.Conexao;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCUsuarioDAO;
@@ -44,22 +45,21 @@ public class AuthUser extends HttpServlet {
 			Conexao conec = new Conexao();
 			Connection conexao = conec.abrirConexao();
 			JDBCUsuarioDAO jdbcContato = new JDBCUsuarioDAO(conexao);
-			boolean ret = jdbcContato.authUser(user);
+			Usuario userExists = jdbcContato.authUser(user);
 			conec.fecharConexao();
 			Map<String, String> msg = new HashMap<String, String>();
 
-			if (ret) {
+			if (userExists != null) {
 
 				HttpSession sessao = request.getSession();
 
-				String usuario = request.getParameter("inputUsername");
-				String senha = request.getParameter("inputSenha");
+				//String usuario = request.getParameter("inputUsername");
+				//String senha = request.getParameter("inputSenha");
 
-				Encoder encoder = Base64.getEncoder();
-				String encodedPassword = encoder.encodeToString(senha.getBytes());
+				//Encoder encoder = Base64.getEncoder();
+				//String encodedPassword = encoder.encodeToString(senha.getBytes());
 
-				sessao.setAttribute("login", usuario);
-				sessao.setAttribute("senha", encodedPassword);
+				sessao.setAttribute("id", Integer.toString(userExists.getId()));
 
 				// Decoder decoder = Base64.getDecoder();
 				// byte[] decodedPassword = decoder.decode(encodedPassword);
@@ -75,7 +75,7 @@ public class AuthUser extends HttpServlet {
 				// response.sendRedirect(context+"/resources/contato/views/teste.jsp");
 
 				response.sendRedirect(
-						user.getNivel() == 0 
+						userExists.getNivel() == 0 
 						? context + "/resources/Index.html"
 						: context + "/resources/admin/admin.html"
 						);

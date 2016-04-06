@@ -15,7 +15,7 @@ public interface UsuarioDAO {
 	public boolean deletaUsuario(int id) throws ValidationException;
 	public boolean ativaUsuario(int id) throws ValidationException;
 	public List<Usuario> getUsers(String text);
-	public boolean authUser(Usuario user) throws SQLException;
+	public Usuario authUser(Usuario user) throws SQLException;
 	public List<Familia> getFamilies();
 	public Usuario getUserById(int id) throws ValidationException;
 }

@@ -1,12 +1,15 @@
 package br.com.ControleFinanceiroCapote.objetos;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.util.List;
+
+import com.sun.org.apache.xerces.internal.impl.dv.xs.DecimalDV;
 
 public class Usuario implements Serializable{
 
 	private static final long serialVersionUID = 1L;
-
+	
 	private int id;
 	private int id_familia;
 	private String usuario;
@@ -16,7 +19,28 @@ public class Usuario implements Serializable{
 	private int nivel;
 	private int ativo;
 	private String nomeFamilia;
+	private int saldoAtual; 
+	private int saldoProx; 
+	private String next;
 	
+	public int getSaldoAtual() {
+		return saldoAtual;
+	}
+	public void setSaldoAtual(int saldoAtual) {
+		this.saldoAtual = saldoAtual;
+	}
+	public int getSaldoProx() {
+		return saldoProx;
+	}
+	public void setSaldoProx(int saldoProx) {
+		this.saldoProx = saldoProx;
+	}
+	public String getNext() {
+		return next;
+	}
+	public void setNext(String next) {
+		this.next = next;
+	}
 	public String getNomeFamilia() {
 		return nomeFamilia;
 	}

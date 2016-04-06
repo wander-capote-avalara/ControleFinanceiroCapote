@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -21,7 +22,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -44,6 +47,9 @@ public class UsuarioRest extends UtilRest {
 	public UsuarioRest() {
 
 	}
+
+	@Context
+	HttpServletRequest request;
 
 	UsuarioService service = new UsuarioService();
 
@@ -114,6 +120,19 @@ public class UsuarioRest extends UtilRest {
 	public Response getFamilies() {
 		try {
 			return this.buildResponse(service.GetFamilies());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+
+	@POST
+	@Path("/getUserInfo")
+	@Produces("text/plain")
+	public Response getUserInfo() {
+		try {
+			Integer idUser = Integer.parseInt((String) request.getSession().getAttribute("id"));
+			return idUser == null ? null : this.buildResponse(service.getUserInfo(idUser));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());

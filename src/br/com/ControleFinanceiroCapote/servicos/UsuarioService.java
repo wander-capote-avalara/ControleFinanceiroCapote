@@ -82,4 +82,14 @@ public class UsuarioService {
 
 		return data;
 	}
+	
+	public Usuario getUserInfo(int id) {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCUsuarioDAO jdbcContato = new JDBCUsuarioDAO(conexao);
+		Usuario user = jdbcContato.getUserInfoById(id);
+		conec.fecharConexao();
+
+		return user;
+	}
 }
