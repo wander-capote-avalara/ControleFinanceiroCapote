@@ -20,7 +20,10 @@
 <link href="css/custom.css" rel="stylesheet">
 <link href="css/custom/custom.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="css/css.css">
+<link href="usuarios/css/usuario.css" rel="stylesheet">
+<script src="rendas/js/renda.js"></script>
 <script src="js/index.js"></script>
+
 <title>Controle Financeiro</title>
 </head>
 
@@ -42,14 +45,14 @@
 						<div class="navbar left_col scroll-view " id="myNavbar">
 							<div id="AnS">
 								<div id="nameUser" class="text-center">
-									<p id="username">Usuário Padrão</p>
+									<p id="username"></p>
 								</div>
 								<div id="userInfo">
-									<h6 id="actualbalance">Saldo Atual(R$): 5000,00</h6>
-									<h6 id="nextbalance">Saldo próx. mês(R$): -435,35</h6>
-									<h6 id="next">Próx. fatura: 26/10/2015</h6>
+									<h6 id="actualbalance">Saldo Atual(R$): 0</h6>
+									<h6 id="nextbalance">Saldo próx. mês(R$): 0</h6>
+									<h6 id="next">Próx. fatura: 00/00/0000</h6>
 									<h6>
-										Família: <a id="family">Família Arara</a>
+										Família: <a id="family"></a>
 									</h6>
 								</div>
 							</div>
@@ -69,7 +72,7 @@
 												class="fa fa-chevron-down"></span></a>
 											<ul class="nav child_menu" style="display: none">
 												<li><a>Conta</a></li>
-												<li><a>Renda</a></li>
+												<li onclick="changeToIncome()"><a>Renda</a></li>
 											</ul></li>
 										<li><a><i class="fa fa-money"
 												title="FUCK THE BITCHES!"></i> Fluxo de Caixa</a></li>
@@ -97,3 +100,11 @@
 </body>
 
 </html>
+
+<script type="text/javascript">
+	var changeToIncome = function() {
+		$("#cont").load("rendas/rendas.html", function() {
+			iniciaRenda();
+		});
+	}
+</script>

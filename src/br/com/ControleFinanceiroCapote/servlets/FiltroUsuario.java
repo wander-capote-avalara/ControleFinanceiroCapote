@@ -23,11 +23,11 @@ public class FiltroUsuario implements Filter{
 
 			HttpSession sessao = ((HttpServletRequest) request).getSession();
 
-			if (((HttpServletRequest) request).getRequestURI().equals(context) || sessao.getAttribute("login") != null) {
-				sessao.setAttribute("msg", "Usu·rio logado com sucesso!");
+			if (((HttpServletRequest) request).getRequestURI().equals(context) || sessao.getAttribute("id") != null || (int)sessao.getAttribute("lvl") != 0) {
+				sessao.setAttribute("msg", "Usu√°rio logado com sucesso!");
 				chain.doFilter(request, response);
 			} else {
-				sessao.setAttribute("msg", "VOC  NAUM TEM PERMISSAAAAUMM 9NHO!");
+				sessao.setAttribute("msg", "VOC√ä NAUM TEM PERMISSAAAAUMM 9NHO!");
 				((HttpServletResponse) response).sendRedirect(context);
 			}
 

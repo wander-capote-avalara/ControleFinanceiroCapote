@@ -6,8 +6,11 @@ import java.util.List;
 
 import com.sun.org.apache.xerces.internal.impl.dv.xs.DecimalDV;
 
+import br.com.ControleFinanceiroCapote.rest.UsuarioRest;
+
 public class Usuario implements Serializable{
 
+	
 	private static final long serialVersionUID = 1L;
 	
 	private int id;

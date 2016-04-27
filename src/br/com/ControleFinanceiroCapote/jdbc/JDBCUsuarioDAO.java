@@ -210,23 +210,24 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		comando.append("SELECT a.Usuario as userName, c.Nome as familyName  FROM usuarios a ");
 		comando.append("LEFT JOIN user_family b ON b.Usuario_Id = a.Id_Usuarios ");
 		comando.append("LEFT JOIN familias c ON c.Id_Familias = b.Familia_Id ");
-		comando.append("WHERE a.Id_Usuarios = " + id);
-
-		Usuario user = null;
+		comando.append("WHERE a.Id_Usuarios = ?");
+		Usuario user = null ;
 		try {
-			java.sql.Statement stmt = conexao.createStatement();
-			ResultSet rs = stmt.executeQuery(comando.toString());
+			PreparedStatement stmt = conexao.prepareStatement(comando.toString());
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
 			
+		
 			while (rs.next()) {
 				user = new Usuario();
 				
 				user.setUsuario(rs.getString("userName"));
 				user.setNomeFamilia(rs.getString("familyName") == null ? "Sem familia" : rs.getString("familyName"));
-				user.setSaldoAtual(getActualBalanceById(id));
+				user.setSaldoAtual(getActualBalanceById(id, false));
 				user.setNext(getNextBill(id));
 				user.setSaldoProx(getNextBalanceById(id));
 			}
-			
+			if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -235,26 +236,14 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	}
 
 	private int getNextBalanceById(int id) {
-		int todaysBalance = getActualBalanceById(id);
-		return (getActualBalanceById(id) + getNextMonthBalance(id)) - getNextMonthBill(id);
-	}
-
-	private int getNextMonthBill(int id) {
-		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2;
-		return nextMonth;
-
-	}
-
-	private int getNextMonthBalance(int id) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getActualBalanceById(id, true) + getActualBalanceById(id, false);
 	}
 
 	private String getNextBill(int id) {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT a.Data_Vencimento as lastDate FROM contas a ");
 		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Conta = 1 ");
-		comando.append("ORDER BY lastDate ASC LIMIT 1");
+		comando.append("ORDER BY lastDate DESC LIMIT 1");
 
 		Date lastDate = null;
 		try {
@@ -264,22 +253,30 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			while (rs.next()) {
 				lastDate = rs.getDate("lastDate");
 			}
-			return new SimpleDateFormat("dd/MM/yyyy").format(lastDate);
+			try {
+				return new SimpleDateFormat("dd/MM/yyyy").format(lastDate);	
+			} catch (Exception e) {
+				return "Não há próxima fatura";
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	private int getActualBalanceById(int id) {
-		return getActualRentsById(id) - getActualBillsById(id, false);
+	private int getActualBalanceById(int id, boolean next) {
+		return getActualRentsById(id, next) - getActualBillsById(id, next);
 	}
 	
 	private int getActualBillsById(int id, boolean next) {
 		StringBuilder comando = new StringBuilder();
-		comando.append("SELECT Valor_Contas as vlrConta FROM contas a ");
+		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
+			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+		comando.append("SELECT SUM(Valor_Contas) as vlrConta FROM contas a ");
 		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Conta = 1 ");
-		comando.append(next ? "AND MONTH(a.Data_Vencimento) = "+Calendar.getInstance().get(Calendar.MONTH) + 2 : "");
+		comando.append(next ? " AND MONTH(a.Data_Vencimento) = "+nextMonth : " AND MONTH(a.Data_Vencimento) <= "+thisMonth);
+		comando.append(" OR ");
+		comando.append("a.Data_Vencimento IS NULL AND a.Id_Usuario = "+id+" AND a.Status_Conta = 1 AND a.Conta_Fixa = 1");
 
 		int balance = 0;
 		try {
@@ -297,11 +294,16 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	}
 	
 	
-	private int getActualRentsById(int id) {
+	private int getActualRentsById(int id, boolean next) {
 		StringBuilder comando = new StringBuilder();
-		comando.append("SELECT Valor_Rendas as vlrRenda FROM rendas a ");
+		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
+			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+		comando.append("SELECT SUM(Valor_Rendas) as vlrRenda FROM rendas a ");
 		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Renda = 1");
-
+		comando.append(next ? " AND MONTH(a.Data_Vencimento) = "+nextMonth : " AND MONTH(a.Data_Vencimento) <= "+thisMonth);
+		comando.append(" OR ");
+		comando.append("a.Data_Vencimento IS NULL AND a.Id_Usuario = "+id+" AND a.Status_Renda = 1 AND a.Renda_Fixa = 1");
+		
 		int balance = 0;
 		try {
 			java.sql.Statement stmt = conexao.createStatement();

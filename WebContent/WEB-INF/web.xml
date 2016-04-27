@@ -27,7 +27,7 @@
 		<servlet-name>Jersey REST Service</servlet-name>
 		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>AuthUser</servlet-name>
 		<servlet-class>br.com.ControleFinanceiroCapote.servlets.AuthUser</servlet-class>
@@ -36,6 +36,15 @@
 		<servlet-name>AuthUser</servlet-name>
 		<url-pattern>/AuthUser</url-pattern>
 	</servlet-mapping>
+
+<!-- <servlet>
+		<servlet-name>LogOut</servlet-name>
+		<servlet-class>br.com.ControleFinanceiroCapote.servlets.LogOut</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>EndSession</servlet-name>
+		<url-pattern>/EndSession</url-pattern>
+	</servlet-mapping> -->	
 
 	<filter>
 		<filter-name>FiltroUsuario</filter-name>

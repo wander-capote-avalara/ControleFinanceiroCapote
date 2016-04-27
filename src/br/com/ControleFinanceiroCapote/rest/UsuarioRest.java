@@ -48,11 +48,16 @@ public class UsuarioRest extends UtilRest {
 
 	}
 
-	@Context
-	HttpServletRequest request;
 
 	UsuarioService service = new UsuarioService();
 
+	@Context
+	HttpServletRequest request = null;
+	
+	public int userId() {
+		return Integer.parseInt((String) request.getSession().getAttribute("id"));
+	}
+	
 	@POST
 	@Path("/add")
 	@Consumes("application/*")
@@ -62,9 +67,9 @@ public class UsuarioRest extends UtilRest {
 		try {
 			Usuario usuario = new ObjectMapper().readValue(usuarioParam, Usuario.class);
 			service.AddUser(usuario);
-			return this.buildResponse("Opera��o feita com sucesso!");
+			return this.buildResponse("Operação feita com sucesso!");
 		} catch (Exception e) {
-			return this.buildErrorResponse("Ocorreu um erro ao fazer a opera��o!");
+			return this.buildErrorResponse("Ocorreu um erro ao fazer a operação!");
 		}
 	}
 
@@ -131,7 +136,7 @@ public class UsuarioRest extends UtilRest {
 	@Produces("text/plain")
 	public Response getUserInfo() {
 		try {
-			Integer idUser = Integer.parseInt((String) request.getSession().getAttribute("id"));
+			Integer idUser = userId();
 			return idUser == null ? null : this.buildResponse(service.getUserInfo(idUser));
 		} catch (Exception e) {
 			e.printStackTrace();

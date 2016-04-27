@@ -60,6 +60,7 @@ public class AuthUser extends HttpServlet {
 				//String encodedPassword = encoder.encodeToString(senha.getBytes());
 
 				sessao.setAttribute("id", Integer.toString(userExists.getId()));
+				sessao.setAttribute("lvl", userExists.getNivel());
 
 				// Decoder decoder = Base64.getDecoder();
 				// byte[] decodedPassword = decoder.decode(encodedPassword);
@@ -103,5 +104,4 @@ public class AuthUser extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-
 }
