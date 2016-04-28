@@ -2,6 +2,7 @@ package br.com.ControleFinanceiroCapote.rest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -42,6 +43,18 @@ public class RendaRest extends UtilRest  {
 			return this.buildResponse("Operação feita com sucesso!");
 		} catch (Exception e) {
 			return this.buildErrorResponse("Insira usuários válidos!");
+		}
+	}
+	
+	@GET
+	@Path("/getIncomes")
+	@Produces("text/plain")
+	public Response getIncomes() {
+		try {
+			return this.buildResponse(serviceRenda.getIncomes(0, userId()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
 		}
 	}
 }

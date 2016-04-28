@@ -1,10 +1,10 @@
 package br.com.ControleFinanceiroCapote.servicos;
 
 import java.sql.Connection;
+import java.util.List;
 
 import br.com.ControleFinanceiroCapote.bd.conexao.Conexao;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCRendaDAO;
-import br.com.ControleFinanceiroCapote.jdbcinterface.RendaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Renda;
 
 public class RendaService {
@@ -18,5 +18,15 @@ public class RendaService {
 		JDBCRendaDAO jdbcRendadao = new JDBCRendaDAO(conexao);
 		jdbcRendadao.inserir(renda);
 		conec.fecharConexao();
+	}
+	public List<Renda> getIncomes(int id, int userId) {
+
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCRendaDAO jdbcRendadao = new JDBCRendaDAO(conexao);
+		List<Renda> incomeList = jdbcRendadao.getIncomes(id, userId);
+		conec.fecharConexao();
+
+		return incomeList;
 	}
 }

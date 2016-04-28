@@ -15,7 +15,22 @@ public class Renda implements Serializable{
 	java.sql.Date startDate;
 	int isFixed;
 	int categoria;
+	String categoriaName;
 	int userId;
+	int status;
+	
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public String getCategoriaName() {
+		return categoriaName;
+	}
+	public void setCategoriaName(String categoriaName) {
+		this.categoriaName = categoriaName;
+	}
 	
 	public int getCategoria() {
 		return categoria;
