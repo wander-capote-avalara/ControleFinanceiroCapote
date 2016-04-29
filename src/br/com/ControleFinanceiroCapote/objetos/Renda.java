@@ -11,7 +11,6 @@ public class Renda implements Serializable{
 	String description;
 	int times;
 	int totalValue;
-	java.sql.Date endDate;
 	java.sql.Date startDate;
 	int isFixed;
 	int categoria;
@@ -73,12 +72,6 @@ public class Renda implements Serializable{
 	}
 	public void setTotalValue(int totalValue) {
 		this.totalValue = totalValue;
-	}
-	public Date getEndDate() {
-		return endDate;
-	}
-	public void setEndDate(java.sql.Date endDate) {
-		this.endDate = endDate;
 	}
 	public Date getStartDate() {
 		return startDate;

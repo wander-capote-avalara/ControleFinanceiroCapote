@@ -49,9 +49,12 @@ iniciaRenda = function() {
 													{
 														data : "status",
 														className : "center",
+														mRender: function(data) {
+											                return data == 0 ? "Não ativo" : "Ativo";
+											            }
 													},
 													{
-														data : "category",
+														data : "categoriaName",
 														className : "center"
 													},
 													{
@@ -69,10 +72,16 @@ iniciaRenda = function() {
 													{
 														data : "isFixed",
 														className : "center",
+														mRender: function(data) {
+											                return data == 0 ? "Não" : "Sim";
+											            }
 													},
 													{
 														data : "times",
 														className : "center",
+														mRender: function(data) {
+											                return data == 0 ? "À vista" : data;
+											            }
 													},
 													{
 														data : "id",
@@ -93,8 +102,7 @@ iniciaRenda = function() {
 						CFINAC.rendas.add = function() {
 							var cfg;
 							var msg, categoria = $("#inputCategory").val(), description = $(
-									"#inputDescription").val(), endDate = $(
-									"#inputOverdueDate").val(), startDate = $(
+									"#inputDescription").val(), startDate = $(
 									"#inputInitialDate").val(), isFixed = $(
 									"#isFixed").val(), totalValue = $(
 									"#inputTotalValue").val(), times = $(
@@ -106,7 +114,6 @@ iniciaRenda = function() {
 								newIncome.id = id;
 								newIncome.description = description;
 								newIncome.startDate = startDate;
-								newIncome.endDate = endDate;
 								newIncome.isFixed = isFixed;
 								newIncome.times = times;
 								newIncome.categoria = categoria;

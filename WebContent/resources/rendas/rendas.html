@@ -8,34 +8,26 @@
 				<form class="form-horizontal" method="post">
 
 					<div class="form-group">
-						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-							Descrição: <input class="hid" id="id"> <input type="text"
-								class="form-control" id="inputDescription"
-								placeholder="Descrição" required maxlength="25">
-						</div>
-						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-							Data de Vencimento: <input type="date" class="form-control"
-								id="inputOverdueDate" placeholder="Data de Vencimento" required>
-						</div>
-
-					</div>
-					<div class="form-group">
-						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-							Conta Fixa: <select id="isFixed" class="form-control"
-								onchange="isFixed()">
-								<option value="0">Não</option>
-								<option value="1">Sim</option>
-							</select>
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" id="categories">
 						</div>
 						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 							Data de Início: <input type="date" class="form-control"
 								id="inputInitialDate" placeholder="Data Inicial" required>
 						</div>
-
 					</div>
 					<div class="form-group">
-						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" id="categories">
-
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+							Descrição: <input class="hid" id="id"> <input type="text"
+								class="form-control" id="inputDescription"
+								placeholder="Descrição" required maxlength="25">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							Conta Fixa: <select id="isFixed" class="form-control">
+								<option value="0">Não</option>
+								<option value="1">Sim</option>
+							</select>
 						</div>
 						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 							Valor Total: <input type="text" class="form-control"
@@ -43,7 +35,7 @@
 								maxlength="15">
 						</div>
 						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-							Vezes: <input type="text" class="form-control" id="inputTimes"
+							Parcelas: <input type="text" class="form-control" id="inputTimes"
 								required>
 						</div>
 
@@ -79,11 +71,14 @@
 </table>
 
 <script>
-	var isFixed = function() {
-		if (this.val() == 0) {
-			alert("0");
-		} else {
-			alert("1");
-		}
+$("#isFixed").change(function(){
+	//this.value == 0 ? $("#inputTimes").prop("disabled", false) : $("#inputTimes").prop("disabled", true);
+	if(this.value == 0){
+		$("#inputTimes").prop("disabled", false);
+	}else{
+		$("#inputTimes").prop("disabled", true);
+		$("#inputTimes").val("");
 	}
+});
+
 </script>

@@ -42,7 +42,7 @@ public class JDBCRendaDAO implements RendaDAO {
 				p.setString(3, renda.getDescription());
 				p.setInt(4, renda.getTotalValue());
 				p.setInt(5, 1);
-				p.setDate(6, (Date) renda.getEndDate());
+				p.setDate(6, (Date) renda.getStartDate());
 				p.setInt(7, renda.getIsFixed() == 0 ? renda.getTimes() : renda.getIsFixed());
 				p.execute();
 				rs = p.getGeneratedKeys();
@@ -102,7 +102,7 @@ public class JDBCRendaDAO implements RendaDAO {
 		StringBuilder comando = new StringBuilder();
 		
 		comando.append("SELECT r.Id_Rendas as id, r.Id_Categoria as categoryId, ");
-		comando.append("r.Descricao_Rendas as desc, r.Valor_Rendas as totalValue, r.Status_Renda as status, ");
+		comando.append("r.Descricao_Rendas as descr, r.Valor_Rendas as totalValue, r.Status_Renda as status, ");
 		comando.append("r.Data_Vencimento as endDate, r.Renda_Fixa as isFixed, r.Vezes as x ");
 		comando.append("FROM rendas r ");
 		comando.append("WHERE r.Id_Usuario = "+ userId);	
@@ -121,10 +121,10 @@ public class JDBCRendaDAO implements RendaDAO {
 
 				income.setId(rs.getInt("id"));
 				income.setCategoria(rs.getInt("categoryId"));
-				income.setDescription(rs.getString("desc"));
+				income.setDescription(rs.getString("descr"));
 				income.setTotalValue(rs.getInt("totalValue"));
 				income.setStatus(rs.getInt("status"));
-				income.setEndDate( rs.getDate("endDate"));
+				income.setStartDate( rs.getDate("endDate"));
 				income.setIsFixed(rs.getInt("isFixed"));
 				income.setTimes(rs.getInt("x"));
 				
