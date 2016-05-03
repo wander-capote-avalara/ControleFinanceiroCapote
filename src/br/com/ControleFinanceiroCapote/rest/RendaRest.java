@@ -5,12 +5,14 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
+import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.objetos.Renda;
 import br.com.ControleFinanceiroCapote.servicos.RendaService;
 
@@ -46,12 +48,23 @@ public class RendaRest extends UtilRest  {
 		}
 	}
 	
-	@GET
-	@Path("/getIncomes")
-	@Produces("text/plain")
-	public Response getIncomes() {
+	@POST
+	@Path("/deletaRenda/{id}")
+	public Response deletaRenda(@PathParam("id") int id) throws ValidationException {
 		try {
-			return this.buildResponse(serviceRenda.getIncomes(0, userId()));
+			serviceRenda.deletaRenda(id);
+			return this.buildResponse("Renda deletada com sucesso.");
+		} catch (Exception e) {
+			return this.buildErrorResponse("Não foi possível deletar a renda.");
+		}
+	}
+	
+	@GET
+	@Path("/getIncomes/{id}")
+	@Produces("text/plain")
+	public Response getIncomes(@PathParam("id") int id) {
+		try {
+			return this.buildResponse(serviceRenda.getIncomes(id, userId()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());
