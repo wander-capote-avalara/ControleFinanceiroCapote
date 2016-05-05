@@ -23,6 +23,9 @@ $(document).ready(
 				};
 				CFINAC.ajax.post(cfg);
 			}
+			
+			CFINAC.index.getUserInfo();
+			setInterval(CFINAC.index.getUserInfo, 30000);
 
 			CFINAC.index.endSession = function() {
 				var cfg = {

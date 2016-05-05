@@ -37,7 +37,7 @@
 <title>Controle Financeiro</title>
 </head>
 
-<body onload="CFINAC.index.getUserInfo()">
+<body>
 	<div class="container">
 		<div class="col-xs-12 col-sm-3 col-md-2 col-lg-2 left_col"
 			style="background-color: #2A3F54;">
@@ -81,7 +81,7 @@
 										<li><a><i class="fa fa-edit"></i> Cadastros <span
 												class="fa fa-chevron-down"></span></a>
 											<ul class="nav child_menu" style="display: none">
-												<li><a>Conta</a></li>
+												<li onclick="changeToBills()"><a>Conta</a></li>
 												<li onclick="changeToIncome()"><a>Renda</a></li>
 											</ul></li>
 										<li><a><i class="fa fa-money"
@@ -116,5 +116,11 @@
 		$("#cont").load("rendas/rendas.html", function() {
 			iniciaRenda();
 		});
+	},
+	changeToBills = function() {
+		$("#cont").load("contas/contas.html", function() {
+			iniciaRenda();
+		});
 	}
+
 </script>
