@@ -159,6 +159,7 @@ public class JDBCRendaDAO implements RendaDAO {
 		}
 	}
 
+	@Override
 	public List<Renda> getIncomes(int id, int userId) {
 		StringBuilder comando = new StringBuilder();
 		

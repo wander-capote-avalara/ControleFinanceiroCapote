@@ -1,6 +1,6 @@
 CFINAC.contas = new Object();
 
-iniciaRenda = function() {
+iniciaConta = function() {
     function alertPopUp(msg) {
         cfg = {
             title: "Mensagem",
@@ -21,12 +21,12 @@ iniciaRenda = function() {
         .ready(
             function() {
             	
-                CFINAC.rendas.procuraCategoria = function() {
+                CFINAC.contas.procuraCategoria = function() {
                     var cfg = {
                         type: "POST",
                         url: "../rest/categoria/getCategories",
                         success: function(listaDeCategorias) {
-                            CFINAC.rendas.exibirCategorias(listaDeCategorias);
+                            CFINAC.contas.exibirCategorias(listaDeCategorias);
                         },
                         error: function(e) {
                             alertPopUp("Erro na ação!")
@@ -35,8 +35,50 @@ iniciaRenda = function() {
                     CFINAC.ajax.post(cfg);
                 };
                 
+                CFINAC.contas.add = function() {
+                    var cfg;
+                    var msg, categoria = $("#inputCategory").val(),
+                        description = $(
+                            "#inputDescription").val(),
+                        startDate = $(
+                            "#inputStartDate").val(),
+                        hasDeadline = $(
+                            "#hasDeadline").val(),
+                        totalValue = $(
+                            "#inputTotalValue").val(),
+                        times = $(
+                            "#inputParcels").val(),
+                        parcelValue = $("#inputParcelValue").val(),
+                        id = $("#id").val();
 
-                CFINAC.rendas.exibirCategorias = function(listaDeCategorias) {
+                    if (description != "" && startDate != "" &&
+                        startDate != "" && totalValue != "") {
+                        var newBill = new Object();
+                        newBill.id = id;
+                        newBill.description = description;
+                        newBill.startDate = startDate;
+                        newBill.hasDeadline = hasDeadline;
+                        newBill.times = times;
+                        newBill.categoria = categoria;
+                        newBill.totalValue = totalValue;
+                        newBill.parcelValue = parcelValue;
+
+                        cfg = {
+                            url: "../rest/conta/add",
+                            data: newBill,
+                            success: function(r) {
+                                alertPopUp(r);
+								table.ajax.reload(null, false);
+                            },
+                            error: function(err) {
+                                alert("Erro na ação" + err.responseText);
+                            }
+                        };
+                        CFINAC.ajax.post(cfg);
+                    }
+                }
+
+                CFINAC.contas.exibirCategorias = function(listaDeCategorias) {
                     var html = "Categoria:<select id='inputCategory' class='form-control'>" +
                         "<option value=0 selected>Selecione uma categoria...</option>";
                     for (var x = 0; x < listaDeCategorias.length; x++) {
@@ -48,7 +90,7 @@ iniciaRenda = function() {
                     $("#categories").html(html);
                 };
 
-                CFINAC.rendas.procuraCategoria();
+                CFINAC.contas.procuraCategoria();
             	
             })
 }

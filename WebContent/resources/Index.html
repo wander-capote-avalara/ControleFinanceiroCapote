@@ -23,6 +23,7 @@
 <link href="css/jquery-ui.structure.css" rel="stylesheet">
 <link href="css/jquery-ui.theme.css" rel="stylesheet">
 <script src="rendas/js/renda.js"></script>
+<script src="contas/js/conta.js"></script>
 <script src="js/index.js"></script>
 <script src="js/dataTables.min.js"></script>
 <link href="css/cssAnimations/animations.css" rel="stylesheet">
@@ -119,7 +120,7 @@
 	},
 	changeToBills = function() {
 		$("#cont").load("contas/contas.html", function() {
-			iniciaRenda();
+			iniciaConta();
 		});
 	}
 
