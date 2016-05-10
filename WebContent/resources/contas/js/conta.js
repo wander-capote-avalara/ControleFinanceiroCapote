@@ -20,13 +20,88 @@ iniciaConta = function() {
     $(document)
         .ready(
             function() {
-            	
+
+                var table = $('#example')
+                    .DataTable({
+                        aLengthMenu: [
+                            [5, 10, 100],
+                            [5, 10, 100]
+                        ],
+                        iDisplayLength: 5,
+                        sAjaxDataProp: "",
+                        language: {
+                            url: "../js/Portuguese.json"
+                        },
+                        sPaginationType: "full_numbers",
+                        processing: true,
+                        ajax: {
+                            url: "../rest/conta/getBills/" + 0,
+                            data: "id=" + 0,
+                            type: "GET"
+                        },
+                        select: {
+                            style: 'os',
+                            selector: 'td:first-child'
+                        },
+                        columns: [{
+                                data: "id",
+                                className: "center"
+                            }, {
+                                data: "status",
+                                className: "center",
+                                mRender: function(data) {
+                                    return data == 0 ? "Não ativo" :
+                                        "Ativo";
+                                }
+                            }, {
+                                data: "categoriaName",
+                                className: "center"
+                            }, {
+                                data: "description",
+                                className: "center"
+                            }, {
+                                data: "totalValue",
+                                className: "center",
+                            }, {
+                                data: "startDate",
+                                className: "center",
+                            }, {
+                                data: "hasDeadline",
+                                className: "center",
+                                mRender: function(data) {
+                                    return data == 0 ? "Não" :
+                                        "Sim";
+                                }
+                            }, {
+                                data: "times",
+                                className: "center",
+                                mRender: function(data) {
+                                    return data == 0 ? "À vista" :
+                                        data;
+                                }
+                            }, {
+                                data: "id",
+                                className: "center",
+                                bSortable: false,
+                                mRender: function(id) {
+                                    return "<a class='link' onclick='CFINAC.contas.editarConta(" +
+                                        id +
+                                        ")'>Editar</a> /" +
+                                        " <a class='link' onclick='CFINAC.contas.deletaConta(" +
+                                        id +
+                                        ")'>Deletar</a>";
+                                }
+                            }]
+                            // # sourceURL=sourcees.coffeee
+                    });
+
                 CFINAC.contas.procuraCategoria = function() {
                     var cfg = {
                         type: "POST",
                         url: "../rest/categoria/getCategories",
                         success: function(listaDeCategorias) {
-                            CFINAC.contas.exibirCategorias(listaDeCategorias);
+                            CFINAC.contas
+                                .exibirCategorias(listaDeCategorias);
                         },
                         error: function(e) {
                             alertPopUp("Erro na ação!")
@@ -34,7 +109,41 @@ iniciaConta = function() {
                     };
                     CFINAC.ajax.post(cfg);
                 };
-                
+
+                CFINAC.contas.deletaConta = function(id) {
+                    var cfgg = {
+                        title: "Mensagem",
+                        height: 250,
+                        width: 400,
+                        modal: true,
+                        trigger: false,
+                        buttons: {
+                            "OK": function() {
+                                $(this).dialog("close");
+                                var cfg = {
+                                    type: "POST",
+                                    url: "../rest/conta/deletaConta/" +
+                                        id,
+                                    data: "id=" + id,
+                                    success: function(msg) {
+                                        alertPopUp(msg);
+                                        table.ajax.reload(null, false);
+                                    },
+                                    error: function(e) {
+                                        alertPopUp("Erro na ação!")
+                                    }
+                                };
+                                CFINAC.ajax.post(cfg);
+                            },
+                            Cancel: function() {
+                                $(this).dialog("close");
+                            }
+                        }
+                    }
+                    $("#msg").html("Chimichanga2");
+                    $("#msg").dialog(cfgg);
+                }
+
                 CFINAC.contas.add = function() {
                     var cfg;
                     var msg, categoria = $("#inputCategory").val(),
@@ -48,8 +157,8 @@ iniciaConta = function() {
                             "#inputTotalValue").val(),
                         times = $(
                             "#inputParcels").val(),
-                        parcelValue = $("#inputParcelValue").val(),
                         id = $("#id").val();
+                    //parcelValue = $("#inputParcelValue").val(), 
 
                     if (description != "" && startDate != "" &&
                         startDate != "" && totalValue != "") {
@@ -61,14 +170,16 @@ iniciaConta = function() {
                         newBill.times = times;
                         newBill.categoria = categoria;
                         newBill.totalValue = totalValue;
-                        newBill.parcelValue = parcelValue;
+                        //newBill.parcelValue = parcelValue;
 
                         cfg = {
                             url: "../rest/conta/add",
                             data: newBill,
                             success: function(r) {
                                 alertPopUp(r);
-								table.ajax.reload(null, false);
+                                $("#conteudoRegistro .btn-danger")
+                                    .click();
+                                table.ajax.reload(null, false);
                             },
                             error: function(err) {
                                 alert("Erro na ação" + err.responseText);
@@ -78,11 +189,41 @@ iniciaConta = function() {
                     }
                 }
 
-                CFINAC.contas.exibirCategorias = function(listaDeCategorias) {
+                CFINAC.contas.editarConta = function(id) {
+                    $("#conteudoRegistro .btn-danger").click();
+                    var cfg = {
+                        type: "GET",
+                        url: "../rest/conta/getBills/" + id,
+                        data: "id=" + id,
+                        success: function(billData) {
+                            $("#id").val(billData[0].id);
+                            $("#inputCategory").val(
+                                billData[0].categoria);
+                            $("#inputStartDate").val(
+                                billData[0].startDate);
+                            $("#inputDescription").val(
+                                billData[0].description);
+                            $("#hasDeadline").val(
+                                billData[0].hasDeadline);
+                            $("#inputTotalValue").val(
+                                billData[0].totalValue);
+                            $("#inputParcels").val(billData[0].times);
+
+                        },
+                        error: function(rest) {
+                            alert("Erro ao editar a renda");
+                        }
+                    };
+                    CFINAC.ajax.post(cfg);
+                };
+
+                CFINAC.contas.exibirCategorias = function(
+                    listaDeCategorias) {
                     var html = "Categoria:<select id='inputCategory' class='form-control'>" +
                         "<option value=0 selected>Selecione uma categoria...</option>";
                     for (var x = 0; x < listaDeCategorias.length; x++) {
-                        html += "<option value='" + listaDeCategorias[x].id + "'>" +
+                        html += "<option value='" +
+                            listaDeCategorias[x].id + "'>" +
                             listaDeCategorias[x].name;
                     }
                     html += "</select>";
@@ -91,6 +232,6 @@ iniciaConta = function() {
                 };
 
                 CFINAC.contas.procuraCategoria();
-            	
+
             })
 }

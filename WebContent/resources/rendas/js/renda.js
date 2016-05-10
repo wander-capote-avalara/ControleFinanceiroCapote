@@ -106,6 +106,7 @@ iniciaRenda = function() {
 							$("#isFixed").val(incomeData[0].isFixed);
 							$("#inputTotalValue").val(incomeData[0].totalValue);
 							$("#inputTimes").val(incomeData[0].times);
+							changes();
 
 						},
 						error : function(rest) {
@@ -179,6 +180,7 @@ iniciaRenda = function() {
                             data: newIncome,
                             success: function(r) {
                                 alertPopUp(r);
+                                $("#conteudoRegistro .btn-danger").click();
 								table.ajax.reload(null, false);
                             },
                             error: function(err) {
@@ -186,6 +188,8 @@ iniciaRenda = function() {
                             }
                         };
                         CFINAC.ajax.post(cfg);
+                    }else{
+                    	alertPopUp("Preencha os campos corretamente!");
                     }
                 }
 

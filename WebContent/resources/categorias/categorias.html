@@ -1,0 +1,33 @@
+<div id="form" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	<div id="row">
+		<div id="conteudoRegistro">
+			<div class="row">
+				<div id="title" class="text-center">
+					<h1 style="color: #2A3F54;">Categorias</h1>
+				</div>
+				<form class="form-horizontal" method="post">
+					<div class="form-group">
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+						<input class="hid" id="id"> 
+							<input type="text" class="form-control"
+								id="inputCategory" placeholder="Descrição" required maxlength="45">
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+							<p><button type="reset" class="btn btn-danger buttom">Limpa</button>
+							<button type="button" class="btn btn-success buttom"onclick="CFINAC.categorias.add()">Enviar</button>
+						</div>		
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<table id="example" class="display" cellspacing="0" width="100%">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Descrição</th>
+			<th>Ações</th>
+		</tr>
+	</thead>
+</table>

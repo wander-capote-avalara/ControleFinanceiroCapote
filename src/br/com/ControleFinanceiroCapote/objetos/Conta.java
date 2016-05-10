@@ -17,7 +17,7 @@ public class Conta implements Serializable{
 	String categoriaName;
 	int userId;
 	int status;
-	int parcelValue;
+	//int parcelValue;
 	
 	
 	public int getHasDeadline() {
@@ -26,12 +26,12 @@ public class Conta implements Serializable{
 	public void setHasDeadline(int hasDeadline) {
 		this.hasDeadline = hasDeadline;
 	}
-	public int getParcelValue() {
+	/*public int getParcelValue() {
 		return parcelValue;
 	}
 	public void setParcelValue(int parcelValue) {
 		this.parcelValue = parcelValue;
-	}
+	}*/
 	public int getStatus() {
 		return status;
 	}

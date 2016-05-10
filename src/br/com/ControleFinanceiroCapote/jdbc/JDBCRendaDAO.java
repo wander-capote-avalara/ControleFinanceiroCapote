@@ -80,12 +80,10 @@ public class JDBCRendaDAO implements RendaDAO {
 				p.setInt(7, renda.getIsFixed() == 0 ? renda.getTimes() : renda.getIsFixed());
 				p.setInt(8, renda.getId());
 				p.execute();
-				rs = p.getGeneratedKeys();
-				if (rs.next()) {
 					if (renda.getTimes() != 0) {
+						deleteParcels(renda.getId());
 						insertParcels(renda.getId(), renda.getTimes(), renda.getTotalValue());
 					}
-				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -169,7 +167,7 @@ public class JDBCRendaDAO implements RendaDAO {
 		comando.append("FROM rendas r ");
 		comando.append("WHERE r.Id_Usuario = "+ userId);
 		comando.append(" AND ");
-		comando.append("Status_Rendas = 1");
+		comando.append("Status_Renda = 1");
 		if (id != 0) {
 			comando.append(" AND ");
 			comando.append("r.Id_Rendas = " + id);

@@ -44,7 +44,7 @@ public class ContaRest extends UtilRest  {
 			serviceConta.addConta(Conta);
 			return this.buildResponse("Operação feita com sucesso!");
 		} catch (Exception e) {
-			return this.buildErrorResponse("Insira usuários válidos!");
+			return this.buildErrorResponse("Erro na ação!");
 		}
 	}
 	
@@ -60,7 +60,7 @@ public class ContaRest extends UtilRest  {
 	}
 	
 	@GET
-	@Path("/getIncomes/{id}")
+	@Path("/getBills/{id}")
 	@Produces("text/plain")
 	public Response getIncomes(@PathParam("id") int id) {
 		try {

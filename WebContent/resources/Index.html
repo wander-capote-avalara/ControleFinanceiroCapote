@@ -52,7 +52,7 @@
 						</button>
 					</div>
 					<div class="collapse navbar-collapse mContainer" id="OP">
-						<img src="images/empty_gallery.png" class="img-responsive center-block">
+						<!-- <img src="images/empty_gallery.png" class="img-responsive center-block"> -->
 						<div class="navbar left_col scroll-view " id="myNavbar">
 							<div id="AnS">
 								<div id="nameUser" class="text-center">
@@ -84,6 +84,7 @@
 											<ul class="nav child_menu" style="display: none">
 												<li onclick="changeToBills()"><a>Conta</a></li>
 												<li onclick="changeToIncome()"><a>Renda</a></li>
+												<li onclick="changeToCategory()"><a>Categoria</a></li>
 											</ul></li>
 										<li><a><i class="fa fa-money"
 												title="FUCK THE BITCHES!"></i> Fluxo de Caixa</a></li>
@@ -121,6 +122,11 @@
 	changeToBills = function() {
 		$("#cont").load("contas/contas.html", function() {
 			iniciaConta();
+		});
+	},
+	changeToCategory = function(){
+		$("#cont").load("categorias/categorias.html", function() {
+			iniciaCategoria();
 		});
 	}
 
