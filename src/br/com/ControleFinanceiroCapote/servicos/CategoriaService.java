@@ -29,4 +29,12 @@ public class CategoriaService {
 		conec.fecharConexao();
 	}
 
+	public void deleteCategory(int id) {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCCategoriaDAO jdbcCategoria = new JDBCCategoriaDAO(conexao);
+		jdbcCategoria.deletaCategoria(id);
+		conec.fecharConexao();		
+	}
+
 }

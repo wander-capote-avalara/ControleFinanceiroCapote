@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,6 +86,23 @@ public class JDBCCategoriaDAO implements CategoriaDAO {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public void deletaCategoria(int id) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("UPDATE contas ");
+		comando.append("SET Status_Conta = 0 ");
+		comando.append("WHERE Id_Contas = ?");
+		PreparedStatement p;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, id);
+			p.execute();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 
