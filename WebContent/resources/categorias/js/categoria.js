@@ -121,7 +121,7 @@ iniciaCategoria = function() {
 							$(this).dialog("close");
 							var cfg = {
 								type : "POST",
-								url : "../rest/categorias/deletaCategoria/" + id,
+								url : "../rest/categoria/deletaCategoria/" + id,
 								data : "id=" + id,
 								success : function(msg) {
 									alertPopUp(msg);

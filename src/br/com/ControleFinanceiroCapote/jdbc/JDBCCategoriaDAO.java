@@ -27,7 +27,7 @@ public class JDBCCategoriaDAO implements CategoriaDAO {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT c.Id_Categorias as idCategoria, c.Descricao as nomeCategoria ");
 		comando.append("FROM categorias c ");
-		comando.append("WHERE 1=1");
+		comando.append("WHERE Status = 1");
 		if (id != 0) {
 			comando.append(" AND ");
 			comando.append("c.Id_Categorias = " + id);
@@ -58,14 +58,15 @@ public class JDBCCategoriaDAO implements CategoriaDAO {
 		if (categoria.getId() == 0) {
 			StringBuilder comando = new StringBuilder();
 			comando.append("INSERT INTO categorias ");
-			comando.append("(Descricao) ");
-			comando.append("VALUES (?)");
+			comando.append("(Descricao, Status) ");
+			comando.append("VALUES (?,?)");
 
 			PreparedStatement p;
 
 			try {
 				p = this.conexao.prepareStatement(comando.toString());
 				p.setString(1, categoria.getName());
+				p.setInt(2, 1);
 				p.execute();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -91,9 +92,9 @@ public class JDBCCategoriaDAO implements CategoriaDAO {
 
 	public void deletaCategoria(int id) {
 		StringBuilder comando = new StringBuilder();
-		comando.append("UPDATE contas ");
-		comando.append("SET Status_Conta = 0 ");
-		comando.append("WHERE Id_Contas = ?");
+		comando.append("UPDATE categorias ");
+		comando.append("SET Status = 0 ");
+		comando.append("WHERE Id_Categorias = ?");
 		PreparedStatement p;
 
 		try {

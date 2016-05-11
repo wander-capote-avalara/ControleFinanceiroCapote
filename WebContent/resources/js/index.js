@@ -23,16 +23,10 @@ $(document).ready(
 				};
 				CFINAC.ajax.post(cfg);
 			}
-<<<<<<< HEAD
 			
 			CFINAC.index.getUserInfo();
 			setInterval(CFINAC.index.getUserInfo, 30000);
 
-=======
-	CFINAC.index.getUserInfo();
-	setInterval(CFINAC.index.getUserInfo, 15000);
-	
->>>>>>> 6d320b7131902ce3de8c28cdd049ff3b0a8b6d0b
 			CFINAC.index.endSession = function() {
 				var cfg = {
 					type : "POST",
