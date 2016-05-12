@@ -95,7 +95,7 @@ public class JDBCContaDAO implements ContaDAO {
 			sum = 0, value;
 		
 		if (math != 0) {
-			sum = math/parcelValue;
+			sum = Math.ceil(math/parcelValue);
 		}
 		value = parcelValue+sum;
 		StringBuilder comando = new StringBuilder();
