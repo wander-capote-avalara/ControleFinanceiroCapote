@@ -30,7 +30,7 @@ iniciaRenda = function() {
                         iDisplayLength: 5,
                         sAjaxDataProp: "",
                         language: {
-                            url: "../js/Portuguese.json"
+                            url: "js/Portuguese.json"
                         },
                         sPaginationType: "full_numbers",
                         processing: true,
@@ -145,7 +145,7 @@ iniciaRenda = function() {
 						}
 					}
 				}
-				$("#msg").html("Chimichanga");
+				$("#msg").html("Deseja realmente excluir essa renda?");
 				$("#msg").dialog(cfgg);
                 }
 
@@ -197,8 +197,9 @@ iniciaRenda = function() {
 
     CFINAC.rendas.procuraCategoria = function() {
         var cfg = {
-            type: "POST",
-            url: "../rest/categoria/getCategories",
+            type: "GET",
+            url: "../rest/categoria/getCategories/"+ 0,
+            data: "id=" + 0,
             success: function(listaDeCategorias) {
                 CFINAC.rendas.exibirCategorias(listaDeCategorias);
             },

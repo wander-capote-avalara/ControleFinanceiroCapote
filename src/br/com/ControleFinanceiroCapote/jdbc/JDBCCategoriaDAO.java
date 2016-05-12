@@ -23,11 +23,13 @@ public class JDBCCategoriaDAO implements CategoriaDAO {
 	}
 	
 	@Override
-	public List<Categoria> getCategories(int id) {
+	public List<Categoria> getCategories(int id, int userId) {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT c.Id_Categorias as idCategoria, c.Descricao as nomeCategoria ");
 		comando.append("FROM categorias c ");
 		comando.append("WHERE Status = 1");
+		comando.append(" AND ");
+		comando.append(" Id_Usuarios = " + userId);
 		if (id != 0) {
 			comando.append(" AND ");
 			comando.append("c.Id_Categorias = " + id);
@@ -58,8 +60,8 @@ public class JDBCCategoriaDAO implements CategoriaDAO {
 		if (categoria.getId() == 0) {
 			StringBuilder comando = new StringBuilder();
 			comando.append("INSERT INTO categorias ");
-			comando.append("(Descricao, Status) ");
-			comando.append("VALUES (?,?)");
+			comando.append("(Descricao, Status, Id_Usuarios) ");
+			comando.append("VALUES (?,?,?)");
 
 			PreparedStatement p;
 
@@ -67,6 +69,7 @@ public class JDBCCategoriaDAO implements CategoriaDAO {
 				p = this.conexao.prepareStatement(comando.toString());
 				p.setString(1, categoria.getName());
 				p.setInt(2, 1);
+				p.setInt(3, userId);
 				p.execute();
 			} catch (Exception e) {
 				e.printStackTrace();

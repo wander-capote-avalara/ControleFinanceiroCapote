@@ -38,7 +38,7 @@ public class CategoriaRest extends UtilRest {
 	@Produces("text/plain")
 	public Response getCategories(@PathParam("id") int id) {
 		try {
-			return this.buildResponse(categ.getCategories(id));
+			return this.buildResponse(categ.getCategories(id, userId()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());

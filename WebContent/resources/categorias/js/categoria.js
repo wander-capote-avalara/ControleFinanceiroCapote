@@ -45,6 +45,8 @@ iniciaCategoria = function() {
                             }
                         };
                         CFINAC.ajax.post(cfg);
+                    }else{
+                    	alertPopUp("Preencha todos os campos!");
                     }
                 }
 
@@ -57,7 +59,7 @@ iniciaCategoria = function() {
                         iDisplayLength: 5,
                         sAjaxDataProp: "",
                         language: {
-                            url: "../js/Portuguese.json"
+                            url: "js/Portuguese.json"
                         },
                         sPaginationType: "full_numbers",
                         processing: true,

@@ -63,9 +63,9 @@
 			<th>Status</th>
 			<th>Categoria</th>
 			<th>Descrição</th>
-			<th>Valor Total</th>
+			<th>Valor total</th>
 			<th>Data de vencimento</th>
-			<th>Conta Fixa</th>
+			<th>A prazo</th>
 			<th>X</th>
 			<th>Ações</th>
 		</tr>
@@ -75,10 +75,12 @@
 <script>
 	var changes = function() {
 		if ($("#inputParcels").val() != 0 || $("#inputParcels").val() != "") {
-			$("#inputParcelValue").val(
-					$("#inputTotalValue").val() / $("#inputParcels").val());
+			
+			var value = $("#inputTotalValue").val() / $("#inputParcels").val();
+			$("#inputParcelValue").val(value.toFixed(2));
 		} else {
 			$("#inputParcelValue").val($("#inputTotalValue").val());
+			
 		}
 	}
 
@@ -90,6 +92,7 @@
 			$("#inputParcels").prop("disabled", false);
 		} else {
 			$("#inputParcels").prop("disabled", true);
+			$("#inputParcels").val("");
 			$("#inputParcelValue").val("");
 		}
 	});

@@ -28,10 +28,10 @@ public class JDBCContaDAO implements ContaDAO {
 		if (conta.getId() == 0) {
 			StringBuilder comando = new StringBuilder();
 			comando.append("INSERT INTO contas ");
-			comando.append(
-					"(Id_Categoria, Id_Usuario, Descricao_Contas, Valor_Contas, Status_Conta, Data_Vencimento, ");
-			comando.append(conta.getHasDeadline() == 1 ? "Vezes" : "Conta_Fixa");
-			comando.append(") VALUES(?,?,?,?,?,?,?)");
+			comando.append("(Id_Categoria, Id_Usuario, Descricao_Contas, Valor_Contas, ");
+			comando.append("Status_Conta, Data_Vencimento, Vezes, Conta_Fixa)");
+			comando.append(" VALUES ");
+			comando.append("(?,?,?,?,?,?,?,?)");
 
 			PreparedStatement p;
 			ResultSet rs = null;
@@ -41,17 +41,18 @@ public class JDBCContaDAO implements ContaDAO {
 				p.setInt(1, conta.getCategoria());
 				p.setInt(2, conta.getUserId());
 				p.setString(3, conta.getDescription());
-				p.setInt(4, conta.getTotalValue());
+				p.setDouble(4, conta.getTotalValue());
 				p.setInt(5, 1);
 				p.setDate(6, (Date) conta.getStartDate());
-				p.setInt(7, conta.getHasDeadline() == 1 ? conta.getTimes() : conta.getHasDeadline());
+				p.setInt(7, conta.getTimes());
+				p.setInt(8, conta.getHasDeadline());
 				p.execute();
 				rs = p.getGeneratedKeys();
 				if (rs.next()) {
 					conta.setId(rs.getInt(1));
 
 					if (conta.getTimes() != 0) {
-						insertParcels(conta.getId(), conta.getTimes(), conta.getTotalValue());
+						insertParcels(conta.getId(), conta.getTimes(), conta.getParcelValue(), conta.getTotalValue());
 					}
 				}
 			} catch (Exception e) {
@@ -61,8 +62,8 @@ public class JDBCContaDAO implements ContaDAO {
 			StringBuilder comando = new StringBuilder();
 			comando.append("UPDATE contas ");
 			comando.append(
-					"SET Id_Categoria = ?, Id_Usuario = ?, Descricao_contas = ?, Valor_contas = ?, Status_conta = ?, Data_Vencimento = ?, ");
-			comando.append(conta.getHasDeadline() == 1 ? "Vezes = ?" : "Conta_Fixa = ?");
+					"SET Id_Categoria = ?, Id_Usuario = ?, Descricao_contas = ?, Valor_contas = ?, ");
+			comando.append("Status_conta = ?, Data_Vencimento = ?, Vezes = ?, Conta_Fixa = ?");
 			comando.append(" WHERE Id_contas = ?");
 
 			PreparedStatement p;
@@ -73,14 +74,15 @@ public class JDBCContaDAO implements ContaDAO {
 				p.setInt(1, conta.getCategoria());
 				p.setInt(2, conta.getUserId());
 				p.setString(3, conta.getDescription());
-				p.setInt(4, conta.getTotalValue());
+				p.setDouble(4, conta.getTotalValue());
 				p.setInt(5, 1);
 				p.setDate(6, (Date) conta.getStartDate());
-				p.setInt(7, conta.getHasDeadline() == 1 ? conta.getTimes() : conta.getHasDeadline());
-				p.setInt(8, conta.getId());
+				p.setInt(7, conta.getTimes());
+				p.setInt(8, conta.getHasDeadline());
+				p.setInt(9, conta.getId());
 				p.execute();
 				if (conta.getTimes() != 0) {
-					insertParcels(conta.getId(), conta.getTimes(), conta.getTotalValue());
+					insertParcels(conta.getId(), conta.getTimes(), conta.getParcelValue(), conta.getTotalValue());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -88,8 +90,14 @@ public class JDBCContaDAO implements ContaDAO {
 		}
 	}
 
-	private void insertParcels(int billIDd, int times, int totalValue) {
-		int parcelValue = totalValue / times;
+	private void insertParcels(int billIDd, int times, Double parcelValue, double totalValue) {
+		double math = ((parcelValue*times) - totalValue),
+			sum = 0, value;
+		
+		if (math != 0) {
+			sum = math/parcelValue;
+		}
+		value = parcelValue+sum;
 		StringBuilder comando = new StringBuilder();
 		comando.append("INSERT INTO parcela_conta");
 		comando.append("(Id_Conta, Valor_Parcela, Status_Parcela)");
@@ -101,7 +109,7 @@ public class JDBCContaDAO implements ContaDAO {
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 			p.setInt(1, billIDd);
-			p.setInt(2, parcelValue);
+			p.setDouble(2, value);
 			p.setInt(3, 1);
 
 			for (int x = 0; x < times; x++) {

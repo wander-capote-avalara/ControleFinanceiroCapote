@@ -30,7 +30,7 @@ iniciaConta = function() {
                         iDisplayLength: 5,
                         sAjaxDataProp: "",
                         language: {
-                            url: "../js/Portuguese.json"
+                            url: "js/Portuguese.json"
                         },
                         sPaginationType: "full_numbers",
                         processing: true,
@@ -97,8 +97,9 @@ iniciaConta = function() {
 
                 CFINAC.contas.procuraCategoria = function() {
                     var cfg = {
-                        type: "POST",
-                        url: "../rest/categoria/getCategories",
+                        type: "GET",
+                        url: "../rest/categoria/getCategories/"+ 0,
+                        data: "id=" + 0,
                         success: function(listaDeCategorias) {
                             CFINAC.contas
                                 .exibirCategorias(listaDeCategorias);
@@ -140,7 +141,7 @@ iniciaConta = function() {
                             }
                         }
                     }
-                    $("#msg").html("Chimichanga2");
+                    $("#msg").html("Deseja realmente excluir essa conta?");
                     $("#msg").dialog(cfgg);
                 }
 
@@ -157,11 +158,15 @@ iniciaConta = function() {
                             "#inputTotalValue").val(),
                         times = $(
                             "#inputParcels").val(),
-                        id = $("#id").val();
-                    //parcelValue = $("#inputParcelValue").val(), 
+                        id = $("#id").val()
+                    parcelValue = $("#inputParcelValue").val();
 
                     if (description != "" && startDate != "" &&
-                        startDate != "" && totalValue != "") {
+                        startDate != "" && totalValue != "" && categoria != 0) {
+                    	if(hasDeadline == 1 && times == 0){
+                    		alertPopUp("Preencha todos os campos!");
+                    		return false;
+                    	}
                         var newBill = new Object();
                         newBill.id = id;
                         newBill.description = description;
@@ -170,7 +175,7 @@ iniciaConta = function() {
                         newBill.times = times;
                         newBill.categoria = categoria;
                         newBill.totalValue = totalValue;
-                        //newBill.parcelValue = parcelValue;
+                        newBill.parcelValue = parcelValue;
 
                         cfg = {
                             url: "../rest/conta/add",
@@ -186,6 +191,8 @@ iniciaConta = function() {
                             }
                         };
                         CFINAC.ajax.post(cfg);
+                    }else{
+                    	alertPopUp("Preencha todos os campos!");
                     }
                 }
 

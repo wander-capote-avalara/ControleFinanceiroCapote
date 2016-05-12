@@ -10,12 +10,12 @@ import br.com.ControleFinanceiroCapote.objetos.Categoria;
 
 public class CategoriaService {
 	
-	public List<Categoria> getCategories(int id) {
+	public List<Categoria> getCategories(int id, int userId) {
 
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCCategoriaDAO jdbcCategoria = new JDBCCategoriaDAO(conexao);
-		List<Categoria> categories = jdbcCategoria.getCategories(id);
+		List<Categoria> categories = jdbcCategoria.getCategories(id, userId);
 		conec.fecharConexao();
 
 		return categories;

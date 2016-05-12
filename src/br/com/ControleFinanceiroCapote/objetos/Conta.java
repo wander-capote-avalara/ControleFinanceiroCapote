@@ -10,14 +10,14 @@ public class Conta implements Serializable{
 	int id;
 	String description;
 	int times;
-	int totalValue;
+	double totalValue;
 	java.sql.Date startDate;
 	int hasDeadline;
 	int categoria;
 	String categoriaName;
 	int userId;
 	int status;
-	//int parcelValue;
+	double parcelValue;
 	
 	
 	public int getHasDeadline() {
@@ -26,12 +26,12 @@ public class Conta implements Serializable{
 	public void setHasDeadline(int hasDeadline) {
 		this.hasDeadline = hasDeadline;
 	}
-	/*public int getParcelValue() {
+	public double getParcelValue() {
 		return parcelValue;
 	}
-	public void setParcelValue(int parcelValue) {
+	public void setParcelValue(double parcelValue) {
 		this.parcelValue = parcelValue;
-	}*/
+	}
 	public int getStatus() {
 		return status;
 	}
@@ -75,10 +75,10 @@ public class Conta implements Serializable{
 	public void setTimes(int times) {
 		this.times = times;
 	}
-	public int getTotalValue() {
+	public double getTotalValue() {
 		return totalValue;
 	}
-	public void setTotalValue(int totalValue) {
+	public void setTotalValue(double totalValue) {
 		this.totalValue = totalValue;
 	}
 	public Date getStartDate() {
