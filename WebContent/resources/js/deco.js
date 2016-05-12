@@ -30,12 +30,18 @@
     });
 
     function DecoController($scope, servicodeSoma, factorydeSoma, Person) {
+        var t = this;
         this.saudacao="oi";
         
-        $scope.pessoa = {
+        this.pessoa = {
             nome: "Wander",
             idade: 19
         }
+        
+        pessoa.sabe(function(){
+            
+            t.nome="hahah"
+        })
 
         var j = new Person("wander");
 
