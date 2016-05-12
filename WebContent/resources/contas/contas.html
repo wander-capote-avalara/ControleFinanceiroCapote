@@ -74,7 +74,7 @@
 
 <script>
 	var changes = function() {
-		if ($("#inputParcels").val() != 0 || $("#inputParcels").val() != "") {
+		if ($("#inputParcels").val() ) {
 			
 			var value = $("#inputTotalValue").val() / $("#inputParcels").val();
 			$("#inputParcelValue").val(value.toFixed(2));
