@@ -44,15 +44,6 @@ iniciaRenda = function() {
                             selector: 'td:first-child'
                         },
                         columns: [{
-                                data: "id",
-                                className: "center"
-                            }, {
-                                data: "status",
-                                className: "center",
-                                mRender: function(data) {
-                                    return data == 0 ? "Não ativo" : "Ativo";
-                                }
-                            }, {
                                 data: "categoriaName",
                                 className: "center"
                             }, {
@@ -87,6 +78,15 @@ iniciaRenda = function() {
                                         " <a class='link' onclick='CFINAC.rendas.deletaRenda(" +
                                         id +
                                         ")'>Deletar</a>";
+                                }
+                            }, {
+                            	data: "id",
+                                className: "center",
+                                bSortable: false,
+                                mRender: function(id) {
+                                    return " <a class='link' onclick='CFINAC.rendas.detalheRenda(" +
+                                        id +
+                                        ")'>Mais</a>";
                                 }
                             }]
                             // # sourceURL=sourcees.coffeee
@@ -162,8 +162,11 @@ iniciaRenda = function() {
                             "#inputTotalValue").val(),
                         times = $(
                             "#inputTimes").val(),
+                        value = $("#inputTotalValue").val() / $("#inputTimes").val();
+                        parcelValue = value.toFixed(2),
                         id = $("#id").val();
-
+                        alert(parcelValue);
+                        
                     if (description != "" && startDate != "" &&
                         startDate != "" && totalValue != "") {
                         var newIncome = new Object();
@@ -174,6 +177,7 @@ iniciaRenda = function() {
                         newIncome.times = times;
                         newIncome.categoria = categoria;
                         newIncome.totalValue = totalValue;
+                        newIncome.parcelValue = parcelValue;
 
                         cfg = {
                             url: "../rest/renda/add",

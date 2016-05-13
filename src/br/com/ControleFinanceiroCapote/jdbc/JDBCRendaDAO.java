@@ -53,7 +53,7 @@ public class JDBCRendaDAO implements RendaDAO {
 					renda.setId(rs.getInt(1));
 
 					if (renda.getTimes() != 0) {
-						insertParcels(renda.getId(), renda.getTimes(), renda.getTotalValue());
+						insertParcels(renda.getId(), renda.getTimes(), renda.getTotalValue(), renda.getParcelValue());
 					}
 				}
 			} catch (Exception e) {
@@ -82,7 +82,7 @@ public class JDBCRendaDAO implements RendaDAO {
 				p.execute();
 					if (renda.getTimes() != 0) {
 						deleteParcels(renda.getId());
-						insertParcels(renda.getId(), renda.getTimes(), renda.getTotalValue());
+						insertParcels(renda.getId(), renda.getTimes(), renda.getTotalValue(), renda.getParcelValue());
 					}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -133,8 +133,10 @@ public class JDBCRendaDAO implements RendaDAO {
 		
 	}
 
-	public void insertParcels(int incomeId, int times, int totalValue) {
-		int parcelValue = totalValue / times;
+	public void insertParcels(int incomeId, int times, double totalValue, double parcelValue) {
+		double math = ((parcelValue*times) - totalValue);
+		boolean hasDifference = (parcelValue*times) - totalValue != 0;
+		
 		StringBuilder comando = new StringBuilder();
 		comando.append("INSERT INTO parcela_renda");
 		comando.append("(Id_Renda, Valor_Parcela, Status_Parcela)");
@@ -145,12 +147,13 @@ public class JDBCRendaDAO implements RendaDAO {
 
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
-			p.setInt(1, incomeId);
-			p.setInt(2, parcelValue);
-			p.setInt(3, 1);
 
 			for (int x = 0; x < times; x++) {
+				p.setInt(1, incomeId);
+				p.setDouble(2, hasDifference ? parcelValue - math: parcelValue);
+				p.setInt(3, 1);
 				p.execute();
+				hasDifference = false;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

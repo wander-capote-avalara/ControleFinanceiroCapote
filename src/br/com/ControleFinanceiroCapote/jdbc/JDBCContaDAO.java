@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mysql.jdbc.Statement;
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.ContaDAO;
@@ -91,13 +92,9 @@ public class JDBCContaDAO implements ContaDAO {
 	}
 
 	private void insertParcels(int billIDd, int times, Double parcelValue, double totalValue) {
-		double math = ((parcelValue*times) - totalValue),
-			sum = 0, value;
+		double math = ((parcelValue*times) - totalValue);
+		boolean hasDifference = (parcelValue*times) - totalValue != 0;
 		
-		if (math != 0) {
-			sum = Math.ceil(math/parcelValue);
-		}
-		value = parcelValue+sum;
 		StringBuilder comando = new StringBuilder();
 		comando.append("INSERT INTO parcela_conta");
 		comando.append("(Id_Conta, Valor_Parcela, Status_Parcela)");
@@ -108,12 +105,13 @@ public class JDBCContaDAO implements ContaDAO {
 
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
-			p.setInt(1, billIDd);
-			p.setDouble(2, value);
-			p.setInt(3, 1);
 
 			for (int x = 0; x < times; x++) {
+				p.setInt(1, billIDd);
+				p.setDouble(2, hasDifference ? parcelValue - math: parcelValue);
+				p.setInt(3, 1);
 				p.execute();
+				hasDifference = false;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

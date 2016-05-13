@@ -17,7 +17,14 @@ public class Renda implements Serializable{
 	String categoriaName;
 	int userId;
 	int status;
+	double parcelValue;
 	
+	public double getParcelValue() {
+		return parcelValue;
+	}
+	public void setParcelValue(double parcelValue) {
+		this.parcelValue = parcelValue;
+	}
 	public int getStatus() {
 		return status;
 	}

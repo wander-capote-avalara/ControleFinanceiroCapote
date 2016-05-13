@@ -44,16 +44,6 @@ iniciaConta = function() {
                             selector: 'td:first-child'
                         },
                         columns: [{
-                                data: "id",
-                                className: "center"
-                            }, {
-                                data: "status",
-                                className: "center",
-                                mRender: function(data) {
-                                    return data == 0 ? "Não ativo" :
-                                        "Ativo";
-                                }
-                            }, {
                                 data: "categoriaName",
                                 className: "center"
                             }, {
@@ -91,10 +81,23 @@ iniciaConta = function() {
                                         id +
                                         ")'>Deletar</a>";
                                 }
+                            }, {
+                            	data: "id",
+                                className: "center",
+                                bSortable: false,
+                                mRender: function(id) {
+                                    return " <a class='link' onclick='CFINAC.contas.detalheConta(" +
+                                        id +
+                                        ")'>Mais</a>";
+                                }
                             }]
                             // # sourceURL=sourcees.coffeee
                     });
 
+                CFINAC.contas.detalheConta = function(){
+                	
+                };
+                
                 CFINAC.contas.procuraCategoria = function() {
                     var cfg = {
                         type: "GET",
