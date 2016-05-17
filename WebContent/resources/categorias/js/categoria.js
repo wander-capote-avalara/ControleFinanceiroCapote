@@ -140,7 +140,7 @@ iniciaCategoria = function() {
 						}
 					}
 				}
-				$("#msg").html("Chimichanga3");
+				$("#msg").html("Deseja realmente excluir essa categoria?");
 				$("#msg").dialog(cfgg);
                 }
             })

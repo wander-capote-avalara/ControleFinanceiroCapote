@@ -71,28 +71,4 @@
 	</thead>
 </table>
 
-<script>
-	var changes = function() {
-		if ($("#inputParcels").val() ) {
-			
-			var value = $("#inputTotalValue").val() / $("#inputParcels").val();
-			$("#inputParcelValue").val(value.toFixed(2));
-		} else {
-			$("#inputParcelValue").val($("#inputTotalValue").val());
-			
-		}
-	}
-
-	$("#inputTotalValue").change(changes);
-	$("#inputParcels").change(changes);
-
-	$("#hasDeadline").change(function() {
-		if (this.value == 1) {
-			$("#inputParcels").prop("disabled", false);
-		} else {
-			$("#inputParcels").prop("disabled", true);
-			$("#inputParcels").val("");
-			$("#inputParcelValue").val("");
-		}
-	});
-</script>
+ 

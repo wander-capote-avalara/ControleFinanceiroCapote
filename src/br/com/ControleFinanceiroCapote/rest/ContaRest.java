@@ -70,4 +70,16 @@ public class ContaRest extends UtilRest  {
 			return this.buildErrorResponse(e.getMessage());
 		}
 	}
+	
+	@GET
+	@Path("/getParcelasById/{id}")
+	@Produces("text/plain")
+	public Response getParcelasById(@PathParam("id") int id) {
+		try {
+			return this.buildResponse(serviceConta.getParcelsById(id));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
 }

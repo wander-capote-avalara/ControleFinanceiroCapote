@@ -16,6 +16,32 @@ iniciaConta = function() {
         $("#msg").html(msg);
         $("#msg").dialog(cfg);
     }
+    
+	var changes = function() {
+		if (+$("#inputParcels").val() ) {
+			
+			var value = $("#inputTotalValue").val() / $("#inputParcels").val();
+			$("#inputParcelValue").val(value.toFixed(2));
+		} else {
+			$("#inputParcelValue").val($("#inputTotalValue").val());
+			
+		}
+	}
+
+	$("#inputTotalValue").change(changes);
+	$("#inputParcels").change(changes);
+	
+	var disab = function() {
+		if ($("#hasDeadline").val() == 1) {
+			$("#inputParcels").prop("disabled", false);
+		} else {
+			$("#inputParcels").prop("disabled", true);
+			$("#inputParcels").val("");
+			$("#inputParcelValue").val("");
+		}
+	};
+	
+	$("#hasDeadline").change(disab);
 
     $(document)
         .ready(
@@ -94,8 +120,20 @@ iniciaConta = function() {
                             // # sourceURL=sourcees.coffeee
                     });
 
-                CFINAC.contas.detalheConta = function(){
-                	
+                CFINAC.contas.detalheConta = function(id){
+                    var cfg = {
+                            type: "GET",
+                            url: "../rest/conta/getParcelasById/"+ id,
+                            data: "id=" + id,
+                            success: function(listaDeParcelas) {
+                                //CFINAC.contas.exibirDetalhes(listaDeParcelas);
+                            	alert(listaDeParcelas[0]);
+                            },
+                            error: function(e) {
+                                alertPopUp("Erro na ação!")
+                            }
+                        };
+                        CFINAC.ajax.post(cfg);
                 };
                 
                 CFINAC.contas.procuraCategoria = function() {
@@ -218,6 +256,8 @@ iniciaConta = function() {
                             $("#inputTotalValue").val(
                                 billData[0].totalValue);
                             $("#inputParcels").val(billData[0].times);
+                            changes();
+                            disab();
 
                         },
                         error: function(rest) {

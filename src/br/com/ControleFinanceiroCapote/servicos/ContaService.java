@@ -7,6 +7,7 @@ import br.com.ControleFinanceiroCapote.bd.conexao.Conexao;
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCContaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Conta;
+import br.com.ControleFinanceiroCapote.objetos.Parcela;
 
 public class ContaService {
 
@@ -36,6 +37,16 @@ public class ContaService {
 		conec.fecharConexao();
 
 		return billList;
+	}
+
+	public List<Parcela> getParcelsById(int id) {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
+		List<Parcela> parcelList = jdbcContadao.getParcelsById(id);
+		conec.fecharConexao();
+
+		return parcelList;
 	}
 
 }

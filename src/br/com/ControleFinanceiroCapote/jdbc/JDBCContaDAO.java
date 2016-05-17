@@ -14,6 +14,7 @@ import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.ContaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Conta;
+import br.com.ControleFinanceiroCapote.objetos.Parcela;
 import br.com.ControleFinanceiroCapote.objetos.Renda;
 
 public class JDBCContaDAO implements ContaDAO {
@@ -226,6 +227,36 @@ public class JDBCContaDAO implements ContaDAO {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public List<Parcela> getParcelsById(int id) {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("SELECT Id_Conta as id, Valor_Parcela as parcelValue, Status_Parcela as parcelStatus, ");
+		comando.append("Data_Pagamento as paymentDate, Data_Vencimento as dueDate ");
+		comando.append("FROM parcela_conta WHERE Id_Conta = "+id);
+
+		List<Parcela> parcelList = new ArrayList<Parcela>();
+		Parcela parcel = null;
+		try {
+			java.sql.Statement stmt = conexao.createStatement();
+			ResultSet rs = stmt.executeQuery(comando.toString());
+			while (rs.next()) {
+				parcel = new Parcela();
+				
+				parcel.setId(rs.getInt("id"));
+				parcel.setParcelValue(rs.getDouble("parcelValue"));
+				parcel.setStatus(rs.getInt("parcelStatus"));
+				parcel.setPaymentDate(rs.getDate("paymentDate"));
+				parcel.setDueDate(rs.getDate("dueDate"));
+
+				parcelList.add(parcel);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return parcelList;
 	}
 
 }
