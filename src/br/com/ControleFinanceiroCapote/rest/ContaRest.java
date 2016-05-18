@@ -72,9 +72,9 @@ public class ContaRest extends UtilRest  {
 	}
 	
 	@GET
-	@Path("/getParcelasById/{id}")
+	@Path("/getParcelsById/{id}")
 	@Produces("text/plain")
-	public Response getParcelasById(@PathParam("id") int id) {
+	public Response getParcelsById(@PathParam("id") int id) {
 		try {
 			return this.buildResponse(serviceConta.getParcelsById(id));
 		} catch (Exception e) {

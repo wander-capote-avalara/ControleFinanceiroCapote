@@ -70,4 +70,16 @@ public class RendaRest extends UtilRest  {
 			return this.buildErrorResponse(e.getMessage());
 		}
 	}
+	
+	@GET
+	@Path("/getParcelsById/{id}")
+	@Produces("text/plain")
+	public Response getParcelsById(@PathParam("id") int id) {
+		try {
+			return this.buildResponse(serviceRenda.getParcelsById(id));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
 }

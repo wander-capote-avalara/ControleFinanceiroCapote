@@ -16,6 +16,7 @@ import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.RendaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Categoria;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
+import br.com.ControleFinanceiroCapote.objetos.Parcela;
 import br.com.ControleFinanceiroCapote.objetos.Renda;
 
 public class JDBCRendaDAO implements RendaDAO {
@@ -230,6 +231,37 @@ public class JDBCRendaDAO implements RendaDAO {
 		
 		return null;
 		
+	}
+
+	public List<Parcela> getParcelsById(int id) {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("SELECT Id_Renda as id, Valor_Parcela as parcelValue, Status_Parcela as parcelStatus, ");
+		comando.append("Data_Pagamento as paymentDate, Data_Vencimento as dueDate ");
+		comando.append("FROM parcela_renda WHERE Id_Renda = "+id);
+		comando.append(" AND Status_Parcela <> 0");
+
+		List<Parcela> parcelList = new ArrayList<Parcela>();
+		Parcela parcel = null;
+		try {
+			java.sql.Statement stmt = conexao.createStatement();
+			ResultSet rs = stmt.executeQuery(comando.toString());
+			while (rs.next()) {
+				parcel = new Parcela();
+				
+				parcel.setId(rs.getInt("id"));
+				parcel.setParcelValue(rs.getDouble("parcelValue"));
+				parcel.setStatus(rs.getInt("parcelStatus"));
+				parcel.setPaymentDate(rs.getDate("paymentDate"));
+				parcel.setDueDate(rs.getDate("dueDate"));
+
+				parcelList.add(parcel);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return parcelList;
 	}
 
 }

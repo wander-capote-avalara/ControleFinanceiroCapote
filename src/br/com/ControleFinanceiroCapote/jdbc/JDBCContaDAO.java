@@ -84,6 +84,7 @@ public class JDBCContaDAO implements ContaDAO {
 				p.setInt(9, conta.getId());
 				p.execute();
 				if (conta.getTimes() != 0) {
+					deleteParcels(conta.getId());
 					insertParcels(conta.getId(), conta.getTimes(), conta.getParcelValue(), conta.getTotalValue());
 				}
 			} catch (Exception e) {
@@ -235,6 +236,7 @@ public class JDBCContaDAO implements ContaDAO {
 		comando.append("SELECT Id_Conta as id, Valor_Parcela as parcelValue, Status_Parcela as parcelStatus, ");
 		comando.append("Data_Pagamento as paymentDate, Data_Vencimento as dueDate ");
 		comando.append("FROM parcela_conta WHERE Id_Conta = "+id);
+		comando.append(" AND Status_Parcela <> 0");
 
 		List<Parcela> parcelList = new ArrayList<Parcela>();
 		Parcela parcel = null;

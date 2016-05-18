@@ -84,13 +84,83 @@ iniciaRenda = function() {
                                 className: "center",
                                 bSortable: false,
                                 mRender: function(id) {
-                                    return " <a class='link' onclick='CFINAC.rendas.detalheRenda(" +
+                                    return " <a class='link' data-toggle='modal' data-target='#Modal' onclick='CFINAC.rendas.detalheRenda(" +
                                         id +
                                         ")'>Mais</a>";
                                 }
                             }]
                             // # sourceURL=sourcees.coffeee
                     });
+                
+                function showStatus(status) {
+					switch (status) {
+					case 1:
+						return "Aberto";
+					case 2:
+						return "Atrasado";
+					case 3:
+						return "Pago";
+					default:
+						return "Status Invalido!";
+					}
+				}
+                
+                CFINAC.rendas.detalheRenda = function(id) {
+					var cfg = {
+						type : "GET",
+						url : "../rest/renda/getParcelsById/" + id,
+						data : "id=" + id,
+						success : function(listaDeParcelas) {
+							CFINAC.rendas
+									.exibirDetalhes(listaDeParcelas);
+						},
+						error : function(e) {
+							alertPopUp("Erro na ação!")
+						}
+					};
+					CFINAC.ajax.post(cfg);
+				};
+
+				CFINAC.rendas.exibirDetalhes = function(detailedList) {
+					var html = "<div class='table-responsive'>";
+					html += "<table class='table table-hover table-striped'>";
+					html += "<tr>";
+					html += "<th>#</th>";
+					html += "<th>Valor da Renda(R$)</th>";
+					html += "<th>Status</th>";
+					html += "<th>Data de Pagamento</th>";
+					html += "<th>Data de Vencimento</th>";
+					html += "</tr>";
+					if (detailedList == null || detailedList == "") {
+						html += "<tr>";
+						html += "<td colspan = 5>Essa renda não contém parcelas!!</td>";
+						html += "</tr>";
+					} else {
+						for (var x = 0; x < detailedList.length; x++) {
+							var naqfi = x+1;
+								
+							html += "<tr>";
+							html += "<td>"+naqfi+"</td>";
+							html += "<td>"
+								+ detailedList[x].parcelValue
+								+ "</td>";
+							html += "<td>" + showStatus(detailedList[x].status) + "</td>";
+							html += "<td>"
+									+ paymentDate(detailedList[x].paymentDate)
+									+ "</td>";
+							html += "<td>" + detailedList[x].dueDate
+									+ "</td>";
+							html += "</tr>";
+						}
+					}
+					html += "</table>"
+					html += "</div>";
+					$("#content").html(html);
+				};
+				
+				function paymentDate(date){
+					return date == null ? "A pagar" : date;
+				}
                 
 				CFINAC.rendas.editarRenda = function(id) {
 					$("#conteudoRegistro .btn-danger").click();
@@ -165,7 +235,6 @@ iniciaRenda = function() {
                         value = $("#inputTotalValue").val() / $("#inputTimes").val();
                         parcelValue = value.toFixed(2),
                         id = $("#id").val();
-                        alert(parcelValue);
                         
                     if (description != "" && startDate != "" &&
                         startDate != "" && totalValue != "") {
