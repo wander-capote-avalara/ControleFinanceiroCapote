@@ -24,6 +24,7 @@
 <link href="css/jquery-ui.theme.css" rel="stylesheet">
 <script src="rendas/js/renda.js"></script>
 <script src="contas/js/conta.js"></script>
+<script src="fluxoCaixa/js/fluxoCaixa.js"></script>
 <script src="categorias/js/categoria.js"></script>
 <script src="js/index.js"></script>
 <script src="js/dataTables.min.js"></script>
@@ -31,6 +32,8 @@
 <link href="css/dataTables.min.css" rel="stylesheet">
 <script src="js/dataTables.buttons.min.js"></script>
 <script src="js/dataTables.select.min.js"></script>
+<script src="js/highcharts.js"></script>
+<script src="js/hcexporting.js"></script>
 <link href="css/custom.css" rel="stylesheet">
 <link href="css/custom/custom.css" rel="stylesheet">
 <link href="../usuarios/css/usuario.css" rel="stylesheet">
@@ -87,15 +90,17 @@
 												<li onclick="changeToIncome()"><a>Renda</a></li>
 												<li onclick="changeToCategory()"><a>Categoria</a></li>
 											</ul></li>
-										<li><a><i class="fa fa-money"
+										<li onclick="changeCashFlow()"><a><i class="fa fa-money"
 												title="FUCK THE BITCHES!"></i> Fluxo de Caixa</a></li>
 										<li><a><i class="fa fa-cogs"></i> Projeções</a></li>
 									</ul>
 								</div>
 							</div>
 						</div>
-						<button type="button"
+						<form action="../LogOut" method="post">
+						<button type="submit"
 							class="fa fa-sign-out btn btn-danger btn-lg btn-block">Sair</button>
+							</form>
 					</div>
 				</div>
 			</div>
@@ -145,6 +150,11 @@
 	changeToCategory = function(){
 		$("#cont").load("categorias/categorias.html", function() {
 			iniciaCategoria();
+		});
+	},
+	changeCashFlow = function(){
+		$("#cont").load("fluxoCaixa/fluxoCaixa.html", function() {
+			iniciaFluxoCaixa();
 		});
 	}
 

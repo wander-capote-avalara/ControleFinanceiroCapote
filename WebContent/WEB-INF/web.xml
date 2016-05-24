@@ -36,15 +36,15 @@
 		<servlet-name>AuthUser</servlet-name>
 		<url-pattern>/AuthUser</url-pattern>
 	</servlet-mapping>
-
-	<!-- <servlet>
+	
+	<servlet>
 		<servlet-name>LogOut</servlet-name>
 		<servlet-class>br.com.ControleFinanceiroCapote.servlets.LogOut</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>EndSession</servlet-name>
-		<url-pattern>/EndSession</url-pattern>
-	</servlet-mapping> -->
+		<servlet-name>LogOut</servlet-name>
+		<url-pattern>/LogOut</url-pattern>
+	</servlet-mapping>
 
 	<filter>
 		<filter-name>FiltroUsuario</filter-name>

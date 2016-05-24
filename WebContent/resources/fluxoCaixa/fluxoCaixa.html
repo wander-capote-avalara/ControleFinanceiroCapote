@@ -1,0 +1,56 @@
+<div id="title" class="text-center">
+	<h1 style="color: #2A3F54;">Fluxo de Caixa</h1>
+</div>
+<div id="firstTable">
+	<div id="title" class="text-left">
+		<h3 style="color: #2A3F54;">Rendas</h3>
+		<p><h5 style="color: #2A3F54;">Valor total:(R$)
+		</h5>
+		</p>
+	</div>
+	<table id="exampleRendas" class="display" cellspacing="0" width="100%">
+		<thead>
+			<tr>
+				<th>Categoria</th>
+				<th>Descrição</th>
+				<th>Valor Total</th>
+				<th>Data de vencimento</th>
+				<th>Conta Fixa</th>
+				<th>X</th>
+			</tr>
+		</thead>
+	</table>
+</div>
+<div id="secondTable">
+	<div id="title" class="text-left">
+		<h3 style="color: #2A3F54;">Contas</h3>
+		<p>
+		<h5 style="color: #2A3F54;">Valor total:(R$)</h5>
+		</p>
+	</div>
+	<table id="exampleContas" class="display" cellspacing="0" width="100%">
+		<thead>
+			<tr>
+				<th>Categoria</th>
+				<th>Descrição</th>
+				<th>Valor total</th>
+				<th>Data de vencimento</th>
+				<th>A prazo</th>
+				<th>X</th>
+			</tr>
+		</thead>
+	</table>
+</div>
+<div id="graph">
+	<p>
+		<button type="button" id="showGraph" class="btn-primary btn-lg center-block">Mostrar/Esconder gráfico</button>
+	</p>
+	<div class="hid" id="highchart"></div>
+</div>
+<script>
+	$(function() {
+		$("#showGraph").click(function(){
+			$("#highchart").show();
+		})
+	})
+</script>

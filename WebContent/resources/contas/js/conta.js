@@ -144,7 +144,7 @@ iniciaConta = function() {
 						};
 
 						CFINAC.contas.exibirDetalhes = function(detailedList) {
-							var html = "<div class='table-responsive'>";
+							var html = "<div class='table-responsive' id='details'>";
 							html += "<table class='table table-hover table-striped'>";
 							html += "<thead>";
 							html += "<tr>";

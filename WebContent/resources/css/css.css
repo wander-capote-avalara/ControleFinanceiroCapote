@@ -143,3 +143,25 @@ li {
 	background-color: #2A3F54 !important;
 	color:#E7E7E7 !important;
 }
+
+#details{
+	max-height: 50%;
+}
+
+#firstTable{
+	padding-top:50px;
+	padding-bottom:50px;
+}
+
+#secondTable{
+}
+
+#graph{
+	padding-top:50px;
+}
+
+#highchart{
+	width: 80%; 
+	height: 80%;
+	margin: 0 auto;
+}
