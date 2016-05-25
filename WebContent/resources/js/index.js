@@ -18,7 +18,7 @@ $(document).ready(
 								"Saldo próx. mês(R$): " + userInfo.saldoProx)
 					},
 					error : function(e) {
-						window.location="../Login.html";
+						//window.location="../Login.html";
 					}
 				};
 				CFINAC.ajax.post(cfg);
