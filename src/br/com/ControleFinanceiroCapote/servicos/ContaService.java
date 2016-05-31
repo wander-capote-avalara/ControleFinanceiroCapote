@@ -1,6 +1,7 @@
 package br.com.ControleFinanceiroCapote.servicos;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.util.List;
 
 import br.com.ControleFinanceiroCapote.bd.conexao.Conexao;
@@ -8,6 +9,7 @@ import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCContaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Conta;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
+import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
 
 public class ContaService {
 
@@ -47,6 +49,17 @@ public class ContaService {
 		conec.fecharConexao();
 
 		return parcelList;
+	}
+
+	public int getBillsTotalValue(RangeDTO datas, int userId) {
+		
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
+		int billsValue = jdbcContadao.getBillsTotalValue(datas, userId);
+		conec.fecharConexao();
+		
+		return billsValue;
 	}
 
 }

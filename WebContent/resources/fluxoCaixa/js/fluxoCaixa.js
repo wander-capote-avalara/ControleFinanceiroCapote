@@ -120,27 +120,26 @@ iniciaFluxoCaixa = function() {
 						CFINAC.fluxoCaixa.graphDetail = function(firstDate,
 								secondDate) {
 							var dates = {}, dateNow = new Date(),
-								income = 0,
-								rent = 0;
+							income, rent;
 
 							if (firstDate == "" || firstDate == null
 									& secondDate == "" || secondDate == null) {
-								dates.firstDate = dateNow.getUTCMonth() + 1.
-								"/" + dateNow.getUTCFullYear();
-								dates.lastDate = dateNow.getUTCMonth() + 1.
-								"/" + dateNow.getUTCFullYear();
+								dates.firstMonth = dateNow.getUTCMonth() + 1;
+								dates.firstYear = dateNow.getUTCFullYear();
+								dates.secondMonth = dateNow.getUTCMonth() + 1;
+								dates.secondYear = dateNow.getUTCFullYear();
 							} else {
-								dates.firstDate = fistDate.getUTCMonth() + 1.
-								"/" + firstDate.getUTCFullYear();
-								dates.lastDate = secondDate.getUTCMonth() + 1.
-								"/" + secondDate.getUTCFullYear();
+								dates.firstMonth = firstDate.getUTCMonth() + 1;
+								dates.firstYear = firstDate.getUTCFullYear();
+								dates.secondMonth = secondDate.getUTCMonth() + 1;
+								dates.secondYear = secondDate.getUTCFullYear();
 							}
 
 							var cfg = {
 								type : "GET",
-								url : "../rest/cashFlow/getRentAndIncome/"
-										+ data,
-								data : "dates=" + data,
+								url : "../rest/conta/getTotalValueBills/"
+										+ dates,
+								data : "dates=" + dates,
 								success : function(data) {
 									income = data;
 								},
@@ -150,7 +149,7 @@ iniciaFluxoCaixa = function() {
 							};
 							CFINAC.ajax.post(cfg);
 							
-							cgf.url = "../rest/cashFlow/getRentAndIncome/"+data;
+							cfg.url = "../rest/cashFlow/getTotalValueRent/"+dates;
 							cfg.success = function(data){rent = data};
 							
 							CFINAC.ajax.post(cfg);
@@ -159,8 +158,8 @@ iniciaFluxoCaixa = function() {
 							
 						};
 
-						// CFINAC.fluxoCaixa.graphDetail(null, null);
-						graph(33,33);
+						CFINAC.fluxoCaixa.graphDetail(null, null);
+						//graph(33,33);
 						//graph([{name:"test", data:[{name:"WTF",y:33},{name:"lwl",y:123}]}]);
 						// # sourceURL=sourcees.coffeee
 

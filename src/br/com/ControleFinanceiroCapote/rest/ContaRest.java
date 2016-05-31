@@ -14,6 +14,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.objetos.Conta;
+import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
 import br.com.ControleFinanceiroCapote.servicos.ContaService;
 
 @Path("conta")
@@ -65,6 +66,19 @@ public class ContaRest extends UtilRest  {
 	public Response getIncomes(@PathParam("id") int id) {
 		try {
 			return this.buildResponse(serviceConta.getBills(id, userId()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+	
+	@GET
+	@Path("/getTotalValueBills/")
+	@Produces("text/plain")
+	public Response getTotalValueBills(String RangeParam) {
+		try {
+			RangeDTO range = new ObjectMapper().readValue(RangeParam, RangeDTO.class);
+			return this.buildResponse(serviceConta.getBillsTotalValue(range, userId()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());

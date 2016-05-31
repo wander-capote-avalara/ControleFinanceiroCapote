@@ -58,7 +58,11 @@
 <script>
 	$(function() {
 		$("#showTables").click(function() {
-			$("#tables").show();
+			if($("#tables").hasClass("hid")){
+				$("#tables").show();				
+			}else{
+				$("#tables").show();	
+			}
 		})
 	})
 </script>
