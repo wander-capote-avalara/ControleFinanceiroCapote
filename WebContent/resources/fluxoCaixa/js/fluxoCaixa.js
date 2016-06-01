@@ -95,7 +95,7 @@ iniciaFluxoCaixa = function() {
 													text : 'Gráfico das rendas e contas do mes de: <div id="date"></div>'
 												},
 												tooltip : {
-													pointFormat : '{series.name}: <b>{series.y}:</b>'
+													  format: '<b>{point.name}</b> {point.y:.2f} Rs.',
 												},
 												plotOptions : {
 													pie : {
@@ -108,7 +108,7 @@ iniciaFluxoCaixa = function() {
 													}
 												},
 												series :[{
-										            name: 'Fluxo de Caixa',
+										            name: 'Valor: (R$)',
 										            data: [
 										                { name: 'Rendas', y: dataRenda },
 										                { name: 'Contas', y: dataConta },
@@ -119,8 +119,8 @@ iniciaFluxoCaixa = function() {
 
 						CFINAC.fluxoCaixa.graphDetail = function(firstDate,
 								secondDate) {
-							var dates = {}, dateNow = new Date(),
-							income, rent;
+							var dates = new Object(), dateNow = new Date(),
+							income = 0, rent = 0;
 
 							if (firstDate == "" || firstDate == null
 									& secondDate == "" || secondDate == null) {
@@ -136,25 +136,25 @@ iniciaFluxoCaixa = function() {
 							}
 
 							var cfg = {
-								type : "GET",
-								url : "../rest/conta/getTotalValueBills/"
-										+ dates,
-								data : "dates=" + dates,
+								type : "POST",
+								url : "../rest/conta/getTotalValueBills/",
+								data : dates,
 								success : function(data) {
 									income = data;
+									cfg.url = "../rest/renda/getTotalValueIncome/";
+									cfg.success = function(data){
+									rent = data; 
+									graph(rent, income);
+									};								
+									CFINAC.ajax.post(cfg);
 								},
 								error : function(e) {
-									alertPopUp("Erro na ação!")
+									alertPopUp("Erro ao buscar informações sobre o gráfico!"+e)
 								}
 							};
 							CFINAC.ajax.post(cfg);
 							
-							cfg.url = "../rest/cashFlow/getTotalValueRent/"+dates;
-							cfg.success = function(data){rent = data};
 							
-							CFINAC.ajax.post(cfg);
-							
-							graph(rent, income);
 							
 						};
 

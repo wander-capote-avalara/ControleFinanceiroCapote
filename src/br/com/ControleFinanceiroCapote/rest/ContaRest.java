@@ -72,8 +72,9 @@ public class ContaRest extends UtilRest  {
 		}
 	}
 	
-	@GET
+	@POST
 	@Path("/getTotalValueBills/")
+	@Consumes("application/*")
 	@Produces("text/plain")
 	public Response getTotalValueBills(String RangeParam) {
 		try {

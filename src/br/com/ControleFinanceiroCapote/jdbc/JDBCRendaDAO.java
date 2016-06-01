@@ -17,6 +17,7 @@ import br.com.ControleFinanceiroCapote.jdbcinterface.RendaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Categoria;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
+import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
 import br.com.ControleFinanceiroCapote.objetos.Renda;
 
 public class JDBCRendaDAO implements RendaDAO {
@@ -262,6 +263,33 @@ public class JDBCRendaDAO implements RendaDAO {
 			e.printStackTrace();
 		}
 		return parcelList;
+	}
+
+	public int getTotalValueIncome(RangeDTO dates, int userId) {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("SELECT SUM(Valor_Rendas) as summ FROM rendas a where Id_Usuario = ? AND MONTH(Data_Vencimento) >= ? ");
+		comando.append("AND YEAR(Data_Vencimento) >= ? AND MONTH(Data_Vencimento) <= ? AND YEAR(Data_Vencimento) <= ?");		
+
+		PreparedStatement p;
+		ResultSet rs = null;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, userId);
+			p.setString(2, dates.getFirstMonth());
+			p.setString(3, dates.getFirstYear());
+			p.setString(4, dates.getSecondMonth());
+			p.setString(5, dates.getSecondYear());
+			rs = p.executeQuery();
+			
+			if (rs.next()) {
+				return rs.getInt("summ");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 }

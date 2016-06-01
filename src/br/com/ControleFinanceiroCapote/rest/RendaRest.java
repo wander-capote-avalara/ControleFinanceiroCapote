@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
+import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
 import br.com.ControleFinanceiroCapote.objetos.Renda;
 import br.com.ControleFinanceiroCapote.servicos.RendaService;
 
@@ -77,6 +78,20 @@ public class RendaRest extends UtilRest  {
 	public Response getParcelsById(@PathParam("id") int id) {
 		try {
 			return this.buildResponse(serviceRenda.getParcelsById(id));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+	
+	@POST
+	@Path("/getTotalValueIncome/")
+	@Consumes("application/*")
+	@Produces("text/plain")
+	public Response getTotalValueIncome(String RangeParam) {
+		try {
+			RangeDTO range = new ObjectMapper().readValue(RangeParam, RangeDTO.class);
+			return this.buildResponse(serviceRenda.getTotalValueIncome(range, userId()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());

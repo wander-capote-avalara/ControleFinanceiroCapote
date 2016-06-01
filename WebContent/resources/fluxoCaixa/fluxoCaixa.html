@@ -59,9 +59,11 @@
 	$(function() {
 		$("#showTables").click(function() {
 			if($("#tables").hasClass("hid")){
-				$("#tables").show();				
+				$("#tables").removeClass("hid");
+				//$("#tables").show();				
 			}else{
-				$("#tables").show();	
+				$("#tables").addClass("hid");
+				//$("#tables").show();	
 			}
 		})
 	})
