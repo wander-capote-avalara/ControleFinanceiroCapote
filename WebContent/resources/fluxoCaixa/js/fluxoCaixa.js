@@ -39,9 +39,6 @@ iniciaFluxoCaixa = function() {
 								selector : 'td:first-child'
 							},
 							columns : [ {
-								data : "categoriaName",
-								className : "center"
-							}, {
 								data : "description",
 								className : "center"
 							}, {
@@ -70,9 +67,6 @@ iniciaFluxoCaixa = function() {
 								selector : 'td:first-child'
 							},
 							columns : [ {
-								data : "categoriaName",
-								className : "center"
-							}, {
 								data : "description",
 								className : "center"
 							}, {
@@ -92,7 +86,7 @@ iniciaFluxoCaixa = function() {
 													type : 'pie'
 												},
 												title : {
-													text : 'Gráfico das rendas e contas do mes de: <div id="date"></div>'
+													text : 'Gráfico das rendas e contas'
 												},
 												tooltip : {
 													  format: '<b>{point.name}</b> {point.y:.2f} Rs.',
@@ -117,24 +111,31 @@ iniciaFluxoCaixa = function() {
 											});
 						}
 
-						CFINAC.fluxoCaixa.graphDetail = function(firstDate,
-								secondDate) {
+						CFINAC.fluxoCaixa.graphDetail = function() {
 							var dates = new Object(), dateNow = new Date(),
 							income = 0, rent = 0;
-
+							
+							firstDate = $("#initialDate").val();
+							secondDate = $("#finalDate").val();
+							
 							if (firstDate == "" || firstDate == null
 									& secondDate == "" || secondDate == null) {
 								dates.firstMonth = dateNow.getUTCMonth() + 1;
 								dates.firstYear = dateNow.getUTCFullYear();
 								dates.secondMonth = dateNow.getUTCMonth() + 1;
 								dates.secondYear = dateNow.getUTCFullYear();
+								firstDate = dates.firstMonth+"/"+dates.firstYear;
+								secondDate = dates.secondMonth+"/"+dates.secondYear;
 							} else {
-								dates.firstMonth = firstDate.getUTCMonth() + 1;
-								dates.firstYear = firstDate.getUTCFullYear();
-								dates.secondMonth = secondDate.getUTCMonth() + 1;
-								dates.secondYear = secondDate.getUTCFullYear();
+								var arrayDateIni = firstDate.split("/"),
+									arrayDateFin = secondDate.split("/");
+								
+								dates.firstMonth = arrayDateIni[0];
+								dates.firstYear = arrayDateIni[1];
+								dates.secondMonth = arrayDateFin[0];
+								dates.secondYear = arrayDateFin[1];
 							}
-
+							
 							var cfg = {
 								type : "POST",
 								url : "../rest/conta/getTotalValueBills/",
@@ -145,6 +146,8 @@ iniciaFluxoCaixa = function() {
 									cfg.success = function(data){
 									rent = data; 
 									graph(rent, income);
+									$("#dateGraph").html(firstDate+" até "+secondDate);
+									$("#showttvalue").html(rent-income);
 									};								
 									CFINAC.ajax.post(cfg);
 								},
@@ -158,7 +161,7 @@ iniciaFluxoCaixa = function() {
 							
 						};
 
-						CFINAC.fluxoCaixa.graphDetail(null, null);
+						CFINAC.fluxoCaixa.graphDetail();
 						//graph(33,33);
 						//graph([{name:"test", data:[{name:"WTF",y:33},{name:"lwl",y:123}]}]);
 						// # sourceURL=sourcees.coffeee

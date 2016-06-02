@@ -268,19 +268,17 @@ public class JDBCRendaDAO implements RendaDAO {
 	public int getTotalValueIncome(RangeDTO dates, int userId) {
 		StringBuilder comando = new StringBuilder();
 
-		comando.append("SELECT SUM(Valor_Rendas) as summ FROM rendas a where Id_Usuario = ? AND MONTH(Data_Vencimento) >= ? ");
-		comando.append("AND YEAR(Data_Vencimento) >= ? AND MONTH(Data_Vencimento) <= ? AND YEAR(Data_Vencimento) <= ?");		
-
+		comando.append("SELECT SUM(Valor_Rendas) as summ FROM rendas a where Id_Usuario = ? ");		
+		comando.append("AND Data_Vencimento between ? AND ?");
+		
 		PreparedStatement p;
 		ResultSet rs = null;
 
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 			p.setInt(1, userId);
-			p.setString(2, dates.getFirstMonth());
-			p.setString(3, dates.getFirstYear());
-			p.setString(4, dates.getSecondMonth());
-			p.setString(5, dates.getSecondYear());
+			p.setString(2, dates.getFirstYear()+"/"+dates.getFirstMonth()+"/01");
+			p.setString(3, dates.getSecondYear()+"/"+dates.getSecondMonth()+"/31");
 			rs = p.executeQuery();
 			
 			if (rs.next()) {
