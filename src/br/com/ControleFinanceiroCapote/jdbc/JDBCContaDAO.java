@@ -164,7 +164,7 @@ public class JDBCContaDAO implements ContaDAO {
 	}
 
 	@Override
-	public List<Conta> getBills(int id, int userId) {
+	public List<Conta> getBills(int id, int userId, RangeDTO range) {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT r.Id_Contas as id, r.Id_Categoria as categoryId, ");
@@ -177,6 +177,13 @@ public class JDBCContaDAO implements ContaDAO {
 		if (id != 0) {
 			comando.append(" AND ");
 			comando.append("r.Id_Contas = " + id);
+		}
+		if (range != null) {
+			comando.append(" AND ");
+			comando.append("r.Data_Vencimento between ");
+			comando.append("'"+range.getFirstYear()+"/"+range.getFirstMonth()+"/01'");
+			comando.append(" AND ");
+			comando.append("'"+range.getSecondYear()+"/"+range.getSecondMonth()+"/31'");
 		}
 
 		List<Conta> BillsList = new ArrayList<Conta>();

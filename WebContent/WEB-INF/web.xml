@@ -52,6 +52,6 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>FiltroUsuario</filter-name>
-		<url-pattern>/resources/admin/admin.html</url-pattern>
+		<url-pattern>/resources/Index.html</url-pattern>
 	</filter-mapping>
 </web-app>

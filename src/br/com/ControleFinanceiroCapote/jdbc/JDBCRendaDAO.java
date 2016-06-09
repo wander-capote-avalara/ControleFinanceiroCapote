@@ -163,7 +163,7 @@ public class JDBCRendaDAO implements RendaDAO {
 	}
 
 	@Override
-	public List<Renda> getIncomes(int id, int userId) {
+	public List<Renda> getIncomes(int id, int userId, RangeDTO range) {
 		StringBuilder comando = new StringBuilder();
 		
 		comando.append("SELECT r.Id_Rendas as id, r.Id_Categoria as categoryId, ");
@@ -176,6 +176,13 @@ public class JDBCRendaDAO implements RendaDAO {
 		if (id != 0) {
 			comando.append(" AND ");
 			comando.append("r.Id_Rendas = " + id);
+		}
+		if (range != null) {
+			comando.append(" AND ");
+			comando.append("r.Data_Vencimento between ");
+			comando.append("'"+range.getFirstYear()+"/"+range.getFirstMonth()+"/01'");
+			comando.append(" AND ");
+			comando.append("'"+range.getSecondYear()+"/"+range.getSecondMonth()+"/31'");
 		}
 
 		List<Renda> incomeList = new ArrayList<Renda>();

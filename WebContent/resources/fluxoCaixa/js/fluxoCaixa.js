@@ -30,8 +30,7 @@ iniciaFluxoCaixa = function() {
 							sPaginationType : "full_numbers",
 							processing : true,
 							ajax : {
-								url : "../rest/conta/getBills/" + 0,
-								data : "id=" + 0,
+								url : "../rest/conta/getBillsPerDate/"+getTypedDate(true),
 								type : "GET"
 							},
 							select : {
@@ -58,8 +57,7 @@ iniciaFluxoCaixa = function() {
 							sPaginationType : "full_numbers",
 							processing : true,
 							ajax : {
-								url : "../rest/renda/getIncomes/" + 0,
-								data : "id=" + 0,
+								url : "../rest/renda/getIncomesPerDate/"+getTypedDate(true),
 								type : "GET"
 							},
 							select : {
@@ -89,7 +87,7 @@ iniciaFluxoCaixa = function() {
 													text : 'Gráfico das rendas e contas'
 												},
 												tooltip : {
-													  format: '<b>{point.name}</b> {point.y:.2f} Rs.',
+													format : '<b>{point.name}</b> {point.y:.2f} Rs.',
 												},
 												plotOptions : {
 													pie : {
@@ -101,22 +99,24 @@ iniciaFluxoCaixa = function() {
 														showInLegend : true
 													}
 												},
-												series :[{
-										            name: 'Valor: (R$)',
-										            data: [
-										                { name: 'Rendas', y: dataRenda },
-										                { name: 'Contas', y: dataConta },
-										            ]
-										        }],
+												series : [ {
+													name : 'Valor: (R$)',
+													data : [ {
+														name : 'Rendas',
+														y : dataRenda
+													}, {
+														name : 'Contas',
+														y : dataConta
+													}, ]
+												} ],
 											});
 						}
-
-						CFINAC.fluxoCaixa.graphDetail = function() {
-							var dates = new Object(), dateNow = new Date(),
-							income = 0, rent = 0;
-							
+						
+						function getTypedDate(isDataTable){
 							firstDate = $("#initialDate").val();
 							secondDate = $("#finalDate").val();
+
+							var dates = new Object(), dateNow = new Date();
 							
 							if (firstDate == "" || firstDate == null
 									& secondDate == "" || secondDate == null) {
@@ -124,46 +124,54 @@ iniciaFluxoCaixa = function() {
 								dates.firstYear = dateNow.getUTCFullYear();
 								dates.secondMonth = dateNow.getUTCMonth() + 1;
 								dates.secondYear = dateNow.getUTCFullYear();
-								firstDate = dates.firstMonth+"/"+dates.firstYear;
-								secondDate = dates.secondMonth+"/"+dates.secondYear;
+								firstDate = dates.firstMonth + "/"
+										+ dates.firstYear;
+								secondDate = dates.secondMonth + "/"
+										+ dates.secondYear;
 							} else {
-								var arrayDateIni = firstDate.split("/"),
-									arrayDateFin = secondDate.split("/");
-								
+								var arrayDateIni = firstDate.split("/"), arrayDateFin = secondDate
+										.split("/");
+
 								dates.firstMonth = arrayDateIni[0];
 								dates.firstYear = arrayDateIni[1];
 								dates.secondMonth = arrayDateFin[0];
 								dates.secondYear = arrayDateFin[1];
 							}
 							
+							return !isDataTable ? dates : "?firstParam="+dates.firstMonth+"&secondParam="+dates.firstYear+"&thirdParam="+dates.secondMonth+"&fourthParam="+dates.secondYear;
+							
+						}
+
+						CFINAC.fluxoCaixa.graphDetail = function() {
+							var income = 0, rent = 0;
+
 							var cfg = {
 								type : "POST",
 								url : "../rest/conta/getTotalValueBills/",
-								data : dates,
+								data : getTypedDate(false),
 								success : function(data) {
 									income = data;
 									cfg.url = "../rest/renda/getTotalValueIncome/";
-									cfg.success = function(data){
-									rent = data; 
-									graph(rent, income);
-									$("#dateGraph").html(firstDate+" até "+secondDate);
-									$("#showttvalue").html(rent-income);
-									};								
+									cfg.success = function(data) {
+										rent = data;
+										graph(rent, income);
+										$("#dateGraph").html(
+												firstDate + " até "
+														+ secondDate);
+										$("#showttvalue").html(rent - income);
+									};
 									CFINAC.ajax.post(cfg);
 								},
 								error : function(e) {
-									alertPopUp("Erro ao buscar informações sobre o gráfico!"+e)
+									alertPopUp("Erro ao buscar informações sobre o gráfico!"
+											+ e)
 								}
 							};
 							CFINAC.ajax.post(cfg);
-							
-							
-							
 						};
 
 						CFINAC.fluxoCaixa.graphDetail();
-						//graph(33,33);
-						//graph([{name:"test", data:[{name:"WTF",y:33},{name:"lwl",y:123}]}]);
+
 						// # sourceURL=sourcees.coffeee
 
 					});

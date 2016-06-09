@@ -7,6 +7,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -66,6 +67,24 @@ public class ContaRest extends UtilRest  {
 	public Response getIncomes(@PathParam("id") int id) {
 		try {
 			return this.buildResponse(serviceConta.getBills(id, userId()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+	
+	@GET
+	@Path("/getBillsPerDate/")
+	@Produces("text/plain")
+	public Response getBillsPerDate(@QueryParam("firstParam") String firstMonth, @QueryParam("secondParam") String firstYear, @QueryParam("thirdParam") String secondMonth, @QueryParam("fourthParam") String secondYear) {
+		try {
+			RangeDTO range = new RangeDTO();
+			range.setFirstMonth(firstMonth);
+			range.setFirstYear(firstYear);
+			range.setSecondMonth(secondMonth);
+			range.setSecondYear(secondYear);
+			
+			return this.buildResponse(serviceConta.getBillsByDate(range, userId()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());

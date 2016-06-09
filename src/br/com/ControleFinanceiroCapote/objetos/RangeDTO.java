@@ -10,6 +10,7 @@ public class RangeDTO implements Serializable {
 	private String firstYear;
 	private String secondMonth;
 	private String secondYear;
+	
 	public String getFirstMonth() {
 		return firstMonth;
 	}

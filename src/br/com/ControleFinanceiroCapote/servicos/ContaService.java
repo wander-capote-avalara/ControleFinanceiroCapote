@@ -35,7 +35,18 @@ public class ContaService {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
-		List<Conta> billList = jdbcContadao.getBills(id, userId);
+		List<Conta> billList = jdbcContadao.getBills(id, userId, null);
+		conec.fecharConexao();
+
+		return billList;
+	}	
+	
+	public  List<Conta> getBillsByDate(RangeDTO range, int userId) {
+		
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
+		List<Conta> billList = jdbcContadao.getBills(0, userId, range);
 		conec.fecharConexao();
 
 		return billList;
