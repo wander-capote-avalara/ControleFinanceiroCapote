@@ -320,4 +320,4 @@ var iniciaUsuario = function() {
 
 					})
 };
-// # sourceURL=source.coffee
+//# sourceURL=source.js

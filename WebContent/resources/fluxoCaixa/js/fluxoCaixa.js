@@ -62,7 +62,7 @@ iniciaFluxoCaixa = function() {
 							},
 							select : {
 								style : 'os',
-								selector : 'td:first-child'
+							 	selector : 'td:first-child'
 							},
 							columns : [ {
 								data : "description",
@@ -159,6 +159,10 @@ iniciaFluxoCaixa = function() {
 												firstDate + " até "
 														+ secondDate);
 										$("#showttvalue").html(rent - income);
+										tableConta.ajax.url("../rest/conta/getBillsPerDate/"+getTypedDate(true));
+										tableConta.ajax.reload(null, true);
+										tableRenda.ajax.url("../rest/renda/getIncomesPerDate/"+getTypedDate(true));
+										tableRenda.ajax.reload(null, true);
 									};
 									CFINAC.ajax.post(cfg);
 								},
