@@ -99,6 +99,20 @@ public class RendaRest extends UtilRest  {
 		}
 	}
 	
+	@POST
+	@Path("/getIncomesByCategory/")
+	@Consumes("application/*")
+	@Produces("text/plain")
+	public Response getIncomesByCategory(String RangeParam) {
+		try {
+			RangeDTO range = new ObjectMapper().readValue(RangeParam, RangeDTO.class);
+			return this.buildResponse(serviceRenda.getIncomesByCategory(range, userId()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+	
 	@GET
 	@Path("/getIncomesPerDate/")
 	@Produces("text/plain")

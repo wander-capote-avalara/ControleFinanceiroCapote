@@ -10,6 +10,7 @@ import br.com.ControleFinanceiroCapote.jdbc.JDBCContaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Conta;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
 import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
+import br.com.ControleFinanceiroCapote.objetos.Renda;
 
 public class ContaService {
 
@@ -71,6 +72,17 @@ public class ContaService {
 		conec.fecharConexao();
 		
 		return billsValue;
+	}
+	
+	public List<Conta> getBillsByCategory(RangeDTO datas, int userId) {
+		
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
+		List<Conta> bills = jdbcContadao.getBillsByCategory(userId, datas);
+		conec.fecharConexao();
+		
+		return bills;
 	}
 
 }

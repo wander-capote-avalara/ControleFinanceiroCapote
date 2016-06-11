@@ -33,7 +33,8 @@ public class JDBCRendaDAO implements RendaDAO {
 		if (renda.getId() == 0) {
 			StringBuilder comando = new StringBuilder();
 			comando.append("INSERT INTO rendas ");
-			comando.append("(Id_Categoria, Id_Usuario, Descricao_Rendas, Valor_Rendas, Status_Renda, Data_Vencimento, ");
+			comando.append(
+					"(Id_Categoria, Id_Usuario, Descricao_Rendas, Valor_Rendas, Status_Renda, Data_Vencimento, ");
 			comando.append(renda.getIsFixed() == 0 ? "Vezes" : "Renda_Fixa");
 			comando.append(") VALUES(?,?,?,?,?,?,?)");
 
@@ -64,7 +65,8 @@ public class JDBCRendaDAO implements RendaDAO {
 		} else {
 			StringBuilder comando = new StringBuilder();
 			comando.append("UPDATE rendas ");
-			comando.append("SET Id_Categoria = ?, Id_Usuario = ?, Descricao_Rendas = ?, Valor_Rendas = ?, Status_Renda = ?, Data_Vencimento = ?, ");
+			comando.append(
+					"SET Id_Categoria = ?, Id_Usuario = ?, Descricao_Rendas = ?, Valor_Rendas = ?, Status_Renda = ?, Data_Vencimento = ?, ");
 			comando.append(renda.getIsFixed() == 0 ? "Vezes = ?" : "Renda_Fixa = ?");
 			comando.append(" WHERE Id_Rendas = ?");
 
@@ -82,32 +84,32 @@ public class JDBCRendaDAO implements RendaDAO {
 				p.setInt(7, renda.getIsFixed() == 0 ? renda.getTimes() : renda.getIsFixed());
 				p.setInt(8, renda.getId());
 				p.execute();
-					if (renda.getTimes() != 0) {
-						deleteParcels(renda.getId());
-						insertParcels(renda.getId(), renda.getTimes(), renda.getTotalValue(), renda.getParcelValue());
-					}
+				if (renda.getTimes() != 0) {
+					deleteParcels(renda.getId());
+					insertParcels(renda.getId(), renda.getTimes(), renda.getTotalValue(), renda.getParcelValue());
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean deletaRenda(int id) throws ValidationException {
-		
+
 		deleteParcels(id);
-		
+
 		StringBuilder comando = new StringBuilder();
 		comando.append("UPDATE rendas ");
 		comando.append("SET Status_Renda = 0 ");
-		comando.append("WHERE Id_Rendas = ?");	
-		PreparedStatement p;	
-		
+		comando.append("WHERE Id_Rendas = ?");
+		PreparedStatement p;
+
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 			p.setInt(1, id);
 			p.execute();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -117,28 +119,28 @@ public class JDBCRendaDAO implements RendaDAO {
 
 	private void deleteParcels(int id) {
 		StringBuilder comando = new StringBuilder();
-		
+
 		comando.append("UPDATE parcela_renda ");
 		comando.append("SET Status_Parcela = 0 ");
 		comando.append("WHERE Id_Renda = ?");
 		PreparedStatement p;
-		
+
 		try {
-			
+
 			p = this.conexao.prepareStatement(comando.toString());
 			p.setInt(1, id);
 			p.execute();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public void insertParcels(int incomeId, int times, double totalValue, double parcelValue) {
-		double math = ((parcelValue*times) - totalValue);
-		boolean hasDifference = (parcelValue*times) - totalValue != 0;
-		
+		double math = ((parcelValue * times) - totalValue);
+		boolean hasDifference = (parcelValue * times) - totalValue != 0;
+
 		StringBuilder comando = new StringBuilder();
 		comando.append("INSERT INTO parcela_renda");
 		comando.append("(Id_Renda, Valor_Parcela, Status_Parcela)");
@@ -152,7 +154,7 @@ public class JDBCRendaDAO implements RendaDAO {
 
 			for (int x = 0; x < times; x++) {
 				p.setInt(1, incomeId);
-				p.setDouble(2, hasDifference ? parcelValue - math: parcelValue);
+				p.setDouble(2, hasDifference ? parcelValue - math : parcelValue);
 				p.setInt(3, 1);
 				p.execute();
 				hasDifference = false;
@@ -165,12 +167,12 @@ public class JDBCRendaDAO implements RendaDAO {
 	@Override
 	public List<Renda> getIncomes(int id, int userId, RangeDTO range) {
 		StringBuilder comando = new StringBuilder();
-		
+
 		comando.append("SELECT r.Id_Rendas as id, r.Id_Categoria as categoryId, ");
 		comando.append("r.Descricao_Rendas as descr, r.Valor_Rendas as totalValue, r.Status_Renda as status, ");
 		comando.append("r.Data_Vencimento as endDate, r.Renda_Fixa as isFixed, r.Vezes as x ");
 		comando.append("FROM rendas r ");
-		comando.append("WHERE r.Id_Usuario = "+ userId);
+		comando.append("WHERE r.Id_Usuario = " + userId);
 		comando.append(" AND ");
 		comando.append("Status_Renda = 1");
 		if (id != 0) {
@@ -180,9 +182,9 @@ public class JDBCRendaDAO implements RendaDAO {
 		if (range != null) {
 			comando.append(" AND ");
 			comando.append("r.Data_Vencimento between ");
-			comando.append("'"+range.getFirstYear()+"/"+range.getFirstMonth()+"/01'");
+			comando.append("'" + range.getFirstYear() + "/" + range.getFirstMonth() + "/01'");
 			comando.append(" AND ");
-			comando.append("'"+range.getSecondYear()+"/"+range.getSecondMonth()+"/31'");
+			comando.append("'" + range.getSecondYear() + "/" + range.getSecondMonth() + "/31'");
 		}
 
 		List<Renda> incomeList = new ArrayList<Renda>();
@@ -191,17 +193,17 @@ public class JDBCRendaDAO implements RendaDAO {
 			java.sql.Statement stmt = conexao.createStatement();
 			ResultSet rs = stmt.executeQuery(comando.toString());
 			while (rs.next()) {
-				income = new Renda();				
+				income = new Renda();
 
 				income.setId(rs.getInt("id"));
 				income.setCategoria(rs.getInt("categoryId"));
 				income.setDescription(rs.getString("descr"));
 				income.setTotalValue(rs.getInt("totalValue"));
 				income.setStatus(rs.getInt("status"));
-				income.setStartDate( rs.getDate("endDate"));
+				income.setStartDate(rs.getDate("endDate"));
 				income.setIsFixed(rs.getInt("isFixed"));
 				income.setTimes(rs.getInt("x"));
-				
+
 				incomeList.add(income);
 			}
 
@@ -223,22 +225,22 @@ public class JDBCRendaDAO implements RendaDAO {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT Descricao as descr ");
 		comando.append("FROM categorias ");
-		comando.append("WHERE Id_Categorias = "+ categoria);
+		comando.append("WHERE Id_Categorias = " + categoria);
 
-		try {		
+		try {
 			java.sql.Statement stmt = conexao.createStatement();
 			ResultSet rs = stmt.executeQuery(comando.toString());
 
 			while (rs.next()) {
-				return rs.getString("descr");		
+				return rs.getString("descr");
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
-		
+
 	}
 
 	public List<Parcela> getParcelsById(int id) {
@@ -246,7 +248,7 @@ public class JDBCRendaDAO implements RendaDAO {
 
 		comando.append("SELECT Id_Renda as id, Valor_Parcela as parcelValue, Status_Parcela as parcelStatus, ");
 		comando.append("Data_Pagamento as paymentDate, Data_Vencimento as dueDate ");
-		comando.append("FROM parcela_renda WHERE Id_Renda = "+id);
+		comando.append("FROM parcela_renda WHERE Id_Renda = " + id);
 		comando.append(" AND Status_Parcela <> 0");
 
 		List<Parcela> parcelList = new ArrayList<Parcela>();
@@ -256,7 +258,7 @@ public class JDBCRendaDAO implements RendaDAO {
 			ResultSet rs = stmt.executeQuery(comando.toString());
 			while (rs.next()) {
 				parcel = new Parcela();
-				
+
 				parcel.setId(rs.getInt("id"));
 				parcel.setParcelValue(rs.getDouble("parcelValue"));
 				parcel.setStatus(rs.getInt("parcelStatus"));
@@ -272,22 +274,64 @@ public class JDBCRendaDAO implements RendaDAO {
 		return parcelList;
 	}
 
-	public int getTotalValueIncome(RangeDTO dates, int userId) {
+	public List<Renda> getIncomesByCategory(int userId, RangeDTO range) {
 		StringBuilder comando = new StringBuilder();
 
-		comando.append("SELECT SUM(Valor_Rendas) as summ FROM rendas a where Id_Usuario = ? ");		
-		comando.append("AND Data_Vencimento between ? AND ?");
-		
+		comando.append("SELECT SUM(root.Valor_Rendas) as ValorTotal, c.Descricao as descricao");
+		comando.append("FROM rendas root");
+		comando.append("INNER JOIN categorias c ON c.Id_Categorias = root.Id_Categoria");
+		comando.append("WHERE Status_Renda = 1");
+		comando.append("AND root.Id_Usuario = ?");
+		comando.append("AND root.Data_Vencimento BETWEEN ? AND ?");
+		comando.append("GROUP BY c.Id_Categorias");
+
 		PreparedStatement p;
 		ResultSet rs = null;
 
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 			p.setInt(1, userId);
-			p.setString(2, dates.getFirstYear()+"/"+dates.getFirstMonth()+"/01");
-			p.setString(3, dates.getSecondYear()+"/"+dates.getSecondMonth()+"/31");
+			p.setString(2, range.getFirstYear() + "/" + range.getFirstMonth() + "/01");
+			p.setString(3, range.getSecondYear() + "/" + range.getSecondMonth() + "/31");
 			rs = p.executeQuery();
-			
+
+			ArrayList<Renda> incomeList = new ArrayList<Renda>();
+
+			while (rs.next()) {
+				Renda newIncome = new Renda();
+
+				newIncome.setCategoriaName(rs.getString("descricao"));
+				newIncome.setTotalValue(rs.getInt("ValorTotal"));
+
+				incomeList.add(newIncome);
+			}
+
+			return incomeList;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public int getTotalValueIncome(RangeDTO dates, int userId) {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("SELECT SUM(Valor_Rendas) as summ FROM rendas a ");
+		comando.append("WHERE Id_Usuario = ? ");
+		comando.append("AND Status_Renda = 1 ");
+		comando.append("AND Data_Vencimento between ? AND ?");
+
+		PreparedStatement p;
+		ResultSet rs = null;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, userId);
+			p.setString(2, dates.getFirstYear() + "/" + dates.getFirstMonth() + "/01");
+			p.setString(3, dates.getSecondYear() + "/" + dates.getSecondMonth() + "/31");
+			rs = p.executeQuery();
+
 			if (rs.next()) {
 				return rs.getInt("summ");
 			}

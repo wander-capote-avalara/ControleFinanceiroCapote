@@ -105,6 +105,20 @@ public class ContaRest extends UtilRest  {
 		}
 	}
 	
+	@POST
+	@Path("/getBillsByCategory/")
+	@Consumes("application/*")
+	@Produces("text/plain")
+	public Response getBillsByCategory(String RangeParam) {
+		try {
+			RangeDTO range = new ObjectMapper().readValue(RangeParam, RangeDTO.class);
+			return this.buildResponse(serviceConta.getBillsByCategory(range, userId()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+	
 	@GET
 	@Path("/getParcelsById/{id}")
 	@Produces("text/plain")

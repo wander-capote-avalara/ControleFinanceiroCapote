@@ -87,14 +87,15 @@ iniciaFluxoCaixa = function() {
 													text : 'Gráfico das rendas e contas'
 												},
 												tooltip : {
-													format : '<b>{point.name}</b> {point.y:.2f} Rs.',
+													format : '<b>{series.name}<b>{series.percentage:.1f}%',
 												},
 												plotOptions : {
 													pie : {
 														allowPointSelect : true,
 														cursor : 'pointer',
 														dataLabels : {
-															enabled : false
+															enabled : true,
+															format : '<b>{point.name}: (R$)</b> {point.y:.2f}',
 														},
 														showInLegend : true
 													}

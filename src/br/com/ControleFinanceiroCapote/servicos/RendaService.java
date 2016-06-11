@@ -71,4 +71,15 @@ public class RendaService {
 
 		return incomeList;
 	}
+		
+	public List<Renda> getIncomesByCategory(RangeDTO datas, int userId) {
+		
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCRendaDAO jdbcRendadao = new JDBCRendaDAO(conexao);
+		List<Renda> incomes = jdbcRendadao.getIncomesByCategory(userId, datas);
+		conec.fecharConexao();
+		
+		return incomes;
+	}
 }

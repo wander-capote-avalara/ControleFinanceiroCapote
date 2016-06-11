@@ -64,8 +64,7 @@ public class JDBCContaDAO implements ContaDAO {
 		} else {
 			StringBuilder comando = new StringBuilder();
 			comando.append("UPDATE contas ");
-			comando.append(
-					"SET Id_Categoria = ?, Id_Usuario = ?, Descricao_contas = ?, Valor_contas = ?, ");
+			comando.append("SET Id_Categoria = ?, Id_Usuario = ?, Descricao_contas = ?, Valor_contas = ?, ");
 			comando.append("Status_conta = ?, Data_Vencimento = ?, Vezes = ?, Conta_Fixa = ?");
 			comando.append(" WHERE Id_contas = ?");
 
@@ -95,9 +94,9 @@ public class JDBCContaDAO implements ContaDAO {
 	}
 
 	private void insertParcels(int billIDd, int times, Double parcelValue, double totalValue) {
-		double math = ((parcelValue*times) - totalValue);
-		boolean hasDifference = (parcelValue*times) - totalValue != 0;
-		
+		double math = ((parcelValue * times) - totalValue);
+		boolean hasDifference = (parcelValue * times) - totalValue != 0;
+
 		StringBuilder comando = new StringBuilder();
 		comando.append("INSERT INTO parcela_conta");
 		comando.append("(Id_Conta, Valor_Parcela, Status_Parcela)");
@@ -111,7 +110,7 @@ public class JDBCContaDAO implements ContaDAO {
 
 			for (int x = 0; x < times; x++) {
 				p.setInt(1, billIDd);
-				p.setDouble(2, hasDifference ? parcelValue - math: parcelValue);
+				p.setDouble(2, hasDifference ? parcelValue - math : parcelValue);
 				p.setInt(3, 1);
 				p.execute();
 				hasDifference = false;
@@ -145,7 +144,7 @@ public class JDBCContaDAO implements ContaDAO {
 	}
 
 	private void deleteParcels(int id) {
-		
+
 		StringBuilder comando = new StringBuilder();
 		comando.append("UPDATE parcela_conta ");
 		comando.append("SET Status_Parcela = 0 ");
@@ -181,9 +180,9 @@ public class JDBCContaDAO implements ContaDAO {
 		if (range != null) {
 			comando.append(" AND ");
 			comando.append("r.Data_Vencimento between ");
-			comando.append("'"+range.getFirstYear()+"/"+range.getFirstMonth()+"/01'");
+			comando.append("'" + range.getFirstYear() + "/" + range.getFirstMonth() + "/01'");
 			comando.append(" AND ");
-			comando.append("'"+range.getSecondYear()+"/"+range.getSecondMonth()+"/31'");
+			comando.append("'" + range.getSecondYear() + "/" + range.getSecondMonth() + "/31'");
 		}
 
 		List<Conta> BillsList = new ArrayList<Conta>();
@@ -220,6 +219,46 @@ public class JDBCContaDAO implements ContaDAO {
 		return BillsList;
 	}
 
+	public List<Conta> getBillsByCategory(int userId, RangeDTO range) {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("SELECT SUM(root.Valor_Contas) as ValorTotal, c.Descricao as descricao");
+		comando.append("FROM contas root");
+		comando.append("INNER JOIN categorias c ON c.Id_Categorias = root.Id_Categoria");
+		comando.append("WHERE Status_Conta = 1");
+		comando.append("AND root.Id_Usuario = ?");
+		comando.append("AND root.Data_Vencimento BETWEEN ? AND ?");
+		comando.append("GROUP BY c.Id_Categorias");
+
+		PreparedStatement p;
+		ResultSet rs = null;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, userId);
+			p.setString(2, range.getFirstYear() + "/" + range.getFirstMonth() + "/01");
+			p.setString(3, range.getSecondYear() + "/" + range.getSecondMonth() + "/31");
+			rs = p.executeQuery();
+
+			ArrayList<Conta> billList = new ArrayList<Conta>();
+
+			while (rs.next()) {
+				Conta newBill = new Conta();
+
+				newBill.setCategoriaName(rs.getString("descricao"));
+				newBill.setTotalValue(rs.getInt("ValorTotal"));
+
+				billList.add(newBill);
+			}
+
+			return billList;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	private String getCategoriesName(int categoria) throws SQLException {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT Descricao as descr ");
@@ -243,7 +282,7 @@ public class JDBCContaDAO implements ContaDAO {
 
 		comando.append("SELECT Id_Conta as id, Valor_Parcela as parcelValue, Status_Parcela as parcelStatus, ");
 		comando.append("Data_Pagamento as paymentDate, Data_Vencimento as dueDate ");
-		comando.append("FROM parcela_conta WHERE Id_Conta = "+id);
+		comando.append("FROM parcela_conta WHERE Id_Conta = " + id);
 		comando.append(" AND Status_Parcela <> 0");
 
 		List<Parcela> parcelList = new ArrayList<Parcela>();
@@ -253,7 +292,7 @@ public class JDBCContaDAO implements ContaDAO {
 			ResultSet rs = stmt.executeQuery(comando.toString());
 			while (rs.next()) {
 				parcel = new Parcela();
-				
+
 				parcel.setId(rs.getInt("id"));
 				parcel.setParcelValue(rs.getDouble("parcelValue"));
 				parcel.setStatus(rs.getInt("parcelStatus"));
@@ -272,8 +311,10 @@ public class JDBCContaDAO implements ContaDAO {
 	public int getBillsTotalValue(RangeDTO dates, int userId) {
 		StringBuilder comando = new StringBuilder();
 
-		comando.append("SELECT SUM(Valor_Contas) as summ FROM contas a where Id_Usuario = ? ");		
-		comando.append("AND Data_Vencimento between ? AND ?");		
+		comando.append("SELECT SUM(Valor_Contas) as summ FROM contas a ");
+		comando.append("WHERE Id_Usuario = ? ");
+		comando.append("AND Status_Conta = 1 ");
+		comando.append("AND Data_Vencimento between ? AND ?");
 
 		PreparedStatement p;
 		ResultSet rs = null;
@@ -281,10 +322,10 @@ public class JDBCContaDAO implements ContaDAO {
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 			p.setInt(1, userId);
-			p.setString(2, dates.getFirstYear()+"/"+dates.getFirstMonth()+"/01");
-			p.setString(3, dates.getSecondYear()+"/"+dates.getSecondMonth()+"/31");
+			p.setString(2, dates.getFirstYear() + "/" + dates.getFirstMonth() + "/01");
+			p.setString(3, dates.getSecondYear() + "/" + dates.getSecondMonth() + "/31");
 			rs = p.executeQuery();
-			
+
 			if (rs.next()) {
 				return rs.getInt("summ");
 			}
