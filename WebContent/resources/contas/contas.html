@@ -1,74 +1,84 @@
 <div id="form" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-	<div id="row">
-		<div id="conteudoRegistro">
-			<div class="row">
-				<div id="title" class="text-center">
-					<h1 style="color: #2A3F54;">Contas</h1>
-				</div>
-				<form class="form-horizontal" method="post">
+    <div id="row">
+        <div id="conteudoRegistro">
+            <div class="row">
+                <div id="title" class="text-center">
+                    <h1 style="color: #2A3F54;">Contas</h1>
+                </div>
+                <form class="form-horizontal" method="post">
 
-					<div class="form-group">
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" id="categories">
-						</div>
-						<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
-						<input class="hid" id="id"> 
-							Descrição: <input type="text" class="form-control"
-								id="inputDescription" placeholder="Descrição" required
-								maxlength="45">
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-							A prazo: <select id="hasDeadline" class="form-control">
+                    <div class="form-group">
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" id="categories">
+                        </div>
+                        <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                            <input class="hid" id="id"> Descrição: <input type="text" class="form-control" id="inputDescription" placeholder="Descrição" required maxlength="45">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                            A prazo: <select id="hasDeadline" class="form-control">
 								<option value="0">Não</option>
 								<option value="1" selected>Sim</option>
 							</select>
-						</div>
-						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-							Data inicial: <input type="date" placeholder="dd/mm/aaaa" class="form-control"
-								id="inputStartDate" required>
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-							Valor Total: <input type="text" class="form-control"
-								id="inputTotalValue" required>
-						</div>
-						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-							Parcelas: <input type="text" class="form-control"
-								id="inputParcels" required maxlength="45">
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-							Valor Parcela: <input type="text" class="form-control"
-								id="inputParcelValue" required maxlength="45" disabled>
-						</div>
-					</div>
+                        </div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                            Data inicial: <input type="date" placeholder="dd/mm/aaaa" class="form-control" id="inputStartDate" required>
+                        </div>
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                            Valor Total: <input type="text" class="form-control" id="inputTotalValue" required>
+                        </div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                            Parcelas: <input type="text" class="form-control" id="inputParcels" required maxlength="45">
+                        </div>
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                            Valor Parcela: <input type="text" class="form-control" id="inputParcelValue" required maxlength="45" disabled>
+                        </div>
+                    </div>
 
-					<div class="form-group">
-						<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-							<button type="reset" class="btn btn-danger buttom">Limpa</button>
-						</div>
-						<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-							<button type="button" class="btn btn-success buttom"
-								onclick="CFINAC.contas.add()">Enviar</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+                    <div class="form-group">
+                        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <button type="reset" class="btn btn-danger buttom">Limpa</button>
+                        </div>
+                        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                            <button type="button" class="btn btn-success buttom" onclick="CFINAC.contas.add()">Enviar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 <table id="example" class="display" cellspacing="0" width="100%">
-	<thead>
-		<tr>
-			<th>Categoria</th>
-			<th>Descrição</th>
-			<th>Valor total</th>
-			<th>Data de vencimento</th>
-			<th>A prazo</th>
-			<th>X</th>
-			<th>Ações</th>
-			<th>Detalhes</th>
-		</tr>
-	</thead>
+    <thead>
+        <tr>
+            <th>Categoria</th>
+            <th>Descrição</th>
+            <th>Valor total</th>
+            <th>Data de vencimento</th>
+            <th>A prazo</th>
+            <th>X</th>
+            <th>Ações</th>
+            <th>Detalhes</th>
+        </tr>
+    </thead>
 </table>
+<p>
+    <button type="button" id="showTables" class="btn-primary btn-lg center-block">Mostrar/Esconder
+		tabelas</button>
+</p>
 
- 
+<div id="highcharts" class="hid"></div>
+
+<script>
+    $(function() {
+        $("#showTables").click(function() {
+            if ($("#highcharts").hasClass("hid")) {
+                $("#highcharts").removeClass("hid");
+                //$("#tables").show();				
+            } else {
+                $("#highcharts").addClass("hid");
+                //$("#tables").show();	
+            }
+        })
+    })
+</script>

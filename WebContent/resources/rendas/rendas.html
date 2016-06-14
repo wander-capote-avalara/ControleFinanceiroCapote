@@ -1,83 +1,90 @@
 <div id="form" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-	<div id="row">
-		<div id="conteudoRegistro">
-			<div class="row">
-				<div id="title" class="text-center">
-					<h1 style="color: #2A3F54;">Rendas</h1>
-				</div>
-				<form class="form-horizontal" method="post">
+    <div id="row">
+        <div id="conteudoRegistro">
+            <div class="row">
+                <div id="title" class="text-center">
+                    <h1 style="color: #2A3F54;">Rendas</h1>
+                </div>
+                <form class="form-horizontal" method="post">
 
-					<div class="form-group">
-						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" id="categories">
-						</div>
-						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-							Data de Início: <input type="date" class="form-control"
-								id="inputInitialDate" placeholder="Data Inicial" required>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-							Descrição: <input class="hid" id="id"> <input type="text"
-								class="form-control" id="inputDescription"
-								placeholder="Descrição" required maxlength="25">
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-							Conta Fixa: <select id="isFixed" class="form-control">
+                    <div class="form-group">
+                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" id="categories">
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                            Data de Início: <input type="date" class="form-control" id="inputInitialDate" placeholder="Data Inicial" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            Descrição: <input class="hid" id="id"> <input type="text" class="form-control" id="inputDescription" placeholder="Descrição" required maxlength="25">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                            Conta Fixa: <select id="isFixed" class="form-control">
 								<option value="0">Não</option>
 								<option value="1">Sim</option>
 							</select>
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-							Valor Total: <input type="text" class="form-control"
-								id="inputTotalValue" placeholder="Valor Total" required
-								maxlength="15">
-						</div>
-						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-							Parcelas: <input type="text" class="form-control" id="inputTimes"
-								required>
-						</div>
+                        </div>
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                            Valor Total: <input type="text" class="form-control" id="inputTotalValue" placeholder="Valor Total" required maxlength="15">
+                        </div>
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                            Parcelas: <input type="text" class="form-control" id="inputTimes" required>
+                        </div>
 
-					</div>
-					<div class="form-group">
-						<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-							<button type="reset" class="btn btn-danger buttom">Limpa</button>
-						</div>
-						<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-							<button type="button" class="btn btn-success buttom"
-								onclick="CFINAC.rendas.add()">Enviar</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <button type="reset" class="btn btn-danger buttom">Limpa</button>
+                        </div>
+                        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                            <button type="button" class="btn btn-success buttom" onclick="CFINAC.rendas.add()">Enviar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 <table id="example" class="display" cellspacing="0" width="100%">
-	<thead>
-		<tr>
-			<th>Categoria</th>
-			<th>Descrição</th>
-			<th>Valor Total</th>
-			<th>Data de vencimento</th>
-			<th>Conta Fixa</th>
-			<th>X</th>
-			<th>Ações</th>
-			<th>Detalhes</th>
-		</tr>
-	</thead>
+    <thead>
+        <tr>
+            <th>Categoria</th>
+            <th>Descrição</th>
+            <th>Valor Total</th>
+            <th>Data de vencimento</th>
+            <th>Conta Fixa</th>
+            <th>X</th>
+            <th>Ações</th>
+            <th>Detalhes</th>
+        </tr>
+    </thead>
 </table>
+<p>
+    <button type="button" id="showTables" class="btn-primary btn-lg center-block">Mostrar/Esconder
+			tabelas</button>
+</p>
 
+<div id="highcharts" class="hid"></div>
 <script>
-$("#isFixed").change(function(){
-	//this.value == 0 ? $("#inputTimes").prop("disabled", false) : $("#inputTimes").prop("disabled", true);
-	if(this.value == 0){
-		$("#inputTimes").prop("disabled", false);
-	}else{
-		$("#inputTimes").prop("disabled", true);
-		$("#inputTimes").val("");
-	}
-});
+    $("#isFixed").change(function() {
+        //this.value == 0 ? $("#inputTimes").prop("disabled", false) : $("#inputTimes").prop("disabled", true);
+        if (this.value == 0) {
+            $("#inputTimes").prop("disabled", false);
+        } else {
+            $("#inputTimes").prop("disabled", true);
+            $("#inputTimes").val("");
+        }
+    });
 
+    $(function() {
+        $("#showTables").click(function() {
+            if ($("#highcharts").hasClass("hid")) {
+                $("#highcharts").removeClass("hid");
+            } else {
+                $("#highcharts").addClass("hid");
+            }
+        })
+    })
 </script>

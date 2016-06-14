@@ -1,89 +1,81 @@
 <div id="title" class="text-center">
-	<h1 style="color: #2A3F54;">Fluxo de Caixa</h1>
-	<p>
-	<h6>
+    <h1 style="color: #2A3F54;">Fluxo de Caixa</h1>
+    <p>
+        <h6>
 		Saldo do período: (R$)<span id="showttvalue"></span> - De:<span id="dateGraph"></span>
 	</h6>
-	</p>
+    </p>
 </div>
 
 <div id="graph" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-	<form class="form-horizontal" method="post">
-		<div class="form-group">
-			<div
-				class="col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
-				<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-					De: <input type="text" class="form-control" id="initialDate"
-						placeholder="mm/AAAA" required maxlength="7">
-				</div>
-				<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-					Até: <input type="text" class="form-control" id="finalDate"
-						placeholder="mm/AAAA" required maxlength="7">
-				</div>
-				<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 thoseButtons">
-					<button type="button" class="btn btn-success buttom"
-						onclick="CFINAC.fluxoCaixa.graphDetail()">Enviar</button>
-				</div>
-			</div>
-		</div>
-	</form>
+    <form class="form-horizontal" method="post">
+        <div class="form-group">
+            <div class="col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                    De: <input type="text" class="form-control" id="initialDate" placeholder="mm/AAAA" required maxlength="7">
+                </div>
+                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                    Até: <input type="text" class="form-control" id="finalDate" placeholder="mm/AAAA" required maxlength="7">
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 thoseButtons">
+                    <button type="button" class="btn btn-success buttom" onclick="CFINAC.fluxoCaixa.graphDetail()">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </form>
 
 
-	<div id="highchart"></div>
-	<p>
-		<button type="button" id="showTables"
-			class="btn-primary btn-lg center-block">Mostrar/Esconder
+    <div id="highchart"></div>
+    <p>
+        <button type="button" id="showTables" class="btn-primary btn-lg center-block">Mostrar/Esconder
 			tabelas</button>
-	</p>
+    </p>
 </div>
 <div class="row hid" id="tables">
-	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-		<div class="row">
-			<div id="firstTable" class="col-xs-12 col-sm-6  col-md-6 col-lg-6">
-				<div id="title" class="text-left">
-					<h3 style="color: #2A3F54;">Rendas</h3>
-				</div>
-				<table id="exampleRendas" class="display" cellspacing="0"
-					width="100%">
-					<thead>
-						<tr>
-							<th>Descrição</th>
-							<th>Valor Total</th>
-						</tr>
-					</thead>
-				</table>
-			</div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="row">
+            <div id="firstTable" class="col-xs-12 col-sm-6  col-md-6 col-lg-6">
+                <div id="title" class="text-left">
+                    <h3 style="color: #2A3F54;">Rendas</h3>
+                </div>
+                <table id="exampleRendas" class="display" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Valor Total</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
 
-			<div id="secondTable" class="col-xs-12 col-sm-6  col-md-6 col-lg-6">
-				<div id="title" class="text-left">
-					<h3 style="color: #2A3F54;">Contas</h3>
-				</div>
-				<table id="exampleContas" class="display" cellspacing="0"
-					width="100%">
-					<thead>
-						<tr>
-							<th>Descrição</th>
-							<th>Valor total</th>
-						</tr>
-					</thead>
-				</table>
-			</div>
-		</div>
-	</div>
+            <div id="secondTable" class="col-xs-12 col-sm-6  col-md-6 col-lg-6">
+                <div id="title" class="text-left">
+                    <h3 style="color: #2A3F54;">Contas</h3>
+                </div>
+                <table id="exampleContas" class="display" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Valor total</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-	$(function() {
-		$("#showTables").click(function() {
-			if ($("#tables").hasClass("hid")) {
-				$("#tables").removeClass("hid");
-				//$("#tables").show();				
-			} else {
-				$("#tables").addClass("hid");
-				//$("#tables").show();	
-			}
-		})
-	})
-
+    $(function() {
+        $("#showTables").click(function() {
+            if ($("#tables").hasClass("hid")) {
+                $("#tables").removeClass("hid");
+                //$("#tables").show();				
+            } else {
+                $("#tables").addClass("hid");
+                //$("#tables").show();	
+            }
+        })
+    })
 </script>
