@@ -11,4 +11,4 @@ public interface ContaDAO {
 	public void inserir(Conta conta);
 	public boolean deletaConta(int id) throws ValidationException;
 	public List<Conta> getBills(int id, int userId, RangeDTO range);
-}
+} 

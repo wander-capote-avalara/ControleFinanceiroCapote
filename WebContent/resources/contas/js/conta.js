@@ -382,7 +382,7 @@ iniciaConta = function() {
                 
                 function getDate(isDataTable) {
 
-                    var dateNow = new Date();
+                    var dateNow = new Date(), dates = {};
 
                         dates.firstMonth = dateNow.getUTCMonth() + 1;
                         dates.firstYear = dateNow.getUTCFullYear();
@@ -393,7 +393,7 @@ iniciaConta = function() {
 
                 }
 
-                CFINAC.conta.graphDetail = function() {                	
+                CFINAC.contas.graphDetail = function() {                	
                 	
                     var cfg = {
                         type: "POST",
@@ -410,7 +410,7 @@ iniciaConta = function() {
                     CFINAC.ajax.post(cfg);
                 };
 
-                CFINAC.conta.graphDetail();
+                CFINAC.contas.graphDetail();
             });
             }
                 // # sourceURL=sourcees.coffeee

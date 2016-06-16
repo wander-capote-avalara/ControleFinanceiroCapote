@@ -27,12 +27,6 @@ public class RendaRest extends UtilRest  {
 	
 	RendaService serviceRenda = new RendaService();
 	
-	@Context
-	HttpServletRequest request = null;
-	
-	public int userId() {
-		return Integer.parseInt((String) request.getSession().getAttribute("id"));
-	}
 	
 	@POST
 	@Path("/add")

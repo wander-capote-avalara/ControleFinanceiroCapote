@@ -185,7 +185,7 @@ iniciaFluxoCaixa = function() {
 
                 CFINAC.fluxoCaixa.graphDetail();
 
-                // # sourceURL=sourcees.coffeee
+                //# sourceURL=sourcees.js
 
             });
 }

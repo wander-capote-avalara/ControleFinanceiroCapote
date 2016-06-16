@@ -185,7 +185,7 @@ public class JDBCContaDAO implements ContaDAO {
 			comando.append("'" + range.getSecondYear() + "/" + range.getSecondMonth() + "/31'");
 		}
 
-		List<Conta> BillsList = new ArrayList<Conta>();
+		List<Conta> billsList = new ArrayList<Conta>();
 		Conta income = null;
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
@@ -202,10 +202,10 @@ public class JDBCContaDAO implements ContaDAO {
 				income.setHasDeadline(rs.getInt("isFixed"));
 				income.setTimes(rs.getInt("x"));
 
-				BillsList.add(income);
+				billsList.add(income);
 			}
 
-			for (Conta inc : BillsList) {
+			for (Conta inc : billsList) {
 				try {
 					inc.setCategoriaName(getCategoriesName(inc.getCategoria()));
 				} catch (Exception e) {
@@ -216,18 +216,18 @@ public class JDBCContaDAO implements ContaDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return BillsList;
+		return billsList;
 	}
 
 	public List<Conta> getBillsByCategory(int userId, RangeDTO range) {
 		StringBuilder comando = new StringBuilder();
 
-		comando.append("SELECT SUM(root.Valor_Contas) as ValorTotal, c.Descricao as descricao");
-		comando.append("FROM contas root");
-		comando.append("INNER JOIN categorias c ON c.Id_Categorias = root.Id_Categoria");
-		comando.append("WHERE Status_Conta = 1");
-		comando.append("AND root.Id_Usuario = ?");
-		comando.append("AND root.Data_Vencimento BETWEEN ? AND ?");
+		comando.append("SELECT SUM(root.Valor_Contas) as ValorTotal, c.Descricao as descricao ");
+		comando.append("FROM contas root ");
+		comando.append("INNER JOIN categorias c ON c.Id_Categorias = root.Id_Categoria ");
+		comando.append("WHERE Status_Conta = 1 ");
+		comando.append("AND root.Id_Usuario = ? ");
+		comando.append("AND root.Data_Vencimento BETWEEN ? AND ?  ");
 		comando.append("GROUP BY c.Id_Categorias");
 
 		PreparedStatement p;
