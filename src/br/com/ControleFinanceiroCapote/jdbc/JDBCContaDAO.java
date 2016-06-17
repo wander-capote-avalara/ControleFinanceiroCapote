@@ -14,6 +14,7 @@ import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.ContaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Conta;
+import br.com.ControleFinanceiroCapote.objetos.Graph;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
 import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
 import br.com.ControleFinanceiroCapote.objetos.Renda;
@@ -219,7 +220,7 @@ public class JDBCContaDAO implements ContaDAO {
 		return billsList;
 	}
 
-	public List<Conta> getBillsByCategory(int userId, RangeDTO range) {
+	public List<Graph> getBillsByCategory(int userId, RangeDTO range) {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT SUM(root.Valor_Contas) as ValorTotal, c.Descricao as descricao ");
@@ -240,13 +241,13 @@ public class JDBCContaDAO implements ContaDAO {
 			p.setString(3, range.getSecondYear() + "/" + range.getSecondMonth() + "/31");
 			rs = p.executeQuery();
 
-			ArrayList<Conta> billList = new ArrayList<Conta>();
+			ArrayList<Graph> billList = new ArrayList<Graph>();
 
 			while (rs.next()) {
-				Conta newBill = new Conta();
+				Graph newBill = new Graph();
 
-				newBill.setCategoriaName(rs.getString("descricao"));
-				newBill.setTotalValue(rs.getInt("ValorTotal"));
+				newBill.setName(rs.getString("descricao"));
+				newBill.setY(rs.getInt("ValorTotal"));
 
 				billList.add(newBill);
 			}

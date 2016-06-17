@@ -2,14 +2,14 @@ package br.com.ControleFinanceiroCapote.objetos;
 
 public class Graph {
 
-	private double value;
+	private double y;
 	private String name;
 	
-	public double getValue() {
-		return value;
+	public double getY() {
+		return y;
 	}
-	public void setValue(double value) {
-		this.value = value;
+	public void setY(double y) {
+		this.y = y;
 	}
 	public String getName() {
 		return name;

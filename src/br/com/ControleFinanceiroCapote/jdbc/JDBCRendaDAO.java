@@ -16,6 +16,7 @@ import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.RendaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Categoria;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
+import br.com.ControleFinanceiroCapote.objetos.Graph;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
 import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
 import br.com.ControleFinanceiroCapote.objetos.Renda;
@@ -274,7 +275,7 @@ public class JDBCRendaDAO implements RendaDAO {
 		return parcelList;
 	}
 
-	public List<Renda> getIncomesByCategory(int userId, RangeDTO range) {
+	public List<Graph> getIncomesByCategory(int userId, RangeDTO range) {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT SUM(root.Valor_Rendas) as ValorTotal, c.Descricao as descricao");
@@ -295,13 +296,13 @@ public class JDBCRendaDAO implements RendaDAO {
 			p.setString(3, range.getSecondYear() + "/" + range.getSecondMonth() + "/31");
 			rs = p.executeQuery();
 
-			ArrayList<Renda> incomeList = new ArrayList<Renda>();
+			ArrayList<Graph> incomeList = new ArrayList<Graph>();
 
 			while (rs.next()) {
-				Renda newIncome = new Renda();
+				Graph newIncome = new Graph();
 
-				newIncome.setCategoriaName(rs.getString("descricao"));
-				newIncome.setTotalValue(rs.getInt("ValorTotal"));
+				newIncome.setName(rs.getString("descricao"));
+				newIncome.setY(rs.getDouble("ValorTotal"));
 
 				incomeList.add(newIncome);
 			}

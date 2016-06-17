@@ -8,6 +8,7 @@ import br.com.ControleFinanceiroCapote.bd.conexao.Conexao;
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCContaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Conta;
+import br.com.ControleFinanceiroCapote.objetos.Graph;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
 import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
 import br.com.ControleFinanceiroCapote.objetos.Renda;
@@ -74,12 +75,12 @@ public class ContaService {
 		return billsValue;
 	}
 	
-	public List<Conta> getBillsByCategory(RangeDTO datas, int userId) {
+	public List<Graph> getBillsByCategory(RangeDTO datas, int userId) {
 		
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
-		List<Conta> bills = jdbcContadao.getBillsByCategory(userId, datas);
+		List<Graph> bills = jdbcContadao.getBillsByCategory(userId, datas);
 		conec.fecharConexao();
 		
 		return bills;

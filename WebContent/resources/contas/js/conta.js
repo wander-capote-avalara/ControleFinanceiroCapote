@@ -341,8 +341,8 @@ iniciaConta = function() {
 
                 CFINAC.contas.procuraCategoria();
 
-                var graph = function(dataRenda, dataConta) {
-                    $('#highchart')
+                var graph = function(data) {
+                    $('#highcharts')
                         .highcharts({
                             chart: {
                                 plotBackgroundColor: null,
@@ -369,13 +369,7 @@ iniciaConta = function() {
                             },
                             series: [{
                                 name: 'Valor: (R$)',
-                                data: [{
-                                    name: 'Rendas',
-                                    y: dataRenda
-                                }, {
-                                    name: 'Contas',
-                                    y: dataConta
-                                }, ]
+                                data: [data, ]
                             }],
                         });
                 }
@@ -400,7 +394,7 @@ iniciaConta = function() {
                         url: "../rest/conta/getBillsByCategory/",
                         data: getDate(false),
                         success: function(data) {
-                        	alert(data);
+                        	graph(data);
                         },
                         error: function(e) {
                             alertPopUp("Erro ao buscar informações sobre o gráfico!" +
