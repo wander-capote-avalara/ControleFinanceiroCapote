@@ -203,6 +203,7 @@ iniciaRenda = function() {
                                     success: function(msg) {
                                         alertPopUp(msg);
                                         table.ajax.reload(null, false);
+                                        CFINAC.rendas.graphDetail();
                                     },
                                     error: function(e) {
                                         alertPopUp("Erro na ação!")
@@ -255,6 +256,7 @@ iniciaRenda = function() {
                                 alertPopUp(r);
                                 $("#conteudoRegistro .btn-danger").click();
                                 table.ajax.reload(null, false);
+                                CFINAC.rendas.graphDetail();
                             },
                             error: function(err) {
                                 alert("Erro na ação" + err.responseText);
@@ -297,8 +299,8 @@ iniciaRenda = function() {
 
     CFINAC.rendas.procuraCategoria();
     
-    var graph = function(dataRenda, dataConta) {
-        $('#highchart')
+    var graph = function(datas) {
+        $('#highcharts')
             .highcharts({
                 chart: {
                     plotBackgroundColor: null,
@@ -307,7 +309,7 @@ iniciaRenda = function() {
                     type: 'pie'
                 },
                 title: {
-                    text: 'Gráfico das rendas e contas'
+                    text: 'Gráfico de rendas feitas em cada categorias no mês atual'
                 },
                 tooltip: {
                     format: '<b>{series.name}<b>{series.percentage:.1f}%',
@@ -325,75 +327,32 @@ iniciaRenda = function() {
                 },
                 series: [{
                     name: 'Valor: (R$)',
-                    data: [{
-                        name: 'Rendas',
-                        y: dataRenda
-                    }, {
-                        name: 'Contas',
-                        y: dataConta
-                    }, ]
+                    data: datas,
                 }],
             });
     }
     
-    function getTypedDate(isDataTable) {
-        firstDate = $("#initialDate").val();
-        secondDate = $("#finalDate").val();
+    function getDate(isDataTable) {
 
-        var dates = new Object(),
-            dateNow = new Date();
+        var dateNow = new Date(), dates = {};
 
-        if (firstDate == "" || firstDate == null &
-            secondDate == "" || secondDate == null) {
             dates.firstMonth = dateNow.getUTCMonth() + 1;
             dates.firstYear = dateNow.getUTCFullYear();
             dates.secondMonth = dateNow.getUTCMonth() + 1;
             dates.secondYear = dateNow.getUTCFullYear();
-            firstDate = dates.firstMonth + "/" +
-                dates.firstYear;
-            secondDate = dates.secondMonth + "/" +
-                dates.secondYear;
-        } else {
-            var arrayDateIni = firstDate.split("/"),
-                arrayDateFin = secondDate
-                .split("/");
-
-            dates.firstMonth = arrayDateIni[0];
-            dates.firstYear = arrayDateIni[1];
-            dates.secondMonth = arrayDateFin[0];
-            dates.secondYear = arrayDateFin[1];
-        }
 
         return !isDataTable ? dates : "?firstParam=" + dates.firstMonth + "&secondParam=" + dates.firstYear + "&thirdParam=" + dates.secondMonth + "&fourthParam=" + dates.secondYear;
 
     }
 
-    CFINAC.fluxoCaixa.graphDetail = function() {
-        var income = 0,
-            rent = 0;
-
+    CFINAC.rendas.graphDetail = function() {                	
+    	
         var cfg = {
             type: "POST",
-            url: "../rest/conta/getTotalValueBills/",
-            data: getTypedDate(false),
+            url: "../rest/renda/getIncomesByCategory/",
+            data: getDate(false),
             success: function(data) {
-                income = data;
-                cfg.url = "../rest/renda/getTotalValueIncome/";
-                cfg.success = function(data) {
-                    rent = data;
-                    graph(rent, income);
-                    $("#dateGraph").html(
-                        firstDate + " até " +
-                        secondDate);
-                    $("#showttvalue").html(rent - income);
-                    tableConta.ajax
-                        .url("../rest/conta/getBillsPerDate/" +
-                            getTypedDate(true));
-                    tableConta.ajax.reload(null, true);
-                    tableRenda.ajax
-                        .url("../rest/renda/getIncomesPerDate/?firstParam=" + dates.firstMonth + "&secondParam=" + dates.firstYear + "&thirdParam=" + dates.secondMonth + "&fourthParam=" + dates.secondYear);
-                };
-                CFINAC.ajax.post(cfg);
+            	graph(data);
             },
             error: function(e) {
                 alertPopUp("Erro ao buscar informações sobre o gráfico!" +
@@ -403,6 +362,6 @@ iniciaRenda = function() {
         CFINAC.ajax.post(cfg);
     };
 
-    CFINAC.fluxoCaixa.graphDetail();
+    CFINAC.rendas.graphDetail();
 };
 // # aleluiasinho.coffee

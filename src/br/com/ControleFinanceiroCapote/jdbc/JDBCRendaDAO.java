@@ -278,13 +278,14 @@ public class JDBCRendaDAO implements RendaDAO {
 	public List<Graph> getIncomesByCategory(int userId, RangeDTO range) {
 		StringBuilder comando = new StringBuilder();
 
-		comando.append("SELECT SUM(root.Valor_Rendas) as ValorTotal, c.Descricao as descricao");
-		comando.append("FROM rendas root");
-		comando.append("INNER JOIN categorias c ON c.Id_Categorias = root.Id_Categoria");
-		comando.append("WHERE Status_Renda = 1");
-		comando.append("AND root.Id_Usuario = ?");
-		comando.append("AND root.Data_Vencimento BETWEEN ? AND ?");
-		comando.append("GROUP BY c.Id_Categorias");
+		comando.append("SELECT SUM(root.Valor_Rendas) as ValorTotal, c.Descricao as descricao ");
+		comando.append("FROM rendas root ");
+		comando.append("INNER JOIN categorias c ON c.Id_Categorias = root.Id_Categoria ");
+		comando.append("WHERE Status_Renda = 1 ");
+		comando.append("AND root.Id_Usuario = ? ");
+		comando.append("AND root.Data_Vencimento BETWEEN ? AND ? ");
+		comando.append("AND root.Status_Renda = ? ");
+		comando.append("GROUP BY c.Id_Categorias ");
 
 		PreparedStatement p;
 		ResultSet rs = null;
@@ -294,6 +295,7 @@ public class JDBCRendaDAO implements RendaDAO {
 			p.setInt(1, userId);
 			p.setString(2, range.getFirstYear() + "/" + range.getFirstMonth() + "/01");
 			p.setString(3, range.getSecondYear() + "/" + range.getSecondMonth() + "/31");
+			p.setInt(4, 1);
 			rs = p.executeQuery();
 
 			ArrayList<Graph> incomeList = new ArrayList<Graph>();

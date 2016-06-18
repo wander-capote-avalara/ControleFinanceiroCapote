@@ -226,6 +226,7 @@ iniciaConta = function() {
                                     success: function(msg) {
                                         alertPopUp(msg);
                                         table.ajax.reload(null, false);
+                                        CFINAC.contas.graphDetail();
                                     },
                                     error: function(e) {
                                         alertPopUp("Erro na ação!")
@@ -284,6 +285,7 @@ iniciaConta = function() {
                                 $("#conteudoRegistro .btn-danger")
                                     .click();
                                 table.ajax.reload(null, false);
+                                CFINAC.contas.graphDetail();
                             },
                             error: function(err) {
                                 alert("Erro na ação" + err.responseText);
@@ -341,7 +343,7 @@ iniciaConta = function() {
 
                 CFINAC.contas.procuraCategoria();
 
-                var graph = function(data) {
+                var graph = function(datas) {
                     $('#highcharts')
                         .highcharts({
                             chart: {
@@ -351,7 +353,7 @@ iniciaConta = function() {
                                 type: 'pie'
                             },
                             title: {
-                                text: 'Gráfico das rendas e contas'
+                                text: 'Gráfico de contas feitas em cada categorias no mês atual'
                             },
                             tooltip: {
                                 format: '<b>{series.name}<b>{series.percentage:.1f}%',
@@ -369,7 +371,7 @@ iniciaConta = function() {
                             },
                             series: [{
                                 name: 'Valor: (R$)',
-                                data: [data, ]
+                                data: datas,
                             }],
                         });
                 }

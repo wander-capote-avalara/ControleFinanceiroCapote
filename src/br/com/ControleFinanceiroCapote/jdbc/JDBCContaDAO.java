@@ -229,6 +229,7 @@ public class JDBCContaDAO implements ContaDAO {
 		comando.append("WHERE Status_Conta = 1 ");
 		comando.append("AND root.Id_Usuario = ? ");
 		comando.append("AND root.Data_Vencimento BETWEEN ? AND ?  ");
+		comando.append("AND root.Status_Conta = ? ");
 		comando.append("GROUP BY c.Id_Categorias");
 
 		PreparedStatement p;
@@ -239,6 +240,7 @@ public class JDBCContaDAO implements ContaDAO {
 			p.setInt(1, userId);
 			p.setString(2, range.getFirstYear() + "/" + range.getFirstMonth() + "/01");
 			p.setString(3, range.getSecondYear() + "/" + range.getSecondMonth() + "/31");
+			p.setInt(4, 1);
 			rs = p.executeQuery();
 
 			ArrayList<Graph> billList = new ArrayList<Graph>();
