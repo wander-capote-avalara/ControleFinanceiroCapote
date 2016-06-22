@@ -24,6 +24,10 @@
 <link href="css/jquery-ui.theme.css" rel="stylesheet">
 <script src="rendas/js/renda.js"></script>
 <script src="contas/js/conta.js"></script>
+<script src="components/Tokenize/jquery.tokenize.js"></script>
+<script src="familias/js/familia.js"></script>
+<link href="components/Tokenize/jquery.tokenize.css" rel="stylesheet">
+<link href="familias/css/family.css" rel="stylesheet">
 <script src="fluxoCaixa/js/fluxoCaixa.js"></script>
 <script src="categorias/js/categoria.js"></script>
 <script src="js/index.js"></script>
@@ -68,7 +72,7 @@
 									<h6 id="nextbalance">Saldo próx. mês(R$): 0</h6>
 									<h6 id="next">Próx. fatura: 00/00/0000</h6>
 									<h6>
-										Família: <a id="family"></a>
+										Família: <a id="family" onclick="viewFamily()"></a>
 									</h6>
 								</div>
 							</div>
@@ -141,6 +145,11 @@
 	var changeToIncome = function() {
 		$("#cont").load("rendas/rendas.html", function() {
 			iniciaRenda();
+		});
+	},
+	viewFamily = function(){
+		$("#cont").load("familias/index.html", function() {
+			iniciaFamilia();
 		});
 	},
 	changeToBills = function() {

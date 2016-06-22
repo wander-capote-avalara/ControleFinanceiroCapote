@@ -298,7 +298,7 @@ iniciaRenda = function() {
     };
 
     CFINAC.rendas.procuraCategoria();
-    
+
     var graph = function(datas) {
         $('#highcharts')
             .highcharts({
@@ -331,28 +331,29 @@ iniciaRenda = function() {
                 }],
             });
     }
-    
+
     function getDate(isDataTable) {
 
-        var dateNow = new Date(), dates = {};
+        var dateNow = new Date(),
+            dates = {};
 
-            dates.firstMonth = dateNow.getUTCMonth() + 1;
-            dates.firstYear = dateNow.getUTCFullYear();
-            dates.secondMonth = dateNow.getUTCMonth() + 1;
-            dates.secondYear = dateNow.getUTCFullYear();
+        dates.firstMonth = dateNow.getUTCMonth() + 1;
+        dates.firstYear = dateNow.getUTCFullYear();
+        dates.secondMonth = dateNow.getUTCMonth() + 1;
+        dates.secondYear = dateNow.getUTCFullYear();
 
         return !isDataTable ? dates : "?firstParam=" + dates.firstMonth + "&secondParam=" + dates.firstYear + "&thirdParam=" + dates.secondMonth + "&fourthParam=" + dates.secondYear;
 
     }
 
-    CFINAC.rendas.graphDetail = function() {                	
-    	
+    CFINAC.rendas.graphDetail = function() {
+
         var cfg = {
             type: "POST",
             url: "../rest/renda/getIncomesByCategory/",
             data: getDate(false),
             success: function(data) {
-            	graph(data);
+                graph(data);
             },
             error: function(e) {
                 alertPopUp("Erro ao buscar informações sobre o gráfico!" +

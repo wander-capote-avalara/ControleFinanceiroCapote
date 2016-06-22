@@ -1,5 +1,6 @@
 CFINAC.familia = new Object();
 
+var iniciaFamilia = function() {
 function alertPopUp(msg) {
 	cfg = {
 		title : "Mensagem",
@@ -185,4 +186,40 @@ $(document)
 					};
 					//# sourceURL=sourcees.js
 				})
+				var membersTable = $('#familyTable')
+				.DataTable(
+						{
+							aLengthMenu : [ [ 5, 10, 100 ],
+									[ 5, 10, 100 ] ],
+							iDisplayLength : 5,
+							sAjaxDataProp : "",
+							language : {
+								url : "../js/Portuguese.json"
+							},
+							sPaginationType : "full_numbers",
+							processing : true,
+							ajax : {
+								url : "../../rest/familia/getFamilies",
+								type : "GET"
+							},
+							select : {
+								style : 'os',
+								selector : 'td:first-child'
+							},
+							columns : [
+									{
+										data : "id",
+										className : "center"
+									},
+									{
+										data : "name",
+										className : "center"
+									},
+									{
+										data : "owner",
+										className : "center"
+									} ]
+						// # sourceURL=sourcees.coffeee
+						});
+}
 // # sourceURL=sourcees.coffee
