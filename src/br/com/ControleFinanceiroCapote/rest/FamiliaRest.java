@@ -96,12 +96,24 @@ public class FamiliaRest extends UtilRest {
 
 	public Response getFamilyById(@PathParam("id") int id) {
 		try {
-			Familia teste = serviceFamily.getFamilyById(id);
-			return this.buildResponse(teste);
-			//return this.buildResponse(serviceFamily.getFamilyById(id));
+			/*Familia teste = serviceFamily.getFamilyById(id);
+			return this.buildResponse(teste);*/
+			return this.buildResponse(serviceFamily.getFamilyById(id));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());
 		}
 	}
+	
+	@GET
+	@Path("/getFamilyMembers")
+	@Produces("text/plain")
+	public Response getFamilyMembers() throws ValidationException {
+		try {
+			return this.buildResponse(serviceFamily.getFamilyMembers(userId()));
+		} catch (Exception e) {
+			return this.buildErrorResponse("Não foi possível buscar informações.");
+		}
+	}
+	
 }

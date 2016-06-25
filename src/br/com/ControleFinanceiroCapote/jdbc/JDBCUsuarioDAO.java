@@ -220,7 +220,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		
 			while (rs.next()) {
 				user = new Usuario();
-				
+				user.setId(id);
 				user.setUsuario(rs.getString("userName"));
 				user.setNomeFamilia(rs.getString("familyName") == null ? "Sem familia" : rs.getString("familyName"));
 				user.setSaldoAtual(getActualBalanceById(id, false));
@@ -409,6 +409,14 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			e.printStackTrace();
 		}
 		return idFamilia;
+	}
+
+	public List<Usuario> getUsersInfo(List<Usuario> familyMembers) {
+		List<Usuario> membersWInfo = new ArrayList<Usuario>();
+		for (Usuario user : familyMembers) {
+			membersWInfo.add(getUserInfoById(user.getId()));
+		}
+		return membersWInfo;
 	}
 
 }

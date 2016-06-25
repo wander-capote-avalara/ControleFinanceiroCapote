@@ -199,7 +199,7 @@ $(document)
 							sPaginationType : "full_numbers",
 							processing : true,
 							ajax : {
-								url : "../../rest/familia/getFamilies",
+								url : "../rest/familia/getFamilyMembers",
 								type : "GET"
 							},
 							select : {
@@ -208,17 +208,30 @@ $(document)
 							},
 							columns : [
 									{
+										data : "usuario",
+										className : "center"
+									},
+									{
+										data : "saldoAtual",
+										className : "center"
+									},
+									{
+										data : "saldoProx",
+										className : "center"
+									},
+									{
 										data : "id",
-										className : "center"
-									},
-									{
-										data : "name",
-										className : "center"
-									},
-									{
-										data : "owner",
-										className : "center"
-									} ]
+										className : "center",
+										bSortable : false,
+										mRender : function(id) {
+											return "<a class='link' onclick='CFINAC.familia.leadProvider("
+													+ id
+													+ ")'>Tornar dono</a> /"
+													+ " <a class='link' onclick='CFINAC.familia.excludeFamilyMember("
+													+ id
+													+ ")'>Expulsar</a>";
+										}
+									}]
 						// # sourceURL=sourcees.coffeee
 						});
 }

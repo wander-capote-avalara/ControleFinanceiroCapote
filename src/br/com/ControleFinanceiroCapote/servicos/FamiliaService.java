@@ -55,4 +55,14 @@ public class FamiliaService {
 		conec.fecharConexao();
 	}
 
+	public List<Usuario> getFamilyMembers(int userId) {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);	
+		JDBCUsuarioDAO userMethods = new JDBCUsuarioDAO(conexao);
+		List<Usuario> users = userMethods.getUsersInfo(jdbcFamilia.getFamilyMembers(userId));
+		conec.fecharConexao();
+		return users;
+	}
+
 }

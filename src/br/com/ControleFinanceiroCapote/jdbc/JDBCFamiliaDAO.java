@@ -273,8 +273,8 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		List<Usuario> listUser = new ArrayList<Usuario>();
 
 		StringBuilder comando2 = new StringBuilder();
-		comando2.append("SELECT uss.Id_Usuarios as userId, uss.Usuario as user from usuarios uss ");
-		comando2.append("INNER join user_family uf on uf.Usuario_Id = uss.Id_Usuarios ");
+		comando2.append("SELECT uss.Id_Usuarios AS userId, uss.Usuario AS user FROM usuarios uss ");
+		comando2.append("INNER JOIN user_family uf ON uf.Usuario_Id = uss.Id_Usuarios ");
 		comando2.append("INNER JOIN familias faa ON faa.Id_Familias = uf.Familia_Id ");
 		if (id != 0) {
 			comando2.append("WHERE faa.Id_Familias = " + id);
@@ -293,6 +293,34 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			e.printStackTrace();
 		}
 		return listUser;
+	}
+
+	public List<Usuario> getFamilyMembers(int userId) {		
+		return getUserAndId(getFamilyByUserId(userId));	
+	}
+
+	private int getFamilyByUserId(int userId) {
+		StringBuilder comando = new StringBuilder();
+		
+		comando.append("SELECT uf.Familia_Id as familyId ");
+		comando.append("FROM user_family uf ");
+		comando.append("WHERE uf.Usuario_Id = ?");
+		
+		PreparedStatement p;
+		ResultSet rs = null;
+		
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, userId);
+			rs = p.executeQuery();
+			if (rs.next()) {
+				return rs.getInt("familyId");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return 0;
 	}
 
 }
