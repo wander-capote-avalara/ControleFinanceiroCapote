@@ -323,4 +323,23 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		return 0;
 	}
 
+	public void leadProvider(int id) {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("UPDATE familias fa SET Id_Usuario=? ");
+		comando.append("WHERE fa.Id_familias = ?");
+
+		PreparedStatement p;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, id);
+			p.setInt(2, getFamilyByUserId(id));
+
+			p.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }

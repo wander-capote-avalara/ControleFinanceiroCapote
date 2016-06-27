@@ -91,6 +91,17 @@ public class FamiliaRest extends UtilRest {
 	}
 	
 	@POST
+	@Path("/leadProvider/{id}")
+	public Response leadProvider(@PathParam("id") int id) throws ValidationException {
+		try {
+			serviceFamily.leadProvider(id);
+			return this.buildResponse("O usuário agora é o lider da família!");
+		} catch (Exception e) {
+			return this.buildErrorResponse("Não foi possível deletar a família.");
+		}
+	}
+	
+	@POST
 	@Path("/getFamilyById/{id}")
 	@Produces({ MediaType.APPLICATION_JSON })
 
