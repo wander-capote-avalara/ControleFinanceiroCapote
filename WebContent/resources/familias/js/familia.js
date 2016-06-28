@@ -212,7 +212,41 @@ var iniciaFamilia = function() {
 							membersTable.ajax.reload(null, false);
 						},
 						error : function(e) {
-							alertPopUp("Erro na ação!")
+							alertPopUp("Você precisa ser dono da familia para fazer essa operação!")
+						}
+					};
+					CFINAC.ajax.post(cfg);
+				},
+				Cancel : function() {
+					$(this).dialog("close");
+				}
+			}
+		}
+		$("#msg").html(msg);
+		$("#msg").dialog(cfg);
+	}
+	
+	CFINAC.familia.kickUser = function(id) {
+		var msg = "Você deseja realmente expulsa-lo?", 
+		cfg = {
+			title : "Mensagem",
+			height : 250,
+			width : 400,
+			modal : true,
+			trigger : false,
+			buttons : {
+				"OK" : function() {
+					$(this).dialog("close");
+					var cfg = {
+						type : "POST",
+						url : "../rest/familia/kickUser/" + id,
+						data : "id=" + id,
+						success : function(msg) {
+							alertPopUp(msg);
+							membersTable.ajax.reload(null, false);
+						},
+						error : function(e) {
+							alertPopUp("Você precisa ser dono da familia para fazer essa operação!")
 						}
 					};
 					CFINAC.ajax.post(cfg);
@@ -266,7 +300,7 @@ var iniciaFamilia = function() {
 										return "<a class='link' onclick='CFINAC.familia.leadProvider("
 												+ id
 												+ ")'>Tornar dono</a> /"
-												+ " <a class='link' onclick='CFINAC.familia.excludeFamilyMember("
+												+ " <a class='link' onclick='CFINAC.familia.kickUser("
 												+ id + ")'>Expulsar</a>";
 									}
 								} ]

@@ -92,12 +92,12 @@ public class FamiliaRest extends UtilRest {
 	
 	@POST
 	@Path("/leadProvider/{id}")
-	public Response leadProvider(@PathParam("id") int id) throws ValidationException {
+	public Response leadProvider(@PathParam("id") int id) {
 		try {
-			serviceFamily.leadProvider(id);
+			serviceFamily.leadProvider(id, userId());
 			return this.buildResponse("O usuário agora é o lider da família!");
 		} catch (Exception e) {
-			return this.buildErrorResponse("Não foi possível deletar a família.");
+			return this.buildErrorResponse("Você precisa ser dono da familia para fazer essa operação!");
 		}
 	}
 	
@@ -123,7 +123,18 @@ public class FamiliaRest extends UtilRest {
 		try {
 			return this.buildResponse(serviceFamily.getFamilyMembers(userId()));
 		} catch (Exception e) {
-			return this.buildErrorResponse("Não foi possível buscar informações.");
+			return this.buildErrorResponse("Erro ao buscar informações");
+		}
+	}
+	
+	@POST
+	@Path("/kickUser/{id}")
+	public Response kickUser(@PathParam("id") int id) {
+		try {
+			serviceFamily.kickUser(id, userId());
+			return this.buildResponse("Usuario expulso com sucesso!");
+		} catch (Exception e) {
+			return this.buildErrorResponse("Você precisa ser dono da familia para fazer essa operação!");
 		}
 	}
 	

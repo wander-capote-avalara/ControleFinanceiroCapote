@@ -342,4 +342,40 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		}
 	}
 
+	public boolean isLeader(int id) {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("SELECT fa.Nome FROM familias fa ");
+		comando.append("WHERE fa.Id_Usuario = ?");
+
+		PreparedStatement p;
+		
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, id);
+
+			return p.executeQuery().next();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	
+	public void kickUser(int id){
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("DELETE FROM user_family ");
+		comando.append("WHERE Usuario_Id = ?");
+
+		PreparedStatement p;
+		
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, id);
+			p.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

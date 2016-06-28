@@ -65,4 +65,27 @@ public class FamiliaService {
 		return users;
 	}
 
+	public void leadProvider(int id, int userId) throws Exception {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
+		if (jdbcFamilia.isLeader(userId))
+			jdbcFamilia.leadProvider(id); 
+		else 
+			throw new Exception("Você precisa ser dono da familia para fazer essa operação!");
+		
+		conec.fecharConexao();
+	}
+	
+	public void kickUser(int id, int userId) throws Exception {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
+		if (jdbcFamilia.isLeader(userId))
+			jdbcFamilia.kickUser(id);
+		else 
+			throw new Exception("Você precisa ser dono da familia para fazer essa operação!");
+		conec.fecharConexao();
+	}
+
 }
