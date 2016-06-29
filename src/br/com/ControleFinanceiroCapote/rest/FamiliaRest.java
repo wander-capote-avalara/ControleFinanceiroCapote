@@ -138,4 +138,28 @@ public class FamiliaRest extends UtilRest {
 		}
 	}
 	
+	@GET
+	@Path("/getAllFamilyBills/")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getAllFamilyBills() {
+		try {
+			return this.buildResponse(serviceFamily.getAllFamilyBills(userId()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+	
+	@GET
+	@Path("/getAllFamilyIncomes/")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getAllFamilyIncomes() {
+		try {
+			return this.buildResponse(serviceFamily.getAllFamilyIncomes(userId()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+	
 }

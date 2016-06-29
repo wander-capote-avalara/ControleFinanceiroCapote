@@ -4,11 +4,17 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.catalina.loader.JdbcLeakPrevention;
+
 import br.com.ControleFinanceiroCapote.bd.conexao.Conexao;
 import br.com.ControleFinanceiroCapote.helpers.Helper;
+import br.com.ControleFinanceiroCapote.jdbc.JDBCContaDAO;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCFamiliaDAO;
+import br.com.ControleFinanceiroCapote.jdbc.JDBCRendaDAO;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCUsuarioDAO;
+import br.com.ControleFinanceiroCapote.objetos.Conta;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
+import br.com.ControleFinanceiroCapote.objetos.Renda;
 import br.com.ControleFinanceiroCapote.objetos.Usuario;
 
 public class FamiliaService {
@@ -86,6 +92,26 @@ public class FamiliaService {
 		else 
 			throw new Exception("Você precisa ser dono da familia para fazer essa operação!");
 		conec.fecharConexao();
+	}
+	
+	public List<Conta> getAllFamilyBills(int userId) {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCContaDAO jdbcConta = new JDBCContaDAO(conexao);	
+		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
+		List<Conta> bills = jdbcConta.getAllFamilyBills(jdbcFamilia.getFamilyByUserId(userId));
+		conec.fecharConexao();
+		return bills;
+	}
+
+	public List<Renda> getAllFamilyIncomes(int userId) {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCRendaDAO jdbcRenda = new JDBCRendaDAO(conexao);	
+		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
+		List<Renda> incomes = jdbcRenda.getAllFamilyIncomes(jdbcFamilia.getFamilyByUserId(userId));
+		conec.fecharConexao();
+		return incomes;
 	}
 
 }

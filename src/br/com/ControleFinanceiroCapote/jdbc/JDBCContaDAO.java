@@ -336,4 +336,43 @@ public class JDBCContaDAO implements ContaDAO {
 		return 0;
 	}
 
+	public List<Conta> getAllFamilyBills(int idFamily) {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("SELECT c.Valor_Contas AS BillValue, u.Usuario AS Name, ");
+		comando.append("ca.Descricao as Description, c.Data_Vencimento as billDate ");
+		comando.append("FROM usuarios u ");
+		comando.append("INNER JOIN user_family uf ON uf.Usuario_Id = u.Id_Usuarios ");
+		comando.append("INNER JOIN contas c ON c.Id_Usuario = uf.Usuario_Id ");
+		comando.append("INNER JOIN categorias ca ON ca.Id_Categorias = c.Id_Categoria ");
+		comando.append("WHERE uf.Familia_Id = ?");
+		
+		PreparedStatement p;
+		ResultSet rs = null;
+		
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, idFamily);
+			rs = p.executeQuery();
+			List<Conta> bills = new ArrayList<Conta>();
+			
+			while (rs.next()) {
+				Conta newBill = new Conta();
+				
+				newBill.setTotalValue(rs.getDouble("BillValue"));
+				newBill.setUserName(rs.getString("Name"));
+				newBill.setCategoriaName(rs.getString("Description"));
+				newBill.setStartDate(rs.getDate("billDate"));
+				
+				bills.add(newBill);
+			}
+			
+			return bills;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 }

@@ -305,6 +305,86 @@ var iniciaFamilia = function() {
 									}
 								} ]
 					});
+	
+	var familyBills = $('#familyBills')
+	.DataTable(
+			{
+				aLengthMenu : [ [ 5, 10, 100 ],
+						[ 5, 10, 100 ] ],
+				iDisplayLength : 5,
+				sAjaxDataProp : "",
+				language : {
+					url : "js/Portuguese.json"
+				},
+				sPaginationType : "full_numbers",
+				processing : true,
+				ajax : {
+					url : "../rest/familia/getAllFamilyBills",
+					type : "GET"
+				},
+				select : {
+					style : 'os',
+					selector : 'td:first-child'
+				},
+				columns : [
+						{
+							data : "userName",
+							className : "center"
+						},
+						{
+							data : "categoriaName",
+							className : "center"
+						},
+						{
+							data : "totalValue",
+							className : "center"
+						},
+						{
+							data : "startDate",
+							className : "center"
+						} ]
+			// # sourceURL=sourcees.coffeee
+			});
+	
+	var familyIncomes = $('#familyIncomes')
+	.DataTable(
+			{
+				aLengthMenu : [ [ 5, 10, 100 ],
+						[ 5, 10, 100 ] ],
+				iDisplayLength : 5,
+				sAjaxDataProp : "",
+				language : {
+					url : "js/Portuguese.json"
+				},
+				sPaginationType : "full_numbers",
+				processing : true,
+				ajax : {
+					url : "../rest/familia/getAllFamilyIncomes",
+					type : "GET"
+				},
+				select : {
+					style : 'os',
+					selector : 'td:first-child'
+				},
+				columns : [
+						{
+							data : "userName",
+							className : "center"
+						},
+						{
+							data : "categoriaName",
+							className : "center"
+						},
+						{
+							data : "totalValue",
+							className : "center"
+						},
+						{
+							data : "startDate",
+							className : "center"
+						} ]
+			// # sourceURL=sourcees.coffeee
+			});
 
 }
 // # sourceURL=sourcees.js

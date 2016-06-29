@@ -16,10 +16,17 @@ public class Conta implements Serializable{
 	int categoria;
 	String categoriaName;
 	int userId;
+	String userName;
 	int status;
 	double parcelValue;
 	
 	
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String UserName) {
+		this.userName = UserName;
+	}
 	public int getHasDeadline() {
 		return hasDeadline;
 	}

@@ -5,8 +5,11 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.script.SimpleScriptContext;
 
 import org.omg.CORBA.PUBLIC_MEMBER;
 
@@ -15,6 +18,7 @@ import com.mysql.jdbc.Statement;
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.RendaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Categoria;
+import br.com.ControleFinanceiroCapote.objetos.Conta;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
 import br.com.ControleFinanceiroCapote.objetos.Graph;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
@@ -47,7 +51,7 @@ public class JDBCRendaDAO implements RendaDAO {
 				p.setInt(1, renda.getCategoria());
 				p.setInt(2, renda.getUserId());
 				p.setString(3, renda.getDescription());
-				p.setInt(4, renda.getTotalValue());
+				p.setDouble(4, renda.getTotalValue());
 				p.setInt(5, 1);
 				p.setDate(6, (Date) renda.getStartDate());
 				p.setInt(7, renda.getIsFixed() == 0 ? renda.getTimes() : renda.getIsFixed());
@@ -79,7 +83,7 @@ public class JDBCRendaDAO implements RendaDAO {
 				p.setInt(1, renda.getCategoria());
 				p.setInt(2, renda.getUserId());
 				p.setString(3, renda.getDescription());
-				p.setInt(4, renda.getTotalValue());
+				p.setDouble(4, renda.getTotalValue());
 				p.setInt(5, 1);
 				p.setDate(6, (Date) renda.getStartDate());
 				p.setInt(7, renda.getIsFixed() == 0 ? renda.getTimes() : renda.getIsFixed());
@@ -340,6 +344,45 @@ public class JDBCRendaDAO implements RendaDAO {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+
+	public List<Renda> getAllFamilyIncomes(int idFamily) {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("SELECT r.Valor_Rendas AS incomeValue, u.Usuario AS Name, ");
+		comando.append("ca.Descricao as Description, r.Data_Vencimento as incomeDate ");
+		comando.append("FROM usuarios u ");
+		comando.append("INNER JOIN user_family uf ON uf.Usuario_Id = u.Id_Usuarios ");
+		comando.append("INNER JOIN rendas r ON r.Id_Usuario = uf.Usuario_Id ");
+		comando.append("INNER JOIN categorias ca ON ca.Id_Categorias = r.Id_Categoria ");
+		comando.append("WHERE uf.Familia_Id = ?");
+		
+		PreparedStatement p;
+		ResultSet rs = null;
+		
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, idFamily);
+			rs = p.executeQuery();
+			List<Renda> incomes = new ArrayList<Renda>();
+			SimpleDateFormat date = new SimpleDateFormat("dd-MM-yyyy");
+			while (rs.next()) {
+				Renda newIncome = new Renda();
+				
+				newIncome.setTotalValue(rs.getDouble("incomeValue"));
+				newIncome.setUserName(rs.getString("Name"));
+				newIncome.setCategoriaName(rs.getString("Description"));
+				newIncome.setFormatedDate(date.format(rs.getDate("incomeDate")));
+				
+				incomes.add(newIncome);
+			}
+			
+			return incomes;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 }

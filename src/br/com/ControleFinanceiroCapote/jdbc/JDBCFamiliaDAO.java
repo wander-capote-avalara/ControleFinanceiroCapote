@@ -299,7 +299,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		return getUserAndId(getFamilyByUserId(userId));	
 	}
 
-	private int getFamilyByUserId(int userId) {
+	public int getFamilyByUserId(int userId) {
 		StringBuilder comando = new StringBuilder();
 		
 		comando.append("SELECT uf.Familia_Id as familyId ");
