@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -345,7 +346,8 @@ public class JDBCContaDAO implements ContaDAO {
 		comando.append("INNER JOIN user_family uf ON uf.Usuario_Id = u.Id_Usuarios ");
 		comando.append("INNER JOIN contas c ON c.Id_Usuario = uf.Usuario_Id ");
 		comando.append("INNER JOIN categorias ca ON ca.Id_Categorias = c.Id_Categoria ");
-		comando.append("WHERE uf.Familia_Id = ?");
+		comando.append("WHERE uf.Familia_Id = ? AND c.Status_Conta = 1 ");
+		comando.append("ORDER BY c.Data_Vencimento DESC");
 		
 		PreparedStatement p;
 		ResultSet rs = null;
@@ -355,6 +357,7 @@ public class JDBCContaDAO implements ContaDAO {
 			p.setInt(1, idFamily);
 			rs = p.executeQuery();
 			List<Conta> bills = new ArrayList<Conta>();
+			SimpleDateFormat date = new SimpleDateFormat("dd-MM-yyyy");
 			
 			while (rs.next()) {
 				Conta newBill = new Conta();
@@ -362,7 +365,7 @@ public class JDBCContaDAO implements ContaDAO {
 				newBill.setTotalValue(rs.getDouble("BillValue"));
 				newBill.setUserName(rs.getString("Name"));
 				newBill.setCategoriaName(rs.getString("Description"));
-				newBill.setStartDate(rs.getDate("billDate"));
+				newBill.setFormatedDate(date.format(rs.getDate("billDate")).replace("-", "/"));
 				
 				bills.add(newBill);
 			}

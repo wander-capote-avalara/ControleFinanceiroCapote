@@ -355,7 +355,8 @@ public class JDBCRendaDAO implements RendaDAO {
 		comando.append("INNER JOIN user_family uf ON uf.Usuario_Id = u.Id_Usuarios ");
 		comando.append("INNER JOIN rendas r ON r.Id_Usuario = uf.Usuario_Id ");
 		comando.append("INNER JOIN categorias ca ON ca.Id_Categorias = r.Id_Categoria ");
-		comando.append("WHERE uf.Familia_Id = ?");
+		comando.append("WHERE uf.Familia_Id = ? AND r.Status_Renda = 1 ");
+		comando.append("ORDER BY r.Data_Vencimento DESC");
 		
 		PreparedStatement p;
 		ResultSet rs = null;
@@ -372,7 +373,7 @@ public class JDBCRendaDAO implements RendaDAO {
 				newIncome.setTotalValue(rs.getDouble("incomeValue"));
 				newIncome.setUserName(rs.getString("Name"));
 				newIncome.setCategoriaName(rs.getString("Description"));
-				newIncome.setFormatedDate(date.format(rs.getDate("incomeDate")));
+				newIncome.setFormatedDate(date.format(rs.getDate("incomeDate")).replace("-", "/"));
 				
 				incomes.add(newIncome);
 			}

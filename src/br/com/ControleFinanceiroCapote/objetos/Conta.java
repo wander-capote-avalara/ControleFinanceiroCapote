@@ -12,6 +12,7 @@ public class Conta implements Serializable{
 	int times;
 	double totalValue;
 	java.sql.Date startDate;
+	String formatedDate;
 	int hasDeadline;
 	int categoria;
 	String categoriaName;
@@ -20,7 +21,13 @@ public class Conta implements Serializable{
 	int status;
 	double parcelValue;
 	
-	
+
+	public String getFormatedDate() {
+		return formatedDate;
+	}
+	public void setFormatedDate(String FormatedDate) {
+		this.formatedDate = FormatedDate;
+	}
 	public String getUserName() {
 		return userName;
 	}
