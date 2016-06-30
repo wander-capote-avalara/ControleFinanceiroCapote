@@ -1,21 +1,12 @@
 package br.com.ControleFinanceiroCapote.jdbc;
 
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.catalina.User;
-import org.apache.jasper.tagplugins.jstl.core.ForEach;
-
 import com.mysql.jdbc.Statement;
-import com.sun.istack.internal.Nullable;
-import com.sun.javafx.scene.layout.region.Margins.Converter;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.FamiliaDAO;

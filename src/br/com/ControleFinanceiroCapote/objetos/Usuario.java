@@ -1,12 +1,6 @@
 package br.com.ControleFinanceiroCapote.objetos;
 
 import java.io.Serializable;
-import java.sql.Date;
-import java.util.List;
-
-import com.sun.org.apache.xerces.internal.impl.dv.xs.DecimalDV;
-
-import br.com.ControleFinanceiroCapote.rest.UsuarioRest;
 
 public class Usuario implements Serializable{
 

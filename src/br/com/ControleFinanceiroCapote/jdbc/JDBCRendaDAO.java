@@ -9,17 +9,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.script.SimpleScriptContext;
-
-import org.omg.CORBA.PUBLIC_MEMBER;
-
 import com.mysql.jdbc.Statement;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.RendaDAO;
-import br.com.ControleFinanceiroCapote.objetos.Categoria;
-import br.com.ControleFinanceiroCapote.objetos.Conta;
-import br.com.ControleFinanceiroCapote.objetos.Familia;
 import br.com.ControleFinanceiroCapote.objetos.Graph;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
 import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
@@ -357,10 +350,10 @@ public class JDBCRendaDAO implements RendaDAO {
 		comando.append("INNER JOIN categorias ca ON ca.Id_Categorias = r.Id_Categoria ");
 		comando.append("WHERE uf.Familia_Id = ? AND r.Status_Renda = 1 ");
 		comando.append("ORDER BY r.Data_Vencimento DESC");
-		
+
 		PreparedStatement p;
 		ResultSet rs = null;
-		
+
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 			p.setInt(1, idFamily);
@@ -369,15 +362,52 @@ public class JDBCRendaDAO implements RendaDAO {
 			SimpleDateFormat date = new SimpleDateFormat("dd-MM-yyyy");
 			while (rs.next()) {
 				Renda newIncome = new Renda();
-				
+
 				newIncome.setTotalValue(rs.getDouble("incomeValue"));
 				newIncome.setUserName(rs.getString("Name"));
 				newIncome.setCategoriaName(rs.getString("Description"));
 				newIncome.setFormatedDate(date.format(rs.getDate("incomeDate")).replace("-", "/"));
-				
+
 				incomes.add(newIncome);
 			}
-			
+
+			return incomes;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public List<Graph> getFamilyIncomesTotalValue(int familyId) {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("SELECT SUM(r.Valor_Rendas) AS IncomeValue, u.Usuario AS Name ");
+		comando.append("FROM usuarios u ");
+		comando.append("INNER JOIN user_family uf ON uf.Usuario_Id = u.Id_Usuarios ");
+		comando.append("INNER JOIN rendas r ON r.Id_Usuario = uf.Usuario_Id ");
+		comando.append("INNER JOIN categorias ca ON ca.Id_Categorias = r.Id_Categoria ");
+		comando.append("WHERE uf.Familia_Id = ? AND r.Status_Renda = 1 ");
+		comando.append("GROUP BY u.Usuario");
+
+		PreparedStatement p;
+		ResultSet rs = null;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, familyId);
+			rs = p.executeQuery();
+			List<Graph> incomes = new ArrayList<Graph>();
+
+			while (rs.next()) {
+				Graph newIncome = new Graph();
+
+				newIncome.setName(rs.getString("Name"));
+				newIncome.setY(rs.getDouble("IncomeValue"));
+
+				incomes.add(newIncome);
+			}
+
 			return incomes;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -5,7 +5,7 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
+
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class UtilRest {
@@ -15,6 +15,10 @@ public class UtilRest {
 
 	public int userId() {
 		return Integer.parseInt((String) request.getSession().getAttribute("id"));
+	}
+	
+	public int familyId() {
+		return Integer.parseInt((String) request.getSession().getAttribute("familyId"));
 	}
 
 	public Response buildResponse(Object result) {

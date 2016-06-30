@@ -7,11 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.UsuarioDAO;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
@@ -173,9 +172,10 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	@Override
 	public Usuario authUser(Usuario user) throws SQLException {
 		StringBuilder comando = new StringBuilder();
-		comando.append(
-				"SELECT usuarios.Id_Usuarios as userid, usuarios.Usuario as user, usuarios.Email as email, usuarios.Nivel as nivel");
-		comando.append(" FROM usuarios ");
+		comando.append("SELECT u.Id_Usuarios as userid, u.Usuario as user, ");
+		comando.append("u.Email as email, u.Nivel as nivel, uf.Familia_Id as familyId ");
+		comando.append(" FROM usuarios u ");
+		comando.append("INNER JOIN user_family uf ON uf.Usuario_Id = u.Id_Usuarios ");
 		if (!user.equals("null") || !user.equals("")) {
 			comando.append("WHERE Usuario=? && Senha=?");
 			comando.append(" AND ");
@@ -197,6 +197,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				usuario.setUsuario(rs.getString("user"));
 				usuario.setEmail(rs.getString("email"));
 				usuario.setNivel(rs.getInt("nivel"));
+				usuario.setId_familia(rs.getInt("familyId"));
 			}
 
 		} catch (Exception e) {

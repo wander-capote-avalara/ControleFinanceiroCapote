@@ -14,9 +14,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.objetos.Categoria;
-import br.com.ControleFinanceiroCapote.objetos.Conta;
 import br.com.ControleFinanceiroCapote.servicos.CategoriaService;
-import br.com.ControleFinanceiroCapote.servicos.UsuarioService;
 
 @Path("categoria")
 public class CategoriaRest extends UtilRest {

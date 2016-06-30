@@ -12,12 +12,10 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
+import br.com.ControleFinanceiroCapote.excecao.ValidationException;
+import br.com.ControleFinanceiroCapote.objetos.Familia;
 import br.com.ControleFinanceiroCapote.servicos.FamiliaService;
 import br.com.ControleFinanceiroCapote.servicos.UsuarioService;
-import br.com.ControleFinanceiroCapote.excecao.ValidationException;
-import br.com.ControleFinanceiroCapote.objetos.DataTable;
-import br.com.ControleFinanceiroCapote.objetos.Familia;
-import br.com.ControleFinanceiroCapote.objetos.Usuario;
 
 @Path("familia")
 public class FamiliaRest extends UtilRest {

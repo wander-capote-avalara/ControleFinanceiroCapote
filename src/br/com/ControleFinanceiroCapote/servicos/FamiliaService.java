@@ -1,13 +1,9 @@
 package br.com.ControleFinanceiroCapote.servicos;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.catalina.loader.JdbcLeakPrevention;
-
 import br.com.ControleFinanceiroCapote.bd.conexao.Conexao;
-import br.com.ControleFinanceiroCapote.helpers.Helper;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCContaDAO;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCFamiliaDAO;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCRendaDAO;

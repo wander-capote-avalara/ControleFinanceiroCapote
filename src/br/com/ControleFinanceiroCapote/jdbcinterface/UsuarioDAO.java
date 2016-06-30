@@ -3,8 +3,6 @@ package br.com.ControleFinanceiroCapote.jdbcinterface;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.sun.jndi.toolkit.ctx.StringHeadTail;
-
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
 import br.com.ControleFinanceiroCapote.objetos.Usuario;

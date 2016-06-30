@@ -387,16 +387,18 @@ var iniciaFamilia = function() {
 			});
 	
     var graph = function(datas) {
-        $('#highcharts')
+        $('#BillsGraph')
             .highcharts({
                 chart: {
                     plotBackgroundColor: null,
                     plotBorderWidth: null,
                     plotShadow: false,
-                    type: 'pie'
+                    type: 'pie',
+                    width: 350,
+                    height:300
                 },
                 title: {
-                    text: 'Gráfico de rendas feitas em cada categorias no mês atual'
+                    text: ''
                 },
                 tooltip: {
                     format: '<b>{series.name}<b>{series.percentage:.1f}%',
@@ -423,7 +425,7 @@ var iniciaFamilia = function() {
 
         var cfg = {
             type: "GET",
-            url: "../rest/renda/getIncomesByCategory/",
+            url: "../rest/conta/getFamilyBillsTotalValue/",
             success: function(data) {
                 graph(data);
             },
@@ -436,6 +438,59 @@ var iniciaFamilia = function() {
     };
 
     CFINAC.familia.graphDetailBills();
+    
+    var graphIncomes = function(datas) {
+        $('#IncomesGraph')
+            .highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie',
+                    width: 350,
+                    height:300
+                },
+                title: {
+                    text: ''
+                },
+                tooltip: {
+                    format: '<b>{series.name}<b>{series.percentage:.1f}%',
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}: (R$)</b> {point.y:.2f}',
+                        },
+                        showInLegend: true
+                    }
+                },
+                series: [{
+                    name: 'Valor: (R$)',
+                    data: datas,
+                }],
+            });
+    }
+
+    CFINAC.familia.graphDetailIncomes = function() {
+
+        var cfg = {
+            type: "GET",
+            url: "../rest/renda/getFamilyIncomesTotalValue/",
+            success: function(data) {
+            	graphIncomes(data);
+            },
+            error: function(e) {
+                alertPopUp("Erro ao buscar informações sobre o gráfico de contas!" +
+                    e)
+            }
+        };
+        CFINAC.ajax.post(cfg);
+    };
+
+    CFINAC.familia.graphDetailIncomes();
 
 }
 // # sourceURL=sourcees.js

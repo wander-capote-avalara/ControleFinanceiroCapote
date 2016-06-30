@@ -1,7 +1,6 @@
 package br.com.ControleFinanceiroCapote.servicos;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.util.List;
 
 import br.com.ControleFinanceiroCapote.bd.conexao.Conexao;
@@ -11,7 +10,6 @@ import br.com.ControleFinanceiroCapote.objetos.Conta;
 import br.com.ControleFinanceiroCapote.objetos.Graph;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
 import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
-import br.com.ControleFinanceiroCapote.objetos.Renda;
 
 public class ContaService {
 
@@ -32,8 +30,8 @@ public class ContaService {
 
 	}
 
-	public  List<Conta> getBills(int id, int userId) {
-		
+	public List<Conta> getBills(int id, int userId) {
+
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
@@ -41,10 +39,10 @@ public class ContaService {
 		conec.fecharConexao();
 
 		return billList;
-	}	
-	
-	public  List<Conta> getBillsByDate(RangeDTO range, int userId) {
-		
+	}
+
+	public List<Conta> getBillsByDate(RangeDTO range, int userId) {
+
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
@@ -65,24 +63,35 @@ public class ContaService {
 	}
 
 	public int getBillsTotalValue(RangeDTO datas, int userId) {
-		
+
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
 		int billsValue = jdbcContadao.getBillsTotalValue(datas, userId);
 		conec.fecharConexao();
-		
+
 		return billsValue;
 	}
-	
+
 	public List<Graph> getBillsByCategory(RangeDTO datas, int userId) {
-		
+
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
 		List<Graph> bills = jdbcContadao.getBillsByCategory(userId, datas);
 		conec.fecharConexao();
-		
+
+		return bills;
+	}
+
+	public List<Graph> getFamilyBillsTotalValue(int familyId) {
+
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
+		List<Graph> bills = jdbcContadao.getFamilyBillsTotalValue(familyId);
+		conec.fecharConexao();
+
 		return bills;
 	}
 

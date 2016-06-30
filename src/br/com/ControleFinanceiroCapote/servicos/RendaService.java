@@ -5,9 +5,7 @@ import java.util.List;
 
 import br.com.ControleFinanceiroCapote.bd.conexao.Conexao;
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
-import br.com.ControleFinanceiroCapote.jdbc.JDBCContaDAO;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCRendaDAO;
-import br.com.ControleFinanceiroCapote.objetos.Conta;
 import br.com.ControleFinanceiroCapote.objetos.Graph;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
 import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
@@ -82,5 +80,14 @@ public class RendaService {
 		conec.fecharConexao();
 		
 		return incomes;
+	}
+	public List<Graph> getFamilyIncomesTotalValue(int familyId) {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCRendaDAO jdbcRendadao = new JDBCRendaDAO(conexao);
+		List<Graph> Incomes = jdbcRendadao.getFamilyIncomesTotalValue(familyId);
+		conec.fecharConexao();
+
+		return Incomes;
 	}
 }

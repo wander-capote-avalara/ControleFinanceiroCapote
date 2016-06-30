@@ -130,4 +130,17 @@ public class ContaRest extends UtilRest  {
 			return this.buildErrorResponse(e.getMessage());
 		}
 	}
+	
+	@GET
+	@Path("/getFamilyBillsTotalValue/")
+	@Consumes("application/*")
+	@Produces("text/plain")
+	public Response getFamilyBillsTotalValue() {
+		try {
+			return this.buildResponse(serviceConta.getFamilyBillsTotalValue(familyId()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
 }

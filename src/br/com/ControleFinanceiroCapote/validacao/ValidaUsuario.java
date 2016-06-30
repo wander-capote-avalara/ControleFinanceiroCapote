@@ -1,7 +1,5 @@
 package br.com.ControleFinanceiroCapote.validacao;
 
-import java.util.List;
-
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.objetos.Usuario;
 

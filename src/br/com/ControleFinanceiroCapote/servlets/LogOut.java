@@ -1,8 +1,6 @@
 package br.com.ControleFinanceiroCapote.servlets;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

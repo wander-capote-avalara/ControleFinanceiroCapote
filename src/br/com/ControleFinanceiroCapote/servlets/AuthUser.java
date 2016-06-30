@@ -1,31 +1,24 @@
 package br.com.ControleFinanceiroCapote.servlets;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.security.*;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.Base64;
-import java.util.Base64.Decoder;
-import java.util.Base64.Encoder;
 
 import com.google.gson.Gson;
-import com.mysql.jdbc.util.Base64Decoder;
-import com.sun.javafx.scene.layout.region.Margins.Converter;
 
 import br.com.ControleFinanceiroCapote.bd.conexao.Conexao;
+import br.com.ControleFinanceiroCapote.helpers.Helper;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCUsuarioDAO;
 import br.com.ControleFinanceiroCapote.objetos.Usuario;
-import br.com.ControleFinanceiroCapote.helpers.Helper;
 
 public class AuthUser extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -60,6 +53,7 @@ public class AuthUser extends HttpServlet {
 				//String encodedPassword = encoder.encodeToString(senha.getBytes());
 
 				sessao.setAttribute("id", Integer.toString(userExists.getId()));
+				sessao.setAttribute("familyId", Integer.toString(userExists.getId_familia()));
 				sessao.setAttribute("lvl", userExists.getNivel());
 
 				// Decoder decoder = Base64.getDecoder();

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mysql.jdbc.Statement;
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.ContaDAO;
@@ -18,7 +17,6 @@ import br.com.ControleFinanceiroCapote.objetos.Conta;
 import br.com.ControleFinanceiroCapote.objetos.Graph;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
 import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
-import br.com.ControleFinanceiroCapote.objetos.Renda;
 
 public class JDBCContaDAO implements ContaDAO {
 
@@ -375,6 +373,43 @@ public class JDBCContaDAO implements ContaDAO {
 			e.printStackTrace();
 		}
 
+		return null;
+	}
+	
+	public List<Graph> getFamilyBillsTotalValue(int idFamily) {
+		StringBuilder comando = new StringBuilder();
+		
+		comando.append("SELECT SUM(c.Valor_Contas) AS BillValue, u.Usuario AS Name ");
+		comando.append("FROM usuarios u ");
+		comando.append("INNER JOIN user_family uf ON uf.Usuario_Id = u.Id_Usuarios ");
+		comando.append("INNER JOIN contas c ON c.Id_Usuario = uf.Usuario_Id ");
+		comando.append("INNER JOIN categorias ca ON ca.Id_Categorias = c.Id_Categoria ");
+		comando.append("WHERE uf.Familia_Id = ? AND c.Status_Conta = 1 ");
+		comando.append("GROUP BY u.Usuario");
+		
+		PreparedStatement p;
+		ResultSet rs = null;
+		
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, idFamily);
+			rs = p.executeQuery();
+			List<Graph> bills = new ArrayList<Graph>();
+			
+			while (rs.next()) {
+				Graph newBill = new Graph();
+				
+				newBill.setName(rs.getString("Name"));
+				newBill.setY(rs.getDouble("BillValue"));
+				
+				bills.add(newBill);
+			}
+			
+			return bills;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 
