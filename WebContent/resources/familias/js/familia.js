@@ -285,14 +285,6 @@ var iniciaFamilia = function() {
 									className : "center"
 								},
 								{
-									data : "saldoAtual",
-									className : "center"
-								},
-								{
-									data : "saldoProx",
-									className : "center"
-								},
-								{
 									data : "id",
 									className : "center",
 									bSortable : false,

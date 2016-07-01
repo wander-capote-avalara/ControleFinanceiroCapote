@@ -2,19 +2,41 @@
 	<div id="row">
 		<div id="conteudoRegistro">
 			<div class="row">
-				<div id="title" class="text-center">
-					<h1 style="color: #2A3F54;">Gestão da família</h1>
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<div id="title" class="text-center">
+						<h1 style="color: #2A3F54;">Gestão da família</h1>
+					</div>
+					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+						<form class="form-horizontal" method="post">
+							<div class="form-group">
+								<div id="title" class="text-left">
+									<h3 style="color: #2A3F54;">Recrute um familiar</h3>
+								</div>
+								<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+									<input class="hid" id="id"> Nome: <input type="text"
+										class="form-control" id="inputName"
+										placeholder="Nome do usuário" required maxlength="45">
+								</div>
+								<div class="form-group">
+									<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+										<button type="button" class="btn btn-danger buttom"
+											onclick="CFINAC.contas.add()" style="width:100%; margin-top:10px">Enviar</button>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+						<table id="familyTable" class="display">
+							<thead>
+								<tr>
+									<th>Nome</th>
+									<th>Ações</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
 				</div>
-				<table id="familyTable" class="display" cellspacing="0" width="100%">
-					<thead>
-						<tr>
-							<th>Nome</th>
-							<th>Saldo (R$)</th>
-							<th>Saldo Seguinte (R$)</th>
-							<th>Ações</th>
-						</tr>
-					</thead>
-				</table>
 			</div>
 			<div class="row" id="tables">
 				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
