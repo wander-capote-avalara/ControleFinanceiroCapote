@@ -3,6 +3,7 @@ package br.com.ControleFinanceiroCapote.jdbc;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import com.mysql.jdbc.Statement;
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.FamiliaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
+import br.com.ControleFinanceiroCapote.objetos.Invite;
 import br.com.ControleFinanceiroCapote.objetos.Usuario;
 
 public class JDBCFamiliaDAO implements FamiliaDAO {
@@ -67,6 +69,29 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+
+	public void inviteUsers(Invite invite) {
+		
+		StringBuilder comando = new StringBuilder();
+		
+		comando.append("INSERT INTO convites (id_membro_familia, id_convidado) ");
+		comando.append("VALUES (?,?)");
+
+		PreparedStatement p;
+		
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			for (Integer userId : invite.getUsersToInvite()) {
+				p.setInt(1, invite.getFamilyOwner());
+				p.setInt(2, userId);
+				p.execute();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	public boolean listUserValidadeById(List<Integer> usersId) {
@@ -368,5 +393,28 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public List<Invite> getInvites(int userId) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT id_membro_familia as inviteFrom FROM convites c ");
+		comando.append("WHERE c.id_convidado = ?");
+		List<Invite> listInvite = new ArrayList<Invite>() ;
+		try {
+			PreparedStatement stmt = conexao.prepareStatement(comando.toString());
+			stmt.setInt(1, userId);
+			ResultSet rs = stmt.executeQuery();
+	
+			while (rs.next()) {
+				Invite newInvite = new Invite();
+				newInvite.setFamilyOwner(rs.getInt("inviteFrom"));
+				
+				listInvite.add(newInvite);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return listInvite;
 	}
 }

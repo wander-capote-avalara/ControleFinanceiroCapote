@@ -10,6 +10,7 @@ import br.com.ControleFinanceiroCapote.jdbc.JDBCRendaDAO;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCUsuarioDAO;
 import br.com.ControleFinanceiroCapote.objetos.Conta;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
+import br.com.ControleFinanceiroCapote.objetos.Invite;
 import br.com.ControleFinanceiroCapote.objetos.Renda;
 import br.com.ControleFinanceiroCapote.objetos.Usuario;
 
@@ -24,6 +25,18 @@ public class FamiliaService {
 		Connection conexao = conec.abrirConexao();
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
 		jdbcFamilia.inserir(family);
+		conec.fecharConexao();
+	}
+
+
+	public void inviteUsers(Invite invite, int owner) throws Exception {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
+		if (jdbcFamilia.isLeader(owner))
+			jdbcFamilia.inviteUsers(invite);
+		else 
+			throw new Exception("Você precisa ser dono da familia para fazer essa operação!");
 		conec.fecharConexao();
 	}
 
@@ -110,4 +123,13 @@ public class FamiliaService {
 		return incomes;
 	}
 
+	public List<Invite> getInvites(int userId) {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
+		List<Invite> invites = jdbcFamilia.getInvites(userId);
+		conec.fecharConexao();
+
+		return invites;
+	}
 }

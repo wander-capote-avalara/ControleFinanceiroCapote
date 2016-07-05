@@ -37,6 +37,14 @@ var iniciaFamilia = function() {
 		hintText : "Procure algo"
 	});
 
+	$('#tokenizeInvite').tokenize({
+		text : $(".TokenSearch input").val(),
+		datas : "../rest/familia/",
+		valueField : "id",
+		textField : "usuario",
+		hintText : "Procure algo"
+	});
+
 	$(document)
 			.ready(
 					function() {
@@ -193,8 +201,7 @@ var iniciaFamilia = function() {
 					})
 
 	CFINAC.familia.leadProvider = function(id) {
-		var msg = "Você deseja realmente torna-lo lider?", 
-		cfg = {
+		var msg = "Você deseja realmente torna-lo lider?", cfg = {
 			title : "Mensagem",
 			height : 250,
 			width : 400,
@@ -226,9 +233,48 @@ var iniciaFamilia = function() {
 		$("#msg").dialog(cfg);
 	}
 	
-	CFINAC.familia.kickUser = function(id) {
-		var msg = "Você deseja realmente expulsa-lo?", 
+	
+	
+	CFINAC.familia.invite = function() {
+
+		var invite = new Object();
+		invite.usersToInvite = $("#tokenizeInvite").val();
+
 		cfg = {
+			type : "POST",
+			url : "../rest/familia/inviteUsers/",
+			data : invite,
+			success : function(msg) {
+				$("#tokenizeInvite").tokenize().clear();
+				$("#conteudoRegistro .btn-danger").click();
+			},
+			error : function(err) {
+				alert("Erro na ação!" + err.responseText);
+			}
+		};
+		CFINAC.ajax.post(cfg);
+	}
+	
+	CFINAC.familia.getInvites = function(){
+			var cfg = {
+				type : "GET",
+				url : "../rest/familia/getInvites",
+				success : function(invites) {
+					if(invites[0])
+						alertPopUp("deuCertinhoWOOOW");
+				},
+				error : function(e) {
+					window.location="../Login.html";
+				}
+			};
+			CFINAC.ajax.post(cfg);
+		}
+		
+	CFINAC.familia.getInvites();
+	setInterval(CFINAC.familia.getInvites, 30000);
+	
+	CFINAC.familia.kickUser = function(id) {
+		var msg = "Você deseja realmente expulsa-lo?", cfg = {
 			title : "Mensagem",
 			height : 250,
 			width : 400,
@@ -297,192 +343,176 @@ var iniciaFamilia = function() {
 									}
 								} ]
 					});
-	
-	var familyBills = $('#familyBills')
-	.DataTable(
-			{
-				aLengthMenu : [ [ 5, 10, 100 ],
-						[ 5, 10, 100 ] ],
-				iDisplayLength : 5,
-				sAjaxDataProp : "",
-				language : {
-					url : "js/Portuguese.json"
-				},
-				sPaginationType : "full_numbers",
-				processing : true,
-				ajax : {
-					url : "../rest/familia/getAllFamilyBills",
-					type : "GET"
-				},
-				select : {
-					style : 'os',
-					selector : 'td:first-child'
-				},
-				columns : [
-						{
-							data : "userName",
-							className : "center"
-						},
-						{
-							data : "categoriaName",
-							className : "center"
-						},
-						{
-							data : "totalValue",
-							className : "center"
-						},
-						{
-							data : "formatedDate",
-							className : "center"
-						} ]
-			// # sourceURL=sourcees.coffeee
-			});
-	
-	var familyIncomes = $('#familyIncomes')
-	.DataTable(
-			{
-				aLengthMenu : [ [ 5, 10, 100 ],
-						[ 5, 10, 100 ] ],
-				iDisplayLength : 5,
-				sAjaxDataProp : "",
-				language : {
-					url : "js/Portuguese.json"
-				},
-				sPaginationType : "full_numbers",
-				processing : true,
-				ajax : {
-					url : "../rest/familia/getAllFamilyIncomes",
-					type : "GET"
-				},
-				select : {
-					style : 'os',
-					selector : 'td:first-child'
-				},
-				columns : [
-						{
-							data : "userName",
-							className : "center"
-						},
-						{
-							data : "categoriaName",
-							className : "center"
-						},
-						{
-							data : "totalValue",
-							className : "center"
-						},
-						{
-							data : "formatedDate",
-							className : "center"
-						} ]
-			// # sourceURL=sourcees.coffeee
-			});
-	
-    var graph = function(datas) {
-        $('#BillsGraph')
-            .highcharts({
-                chart: {
-                    plotBackgroundColor: null,
-                    plotBorderWidth: null,
-                    plotShadow: false,
-                    type: 'pie',
-                    width: 350,
-                    height:300
-                },
-                title: {
-                    text: ''
-                },
-                tooltip: {
-                    format: '<b>{series.name}<b>{series.percentage:.1f}%',
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: true,
-                            format: '<b>{point.name}: (R$)</b> {point.y:.2f}',
-                        },
-                        showInLegend: true
-                    }
-                },
-                series: [{
-                    name: 'Valor: (R$)',
-                    data: datas,
-                }],
-            });
-    }
 
-    CFINAC.familia.graphDetailBills = function() {
+	var familyBills = $('#familyBills').DataTable({
+		aLengthMenu : [ [ 5, 10, 100 ], [ 5, 10, 100 ] ],
+		iDisplayLength : 5,
+		sAjaxDataProp : "",
+		language : {
+			url : "js/Portuguese.json"
+		},
+		sPaginationType : "full_numbers",
+		processing : true,
+		ajax : {
+			url : "../rest/familia/getAllFamilyBills",
+			type : "GET"
+		},
+		select : {
+			style : 'os',
+			selector : 'td:first-child'
+		},
+		columns : [ {
+			data : "userName",
+			className : "center"
+		}, {
+			data : "categoriaName",
+			className : "center"
+		}, {
+			data : "totalValue",
+			className : "center"
+		}, {
+			data : "formatedDate",
+			className : "center"
+		} ]
+	// # sourceURL=sourcees.coffeee
+	});
 
-        var cfg = {
-            type: "GET",
-            url: "../rest/conta/getFamilyBillsTotalValue/",
-            success: function(data) {
-                graph(data);
-            },
-            error: function(e) {
-                alertPopUp("Erro ao buscar informações sobre o gráfico de contas!" +
-                    e)
-            }
-        };
-        CFINAC.ajax.post(cfg);
-    };
+	var familyIncomes = $('#familyIncomes').DataTable({
+		aLengthMenu : [ [ 5, 10, 100 ], [ 5, 10, 100 ] ],
+		iDisplayLength : 5,
+		sAjaxDataProp : "",
+		language : {
+			url : "js/Portuguese.json"
+		},
+		sPaginationType : "full_numbers",
+		processing : true,
+		ajax : {
+			url : "../rest/familia/getAllFamilyIncomes",
+			type : "GET"
+		},
+		select : {
+			style : 'os',
+			selector : 'td:first-child'
+		},
+		columns : [ {
+			data : "userName",
+			className : "center"
+		}, {
+			data : "categoriaName",
+			className : "center"
+		}, {
+			data : "totalValue",
+			className : "center"
+		}, {
+			data : "formatedDate",
+			className : "center"
+		} ]
+	// # sourceURL=sourcees.coffeee
+	});
 
-    CFINAC.familia.graphDetailBills();
-    
-    var graphIncomes = function(datas) {
-        $('#IncomesGraph')
-            .highcharts({
-                chart: {
-                    plotBackgroundColor: null,
-                    plotBorderWidth: null,
-                    plotShadow: false,
-                    type: 'pie',
-                    width: 350,
-                    height:300
-                },
-                title: {
-                    text: ''
-                },
-                tooltip: {
-                    format: '<b>{series.name}<b>{series.percentage:.1f}%',
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: true,
-                            format: '<b>{point.name}: (R$)</b> {point.y:.2f}',
-                        },
-                        showInLegend: true
-                    }
-                },
-                series: [{
-                    name: 'Valor: (R$)',
-                    data: datas,
-                }],
-            });
-    }
+	var graph = function(datas) {
+		$('#BillsGraph').highcharts({
+			chart : {
+				plotBackgroundColor : null,
+				plotBorderWidth : null,
+				plotShadow : false,
+				type : 'pie',
+				width : 350,
+				height : 300
+			},
+			title : {
+				text : ''
+			},
+			tooltip : {
+				format : '<b>{series.name}<b>{series.percentage:.1f}%',
+			},
+			plotOptions : {
+				pie : {
+					allowPointSelect : true,
+					cursor : 'pointer',
+					dataLabels : {
+						enabled : true,
+						format : '<b>{point.name}: (R$)</b> {point.y:.2f}',
+					},
+					showInLegend : true
+				}
+			},
+			series : [ {
+				name : 'Valor: (R$)',
+				data : datas,
+			} ],
+		});
+	}
 
-    CFINAC.familia.graphDetailIncomes = function() {
+	CFINAC.familia.graphDetailBills = function() {
 
-        var cfg = {
-            type: "GET",
-            url: "../rest/renda/getFamilyIncomesTotalValue/",
-            success: function(data) {
-            	graphIncomes(data);
-            },
-            error: function(e) {
-                alertPopUp("Erro ao buscar informações sobre o gráfico de contas!" +
-                    e)
-            }
-        };
-        CFINAC.ajax.post(cfg);
-    };
+		var cfg = {
+			type : "GET",
+			url : "../rest/conta/getFamilyBillsTotalValue/",
+			success : function(data) {
+				graph(data);
+			},
+			error : function(e) {
+				alertPopUp("Erro ao buscar informações sobre o gráfico de contas!"
+						+ e)
+			}
+		};
+		CFINAC.ajax.post(cfg);
+	};
 
-    CFINAC.familia.graphDetailIncomes();
+	CFINAC.familia.graphDetailBills();
+
+	var graphIncomes = function(datas) {
+		$('#IncomesGraph').highcharts({
+			chart : {
+				plotBackgroundColor : null,
+				plotBorderWidth : null,
+				plotShadow : false,
+				type : 'pie',
+				width : 350,
+				height : 300
+			},
+			title : {
+				text : ''
+			},
+			tooltip : {
+				format : '<b>{series.name}<b>{series.percentage:.1f}%',
+			},
+			plotOptions : {
+				pie : {
+					allowPointSelect : true,
+					cursor : 'pointer',
+					dataLabels : {
+						enabled : true,
+						format : '<b>{point.name}: (R$)</b> {point.y:.2f}',
+					},
+					showInLegend : true
+				}
+			},
+			series : [ {
+				name : 'Valor: (R$)',
+				data : datas,
+			} ],
+		});
+	}
+
+	CFINAC.familia.graphDetailIncomes = function() {
+
+		var cfg = {
+			type : "GET",
+			url : "../rest/renda/getFamilyIncomesTotalValue/",
+			success : function(data) {
+				graphIncomes(data);
+			},
+			error : function(e) {
+				alertPopUp("Erro ao buscar informações sobre o gráfico de contas!"
+						+ e)
+			}
+		};
+		CFINAC.ajax.post(cfg);
+	};
+
+	CFINAC.familia.graphDetailIncomes();
 
 }
 // # sourceURL=sourcees.js

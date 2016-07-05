@@ -9,6 +9,7 @@ import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.helpers.Helper;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCUsuarioDAO;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
+import br.com.ControleFinanceiroCapote.objetos.Invite;
 import br.com.ControleFinanceiroCapote.objetos.Usuario;
 
 public class UsuarioService {

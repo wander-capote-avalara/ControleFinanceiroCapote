@@ -14,6 +14,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
+import br.com.ControleFinanceiroCapote.objetos.Invite;
 import br.com.ControleFinanceiroCapote.servicos.FamiliaService;
 import br.com.ControleFinanceiroCapote.servicos.UsuarioService;
 
@@ -41,7 +42,37 @@ public class FamiliaRest extends UtilRest {
 			return this.buildErrorResponse("Insira usuários válidos!");
 		}
 	}
+	
+	@POST
+	@Path("/inviteUsers")
+	@Consumes("application/*")
+	@Produces("text/plain")
 
+	public Response inviteUsers(String inviteParam) {
+		try {
+			Invite invite = new ObjectMapper().readValue(inviteParam, Invite.class);
+			invite.setFamilyOwner(familyId());
+			serviceFamily.inviteUsers(invite, userId());
+			return this.buildResponse("Operação feita com sucesso!");
+		} catch (Exception e) {
+			return this.buildErrorResponse("Você precisa ser líder da família para fazer essa ação!");
+		}
+	}
+	
+	
+	@GET
+	@Path("/getInvites")
+	@Produces("text/plain")
+	public Response getInvites() {
+		try {
+			return this.buildResponse(serviceFamily.getInvites(userId()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+	
+	
 	@GET
 	@Produces("text/plain")
 	public Response getUsers(@QueryParam("search") String text) {
