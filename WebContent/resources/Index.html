@@ -39,6 +39,7 @@
 <script src="js/highcharts.js"></script>
 <script src="js/hcexporting.js"></script>
 <script src="js/hctheme.js"></script>
+<script src="js/pusher.js"></script>
 <link href="css/custom.css" rel="stylesheet">
 <link href="css/custom/custom.css" rel="stylesheet">
 <link href="../usuarios/css/usuario.css" rel="stylesheet">
@@ -74,6 +75,7 @@
 									<h6>
 										Família: <a id="family" onclick="viewFamily()"></a>
 									</h6>
+									<h6>Convites: <i id="invites" onclick="CFINAC.index.allInvites()" data-toggle='modal' data-target='#Modal' class="fa fa-envelope-o" aria-hidden="true"> 0</i></h6>
 								</div>
 							</div>
 							<!-- sidebar menu -->
@@ -167,5 +169,4 @@
 			iniciaFluxoCaixa();
 		});
 	}
-
 </script>

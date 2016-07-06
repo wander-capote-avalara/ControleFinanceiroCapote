@@ -255,24 +255,6 @@ var iniciaFamilia = function() {
 		CFINAC.ajax.post(cfg);
 	}
 	
-	CFINAC.familia.getInvites = function(){
-			var cfg = {
-				type : "GET",
-				url : "../rest/familia/getInvites",
-				success : function(invites) {
-					if(invites[0])
-						alertPopUp("deuCertinhoWOOOW");
-				},
-				error : function(e) {
-					window.location="../Login.html";
-				}
-			};
-			CFINAC.ajax.post(cfg);
-		}
-		
-	CFINAC.familia.getInvites();
-	setInterval(CFINAC.familia.getInvites, 30000);
-	
 	CFINAC.familia.kickUser = function(id) {
 		var msg = "Você deseja realmente expulsa-lo?", cfg = {
 			title : "Mensagem",

@@ -45,7 +45,7 @@ li {
 	border-top: 1px solid #E7E7E7;
 	border-bottom: 1px solid #E7E7E7;
 	margin-top: 5px;
-	height: 140px;
+	height: 150px;
 	overflow: auto;
 }
 
@@ -176,4 +176,9 @@ span{
 
 #showTables{
 	margin-top: 50px;
+}
+
+#invites{
+	cursor: pointer; 
+	font-weight: bold;
 }

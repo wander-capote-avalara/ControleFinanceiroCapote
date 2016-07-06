@@ -70,17 +70,16 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			}
 		}
 	}
-	
 
 	public void inviteUsers(Invite invite) {
-		
+
 		StringBuilder comando = new StringBuilder();
-		
+
 		comando.append("INSERT INTO convites (id_membro_familia, id_convidado) ");
 		comando.append("VALUES (?,?)");
 
 		PreparedStatement p;
-		
+
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 			for (Integer userId : invite.getUsersToInvite()) {
@@ -91,7 +90,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public boolean listUserValidadeById(List<Integer> usersId) {
@@ -311,20 +310,20 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		return listUser;
 	}
 
-	public List<Usuario> getFamilyMembers(int userId) {		
-		return getUserAndId(getFamilyByUserId(userId));	
+	public List<Usuario> getFamilyMembers(int userId) {
+		return getUserAndId(getFamilyByUserId(userId));
 	}
 
 	public int getFamilyByUserId(int userId) {
 		StringBuilder comando = new StringBuilder();
-		
+
 		comando.append("SELECT uf.Familia_Id as familyId ");
 		comando.append("FROM user_family uf ");
 		comando.append("WHERE uf.Usuario_Id = ?");
-		
+
 		PreparedStatement p;
 		ResultSet rs = null;
-		
+
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 			p.setInt(1, userId);
@@ -335,7 +334,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return 0;
 	}
 
@@ -365,7 +364,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		comando.append("WHERE fa.Id_Usuario = ?");
 
 		PreparedStatement p;
-		
+
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 			p.setInt(1, id);
@@ -376,16 +375,15 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		}
 		return false;
 	}
-	
-	
-	public void kickUser(int id){
+
+	public void kickUser(int id) {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("DELETE FROM user_family ");
 		comando.append("WHERE Usuario_Id = ?");
 
 		PreparedStatement p;
-		
+
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 			p.setInt(1, id);
@@ -399,16 +397,16 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT id_membro_familia as inviteFrom FROM convites c ");
 		comando.append("WHERE c.id_convidado = ?");
-		List<Invite> listInvite = new ArrayList<Invite>() ;
+		List<Invite> listInvite = new ArrayList<Invite>();
 		try {
 			PreparedStatement stmt = conexao.prepareStatement(comando.toString());
 			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
-	
+
 			while (rs.next()) {
 				Invite newInvite = new Invite();
 				newInvite.setFamilyOwner(rs.getInt("inviteFrom"));
-				
+
 				listInvite.add(newInvite);
 			}
 		} catch (SQLException e) {
@@ -416,5 +414,72 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			return null;
 		}
 		return listInvite;
+	}
+
+	public List<Invite> getInvitesInfo(int userId) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT u.Usuario AS userName, f.Nome AS familyName, c.id_membro_familia as familyId ");
+		comando.append("FROM convites c ");
+		comando.append("INNER JOIN familias f ON f.Id_Familias = c.id_membro_familia ");
+		comando.append("INNER JOIN usuarios u ON u.Id_Usuarios = f.Id_Usuario ");
+		comando.append("WHERE c.id_convidado = ? ");
+		List<Invite> listInvite = new ArrayList<Invite>();
+		try {
+			PreparedStatement stmt = conexao.prepareStatement(comando.toString());
+			stmt.setInt(1, userId);
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				Invite newInvite = new Invite();
+				newInvite.setFamilyName(rs.getString("familyName"));
+				newInvite.setOwnerName(rs.getString("userName"));
+				newInvite.setFamilyOwner(rs.getInt("familyId"));
+
+				listInvite.add(newInvite);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return listInvite;
+	}
+
+	public void declineInvite(int id, int userId) {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("DELETE FROM convites ");
+		comando.append("WHERE id_membro_familia = ? AND id_convidado = ?");
+
+		PreparedStatement p;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, id);
+			p.setInt(2, userId);
+			p.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void acceptInvite(int id, int userId) {
+		declineInvite(id, userId);
+		kickUser(userId);
+		
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("INSERT INTO user_family (Familia_Id, Usuario_Id) ");
+		comando.append("VALUES (?,?)");
+
+		PreparedStatement p;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, id);
+			p.setInt(2, userId);
+			p.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -72,6 +72,18 @@ public class FamiliaRest extends UtilRest {
 		}
 	}
 	
+	@GET
+	@Path("/getInvitesInfo")
+	@Produces("text/plain")
+	public Response getInvitesInfo() {
+		try {
+			return this.buildResponse(serviceFamily.getInvitesInfo(userId()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+	
 	
 	@GET
 	@Produces("text/plain")
@@ -90,6 +102,32 @@ public class FamiliaRest extends UtilRest {
 	public Response getFamiliesById(@PathParam("id") int id) {
 		try {
 			return this.buildResponse(serviceFamily.getFamilies(id));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+	
+	@POST
+	@Path("/declineInvite/{id}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response declineInvite(@PathParam("id") int id) {
+		try {
+			serviceFamily.declineInvite(id, userId());
+			return this.buildResponse("Convite recusado com sucesso!");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+	
+	@POST
+	@Path("/acceptInvite/{id}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response acceptInvite(@PathParam("id") int id) {
+		try {
+			serviceFamily.acceptInvite(id, userId());
+			return this.buildResponse("Convite aceitado com sucesso!");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());

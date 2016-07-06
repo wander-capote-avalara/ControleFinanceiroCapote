@@ -132,4 +132,30 @@ public class FamiliaService {
 
 		return invites;
 	}
+
+	public List<Invite> getInvitesInfo(int userId) {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
+		List<Invite> invites = jdbcFamilia.getInvitesInfo(userId);
+		conec.fecharConexao();
+
+		return invites;
+	}
+
+	public void declineInvite(int id, int userId) {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
+		jdbcFamilia.declineInvite(id, userId);
+		conec.fecharConexao();
+	}
+
+	public void acceptInvite(int id, int userId) {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
+		jdbcFamilia.acceptInvite(id, userId);
+		conec.fecharConexao();
+	}
 }

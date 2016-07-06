@@ -43,7 +43,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				p.setString(2, user.getSenha());
 				p.setString(3, user.getEmail());
 				p.setInt(4, user.getNivel());
-				p.setInt(5, user.getAtivo());
+				p.setInt(5, 1);
 
 				p.executeUpdate();
 				rs = p.getGeneratedKeys();
@@ -175,9 +175,9 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		comando.append("SELECT u.Id_Usuarios as userid, u.Usuario as user, ");
 		comando.append("u.Email as email, u.Nivel as nivel, uf.Familia_Id as familyId ");
 		comando.append(" FROM usuarios u ");
-		comando.append("INNER JOIN user_family uf ON uf.Usuario_Id = u.Id_Usuarios ");
+		comando.append("LEFT JOIN user_family uf ON uf.Usuario_Id = u.Id_Usuarios ");
 		if (!user.equals("null") || !user.equals("")) {
-			comando.append("WHERE Usuario=? && Senha=?");
+			comando.append("WHERE Usuario=? AND Senha=?");
 			comando.append(" AND ");
 			comando.append("Ativo > 0");
 		}

@@ -122,6 +122,7 @@ iniciaRenda = function() {
                 };
 
                 CFINAC.rendas.exibirDetalhes = function(detailedList) {
+                	$("#ModalLabel").html("Detalhes");
                     var html = "<div class='table-responsive' id='details'>";
                     html += "<table class='table table-hover table-striped'>";
                     html += "<tr>";
