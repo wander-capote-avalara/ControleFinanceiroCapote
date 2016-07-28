@@ -97,7 +97,7 @@
 												<li onclick="changeToIncome()"><a>Renda</a></li>
 												<li onclick="changeToCategory()"><a>Categoria</a></li>
 											</ul></li>
-										<li onclick="changeCashFlow()"><a><i class="fa fa-money"
+										<li onclick="changeCashFlow()" id="firstPage"><a><i class="fa fa-money"
 												title="FUCK THE BITCHES!"></i> Fluxo de Caixa</a></li>
 										<li><a><i class="fa fa-cogs"></i> Projeções</a></li>
 									</ul>
@@ -144,6 +144,11 @@
 </html>
 
 <script type="text/javascript">
+	$(function(){
+		changeCashFlow();
+		$("#firstPage").addClass("nv active");
+	});
+	
 	var changeToIncome = function() {
 		$("#cont").load("rendas/rendas.html", function() {
 			iniciaRenda();
