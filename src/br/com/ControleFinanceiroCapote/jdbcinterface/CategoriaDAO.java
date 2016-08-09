@@ -7,4 +7,6 @@ import br.com.ControleFinanceiroCapote.objetos.Categoria;
 public interface CategoriaDAO {
 
 	public List<Categoria> getCategories(int id, int userId);
+	public void inserir(Categoria categoria, int userId);
+	public void deletaCategoria(int id);
 }
