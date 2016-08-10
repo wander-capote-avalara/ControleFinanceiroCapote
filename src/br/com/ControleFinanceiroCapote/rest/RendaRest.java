@@ -108,7 +108,7 @@ public class RendaRest extends UtilRest  {
 	@GET
 	@Path("/getIncomesPerDate/")
 	@Produces("text/plain")
-	public Response getBillsPerDate(@QueryParam("firstParam") String firstMonth, @QueryParam("secondParam") String firstYear, @QueryParam("thirdParam") String secondMonth, @QueryParam("fourthParam") String secondYear) {
+	public Response getIncomesPerDate(@QueryParam("firstParam") String firstMonth, @QueryParam("secondParam") String firstYear, @QueryParam("thirdParam") String secondMonth, @QueryParam("fourthParam") String secondYear) {
 		try {
 			RangeDTO range = new RangeDTO();
 			range.setFirstMonth(firstMonth);
