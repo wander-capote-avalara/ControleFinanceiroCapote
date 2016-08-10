@@ -55,7 +55,6 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			comando.append("WHERE Id_Familias = ?");
 
 			PreparedStatement p;
-			ResultSet rs = null;
 
 			try {
 				p = this.conexao.prepareStatement(comando.toString());
@@ -203,7 +202,6 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 
 	public String getUserByFamilyId(int id) {
 
-		List<Usuario> listUser = new ArrayList<Usuario>();
 
 		StringBuilder comando2 = new StringBuilder();
 		comando2.append("SELECT uss.Usuario as user from usuarios uss ");
