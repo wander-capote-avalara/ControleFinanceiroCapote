@@ -1,0 +1,86 @@
+<div id="form" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	<div id="row">
+		<div id="conteudoRegistro">
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<div id="title" class="text-center">
+						<h1 style="color: #2A3F54;">Projeçoes</h1>
+					</div>
+				</div>
+			</div>
+			<div class="row" id="tables">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<div class="row">
+						<div id="firstTable"
+							class="col-xs-12 col-sm-12  col-md-12 col-lg-12">
+							<div id="title" class="text-left">
+								<h3 style="color: #2A3F54;">Contas</h3>
+							</div>
+							<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8" id="billsTable">
+							</div>
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" id="billsForm">
+								<form class="form-horizontal" method="post">
+									<div class="form-group">
+										<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+											Descrição: <input type="text" placeholder="Descrição"
+												class="form-control" id="description" required>
+										</div>
+										<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+											Valor(R$): <input type="text" placeholder="Valor(R$)"
+												class="form-control" id="value" required>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+											<button type="button" class="btn btn-success buttom btn-sm"
+												onclick="CFINAC.projecao.add(0)" style="width: 100%;">Enviar</button>
+										</div>
+										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+											<button type="reset" class="btn btn-danger buttom btn-sm"
+												style="width: 100%;">Limpar</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div id="secondTable"
+							class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
+							style="width: 100%">
+							<div id="title" class="text-left">
+								<h3 style="color: #2A3F54;">Rendas</h3>
+							</div>
+							<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8"
+								id="incomesTable"></div>
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4"
+								id="incomesForm">
+								<form class="form-horizontal" method="post">
+									<div class="form-group">
+										<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+											Descrição: <input type="text" placeholder="Descrição"
+												class="form-control" id="description" required>
+										</div>
+										<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+											Valor(R$): <input type="text" placeholder="Valor(R$)"
+												class="form-control" id="value" required>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+											<button type="button" class="btn btn-success buttom btn-sm"
+												onclick="CFINAC.projecao.add(1)" style="width: 100%;">Enviar</button>
+										</div>
+										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+											<button type="reset" class="btn btn-danger buttom btn-sm"
+												style="width: 100%;">Limpar</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>

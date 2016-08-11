@@ -2,11 +2,8 @@
 
 <head>
 
-<meta name="viewport" content="width=device-width, initial-scale=1"
-	charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<!-- Meta, title, CSS, favicons, etc. -->
-<meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <script src="js/jquery-2.1.3.js"></script>
@@ -24,6 +21,7 @@
 <link href="css/jquery-ui.theme.css" rel="stylesheet">
 <script src="rendas/js/renda.js"></script>
 <script src="contas/js/conta.js"></script>
+<script src="projecoes/js/projecoes.js"></script>
 <script src="components/Tokenize/jquery.tokenize.js"></script>
 <script src="familias/js/familia.js"></script>
 <link href="components/Tokenize/jquery.tokenize.css" rel="stylesheet">
@@ -99,7 +97,7 @@
 											</ul></li>
 										<li onclick="changeCashFlow()" id="firstPage"><a><i class="fa fa-money"
 												title="FUCK THE BITCHES!"></i> Fluxo de Caixa</a></li>
-										<li><a><i class="fa fa-cogs"></i> Projeções</a></li>
+										<li onclick="changeProjections()"><a><i class="fa fa-cogs"></i> Projeções</a></li>
 									</ul>
 								</div>
 							</div>
@@ -172,6 +170,11 @@
 	changeCashFlow = function(){
 		$("#cont").load("fluxoCaixa/fluxoCaixa.html", function() {
 			iniciaFluxoCaixa();
+		});
+	},
+	changeProjections = function(){
+		$("#cont").load("projecoes/projecoes.html", function() {
+			iniciaProjecao();
 		});
 	}
 </script>
