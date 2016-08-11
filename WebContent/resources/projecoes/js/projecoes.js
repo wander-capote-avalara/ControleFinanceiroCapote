@@ -50,6 +50,7 @@ var iniciaProjecao = function() {
 		html += "<tr>";
 		html += "<th>Descrição</th>";
 		html += "<th>Valor(R$)</th>";
+		html += "<th>Ações</th>";
 		html += "</tr>"
 		if (list.length == 0) {
 			html += "<tr>";
@@ -60,12 +61,20 @@ var iniciaProjecao = function() {
 				html += "<tr>";
 				html += "<td>" + list[i].description + "</td>";
 				html += "<td>" + list[i].totalValue + "</td>";
+				html += "<td> ";
+				html += "<a class='link' onclick='CFINAC.projecao.test("+i+", "+type+")'> ";
+				html += "<i class='fa fa-trash-o' aria-hidden='true' />";
+				html += "</a></td>";
 				html += "</tr>";
 			}
 		}
 		html += "</table>";
 
 		type == 0 ? $("#billsTable").html(html) : $("#incomesTable").html(html);
+	}
+	
+	CFINAC.projecao.test = function(index, type){
+		type == 0 ? billsList.splice(x,1) : incomesList.splice(x,1);
 	}
 
 	CFINAC.projecao.add = function(type) {
