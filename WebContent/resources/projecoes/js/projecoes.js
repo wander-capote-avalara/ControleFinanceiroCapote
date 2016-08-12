@@ -1,11 +1,10 @@
 CFINAC.projecao = new Object();
 
 var iniciaProjecao = function() {
-	var billsList, incomesList, billsTtValue = 0, incomesTtValue = 0;
+	var billsList, incomesList, billsTtValue = 0, incomesTtValue = 0, firstDate = "MM/yyyy", secondDate = "MM/yyyy";
 	CFINAC.projecao.getBills = function() {
 		var cfg = {
-			url : "../rest/conta/getBills/" + 0,
-			data : "id=" + 0,
+			url : "../rest/conta/getBillsPerDate/" + getTypedDate(true),
 			type : "GET",
 			success : function(bills) {
 				billsList = bills;
@@ -20,7 +19,7 @@ var iniciaProjecao = function() {
 
 	CFINAC.projecao.getIncomes = function() {
 		var cfg = {
-			url : "../rest/renda/getIncomes/" + 0,
+			url : "../rest/renda/getIncomesPerDate/" + getTypedDate(true),
 			data : "id=" + 0,
 			type : "GET",
 			success : function(incomes) {
@@ -52,7 +51,8 @@ var iniciaProjecao = function() {
 	}
 
 	function showBillsAndIncomes(list, type) {
-		var html = "<table class='table table-striped' style='overflow:scroll; max-height:200px;'>"
+		var html = "<div class='table-responsive' id='details' style='max-height: 70% !IMPORTANT;'>";
+		html += "<table class='table table-hover table-striped'>";
 		html += "<tr>";
 		html += "<th>Descrição</th>";
 		html += "<th>Valor(R$)</th>";
@@ -76,8 +76,39 @@ var iniciaProjecao = function() {
 			}
 		}
 		html += "</table>";
+		html += "</div>";
 
 		type == 0 ? $("#billsTable").html(html) : $("#incomesTable").html(html);
+	}
+
+	function getTypedDate(isDataTable) {
+		firstDate = $("#initialDate").val();
+		secondDate = $("#finalDate").val();
+
+		var dates = new Object(), dateNow = new Date();
+
+		if (firstDate == "" || firstDate == null & secondDate == ""
+				|| secondDate == null) {
+			dates.firstMonth = dateNow.getUTCMonth() + 1;
+			dates.firstYear = dateNow.getUTCFullYear();
+			dates.secondMonth = dateNow.getUTCMonth() + 1;
+			dates.secondYear = dateNow.getUTCFullYear();
+			firstDate = dates.firstMonth + "/" + dates.firstYear;
+			secondDate = dates.secondMonth + "/" + dates.secondYear;
+		} else {
+			var arrayDateIni = firstDate.split("/"), arrayDateFin = secondDate
+					.split("/");
+
+			dates.firstMonth = arrayDateIni[0];
+			dates.firstYear = arrayDateIni[1];
+			dates.secondMonth = arrayDateFin[0];
+			dates.secondYear = arrayDateFin[1];
+		}
+
+		return !isDataTable ? dates : "?firstParam=" + dates.firstMonth
+				+ "&secondParam=" + dates.firstYear + "&thirdParam="
+				+ dates.secondMonth + "&fourthParam=" + dates.secondYear;
+
 	}
 
 	CFINAC.projecao.RemoveFromTable = function(index, type) {
@@ -117,7 +148,11 @@ var iniciaProjecao = function() {
 		alertPopUp("Done!");
 	}
 
-	CFINAC.projecao.getBills();
-	CFINAC.projecao.getIncomes();
+	CFINAC.projecao.update = function() {
+		CFINAC.projecao.getBills();
+		CFINAC.projecao.getIncomes();
+		$("#dateGraph").html(firstDate + " até " + secondDate);
+	}
+	CFINAC.projecao.update();
 
 }
