@@ -1,7 +1,7 @@
 CFINAC.projecao = new Object();
 
 var iniciaProjecao = function() {
-	var billsList, incomesList, billsTtValue, incomesTtValue;
+	var billsList, incomesList, billsTtValue = 0, incomesTtValue = 0;
 	CFINAC.projecao.getBills = function() {
 		var cfg = {
 			url : "../rest/conta/getBills/" + 0,
@@ -10,7 +10,6 @@ var iniciaProjecao = function() {
 			success : function(bills) {
 				billsList = bills;
 				showBillsAndIncomes(bills, 0);
-				sum();
 			},
 			error : function(e) {
 				alertPopUp("Erro na ação!");
@@ -35,18 +34,25 @@ var iniciaProjecao = function() {
 		};
 		CFINAC.ajax.post(cfg);
 	};
-	
-	function sum(){
-		for (x = 0; x < billsList.length; x++) {
-			billsTtValue += billsList[x].totalValue;
+
+	function sum() {
+		if (billsList != null || billsList.length > 0) {
+			billsTtValue = 0;
+			for (x = 0; x < billsList.length; x++) {
+				billsTtValue += +billsList[x].totalValue;
+			}
 		}
-		for (x = 0; x < incomesList.length; x++) {
-			incomesTtValue += incomesList[x].totalValue;
-		}	
+		if (incomesList != null || incomesList.length > 0) {
+			incomesTtValue = 0;
+			for (x = 0; x < incomesList.length; x++) {
+				incomesTtValue += +incomesList[x].totalValue;
+			}
+		}
+		$("#showttvalue").html(incomesTtValue - billsTtValue);
 	}
 
 	function showBillsAndIncomes(list, type) {
-		var html = "<table class='table table-striped'>"
+		var html = "<table class='table table-striped' style='overflow:scroll; max-height:200px;'>"
 		html += "<tr>";
 		html += "<th>Descrição</th>";
 		html += "<th>Valor(R$)</th>";
@@ -62,7 +68,8 @@ var iniciaProjecao = function() {
 				html += "<td>" + list[i].description + "</td>";
 				html += "<td>" + list[i].totalValue + "</td>";
 				html += "<td> ";
-				html += "<a class='link' onclick='CFINAC.projecao.test("+i+", "+type+")'> ";
+				html += "<a class='link' onclick='CFINAC.projecao.RemoveFromTable("
+						+ i + ", " + type + ")'> ";
 				html += "<i class='fa fa-trash-o' aria-hidden='true' />";
 				html += "</a></td>";
 				html += "</tr>";
@@ -72,15 +79,23 @@ var iniciaProjecao = function() {
 
 		type == 0 ? $("#billsTable").html(html) : $("#incomesTable").html(html);
 	}
-	
-	CFINAC.projecao.test = function(index, type){
-		type == 0 ? billsList.splice(x,1) : incomesList.splice(x,1);
+
+	CFINAC.projecao.RemoveFromTable = function(index, type) {
+		if (type == 0) {
+			billsList.splice(index, 1);
+			showBillsAndIncomes(billsList, type);
+		} else {
+			incomesList.splice(index, 1);
+			showBillsAndIncomes(incomesList, type);
+		}
+		sum();
 	}
 
 	CFINAC.projecao.add = function(type) {
-		var desc = $(type == 0 ? "#billsForm #description"
-				: "#incomesForm #description").val(), value = $(type == 0 ? "#billsForm #value"
-				: "#incomesForm #value").val();
+		var desc = $(
+				type == 0 ? "#billsForm #description"
+						: "#incomesForm #description").val(), value = $(
+				type == 0 ? "#billsForm #value" : "#incomesForm #value").val();
 
 		if (desc == "" || desc == null || !+value) {
 			alertPopUp("Preecha os campos corretamente");
