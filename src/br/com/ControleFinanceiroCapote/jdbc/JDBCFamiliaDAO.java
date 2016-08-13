@@ -27,17 +27,22 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 	public void inserir(Familia family) throws ValidationException {
 
 		if (!listUserValidadeById(family.getUsers())) {
-			throw new ValidationException("Insira somente usuários existentes!!");
+			throw new ValidationException(
+					"Insira somente usuários existentes!!");
 		}
 
 		if (family.getId() == 0) {
-			String comando = "insert into familias " + "(Nome, Id_Usuario) " + "values(?,?)";
+			StringBuilder comando = new StringBuilder();
+
+			comando.append("INSERT INTO familias ");
+			comando.append("(Nome, Id_Usuario) VALUES (?,?)");
 
 			PreparedStatement p;
 			ResultSet rs = null;
 
 			try {
-				p = this.conexao.prepareStatement(comando, Statement.RETURN_GENERATED_KEYS);
+				p = this.conexao.prepareStatement(comando.toString(),
+						Statement.RETURN_GENERATED_KEYS);
 				p.setString(1, family.getName());
 				p.setString(2, family.getOwner());
 				p.execute();
@@ -70,11 +75,77 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		}
 	}
 
+	public void createFamily(Familia family, int userId) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("INSERT INTO familias ");
+		comando.append("(Nome, Id_Usuario) VALUES (?,?)");
+
+		PreparedStatement p;
+		ResultSet rs = null;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString(),
+					Statement.RETURN_GENERATED_KEYS);
+			p.setString(1, family.getName());
+			p.setInt(2, userId);
+			p.execute();
+			rs = p.getGeneratedKeys();
+			if (rs.next()) {
+				family.setId(rs.getInt(1));
+			}
+			afterCreate(userId, family.getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void afterCreate(int userId, int idFamilia) {
+
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("INSERT INTO user_family (Familia_Id, Usuario_Id) ");
+		comando.append("VALUES (?, ?)");
+
+		PreparedStatement p;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, idFamilia);
+			p.setInt(2, userId);
+			p.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean hasFamily(int userId) {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("SELECT Familia_Id FROM user_family ");
+		comando.append("WHERE Usuario_Id = ?");
+
+		PreparedStatement p;
+		ResultSet rs = null;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, userId);
+			rs = p.executeQuery();
+
+			return rs.next() ? true : false;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	public void inviteUsers(Invite invite) {
 
 		StringBuilder comando = new StringBuilder();
 
-		comando.append("INSERT INTO convites (id_membro_familia, id_convidado) ");
+		comando.append("INSERT INTO convites (id_family, id_user) ");
 		comando.append("VALUES (?,?)");
 
 		PreparedStatement p;
@@ -82,7 +153,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 			for (Integer userId : invite.getUsersToInvite()) {
-				p.setInt(1, invite.getFamilyOwner());
+				p.setInt(1, invite.getFamilyId());
 				p.setInt(2, userId);
 				p.execute();
 			}
@@ -201,7 +272,6 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 	}
 
 	public String getUserByFamilyId(int id) {
-
 
 		StringBuilder comando2 = new StringBuilder();
 		comando2.append("SELECT uss.Usuario as user from usuarios uss ");
@@ -386,9 +456,30 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			p = this.conexao.prepareStatement(comando.toString());
 			p.setInt(1, id);
 			p.execute();
+			if (isLeader(id)) {
+				deleteFamily(id);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void deleteFamily(int id) {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("DELETE FROM familias ");
+		comando.append("WHERE Id_Usuario = ?");
+
+		PreparedStatement p;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, id);
+			p.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public List<Invite> getInvites(int userId) {
@@ -397,13 +488,14 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		comando.append("WHERE c.id_convidado = ?");
 		List<Invite> listInvite = new ArrayList<Invite>();
 		try {
-			PreparedStatement stmt = conexao.prepareStatement(comando.toString());
+			PreparedStatement stmt = conexao.prepareStatement(comando
+					.toString());
 			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
 				Invite newInvite = new Invite();
-				newInvite.setFamilyOwner(rs.getInt("inviteFrom"));
+				newInvite.setFamilyId(rs.getInt("inviteFrom"));
 
 				listInvite.add(newInvite);
 			}
@@ -423,7 +515,8 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		comando.append("WHERE c.id_convidado = ? ");
 		List<Invite> listInvite = new ArrayList<Invite>();
 		try {
-			PreparedStatement stmt = conexao.prepareStatement(comando.toString());
+			PreparedStatement stmt = conexao.prepareStatement(comando
+					.toString());
 			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
 
@@ -431,7 +524,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				Invite newInvite = new Invite();
 				newInvite.setFamilyName(rs.getString("familyName"));
 				newInvite.setOwnerName(rs.getString("userName"));
-				newInvite.setFamilyOwner(rs.getInt("familyId"));
+				newInvite.setFamilyId(rs.getInt("familyId"));
 
 				listInvite.add(newInvite);
 			}
@@ -463,7 +556,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 	public void acceptInvite(int id, int userId) {
 		declineInvite(id, userId);
 		kickUser(userId);
-		
+
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("INSERT INTO user_family (Familia_Id, Usuario_Id) ");

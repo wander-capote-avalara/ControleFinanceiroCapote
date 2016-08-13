@@ -29,6 +29,21 @@ public class FamiliaRest extends UtilRest {
 	FamiliaService serviceFamily = new FamiliaService();
 	
 	@POST
+	@Path("/createFamily")
+	@Consumes("application/*")
+	@Produces("text/plain")
+
+	public Response createFamily(String familiaParam) {
+		try {
+			Familia family = new ObjectMapper().readValue(familiaParam, Familia.class);
+			serviceFamily.createFamily(family, userId());
+			return this.buildResponse("Operação feita com sucesso!");
+		} catch (Exception e) {
+			return this.buildErrorResponse("Erro na operação!");
+		}
+	}
+	
+	@POST
 	@Path("/add")
 	@Consumes("application/*")
 	@Produces("text/plain")
@@ -51,7 +66,7 @@ public class FamiliaRest extends UtilRest {
 	public Response inviteUsers(String inviteParam) {
 		try {
 			Invite invite = new ObjectMapper().readValue(inviteParam, Invite.class);
-			invite.setFamilyOwner(familyId());
+			invite.setFamilyId(familyId());
 			serviceFamily.inviteUsers(invite, userId());
 			return this.buildResponse("Operação feita com sucesso!");
 		} catch (Exception e) {
@@ -223,6 +238,18 @@ public class FamiliaRest extends UtilRest {
 	public Response getAllFamilyIncomes() {
 		try {
 			return this.buildResponse(serviceFamily.getAllFamilyIncomes(userId()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+	
+	@GET
+	@Path("/hasFamily/")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response hasFamily() {
+		try {
+			return this.buildResponse(serviceFamily.hasFamily(userId()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());

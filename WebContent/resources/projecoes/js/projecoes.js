@@ -20,7 +20,6 @@ var iniciaProjecao = function() {
 	CFINAC.projecao.getIncomes = function() {
 		var cfg = {
 			url : "../rest/renda/getIncomesPerDate/" + getTypedDate(true),
-			data : "id=" + 0,
 			type : "GET",
 			success : function(incomes) {
 				incomesList = incomes;
@@ -35,13 +34,13 @@ var iniciaProjecao = function() {
 	};
 
 	function sum() {
-		if (billsList != null || billsList.length > 0) {
+		if (billsList != null) {
 			billsTtValue = 0;
 			for (x = 0; x < billsList.length; x++) {
 				billsTtValue += +billsList[x].totalValue;
 			}
 		}
-		if (incomesList != null || incomesList.length > 0) {
+		if (incomesList != null) {
 			incomesTtValue = 0;
 			for (x = 0; x < incomesList.length; x++) {
 				incomesTtValue += +incomesList[x].totalValue;

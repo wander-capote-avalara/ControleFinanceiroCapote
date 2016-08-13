@@ -1,4 +1,4 @@
-<div id="form" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+<div id="form" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 hid">
 	<div id="row">
 		<div id="conteudoRegistro">
 			<div class="row">
@@ -12,7 +12,8 @@
 								<div id="title" class="text-left">
 									<h3 style="color: #2A3F54;">Recrute um familiar</h3>
 								</div>
-								<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="owner" style="margin-top:16px">
+								<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="owner"
+									style="margin-top: 16px">
 									<select id="tokenizeInvite" multiple="multiple"
 										class="tokenize-sample">
 									</select>
@@ -91,3 +92,29 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 hid" id="noFamily">
+	<div id="row">
+		<div id="conteudoRegistro">
+			<div class="row">
+				<div id="title" class="text-center">
+					<h1 style="color: #2A3F54;">Criar familia</h1>
+				</div>
+				<form class="form-horizontal" method="post">
+					<div class="form-group">
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+						<input class="hid" id="id"> 
+							<input type="text" class="form-control"
+								id="inputFamilyName" placeholder="Digite um nome" required maxlength="45">
+						</div>
+						<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+							<p><button type="reset" class="btn btn-danger buttom">Limpa</button>
+							<button type="button" class="btn btn-success buttom"onclick="CFINAC.familia.createFamily()">Enviar</button>
+						</div>		
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

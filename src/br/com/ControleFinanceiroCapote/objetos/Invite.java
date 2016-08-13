@@ -7,17 +7,17 @@ public class Invite implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	private int familyOwner;
+	private int familyId;
 	private List<Integer> usersToInvite;
 	private String familyName;
 	private String ownerName;
 	
 	
-	public int getFamilyOwner() {
-		return familyOwner;
+	public int getFamilyId() {
+		return familyId;
 	}
-	public void setFamilyOwner(int familyOwner) {
-		this.familyOwner = familyOwner;
+	public void setFamilyId(int familyId) {
+		this.familyId = familyId;
 	}
 	public List<Integer> getUsersToInvite() {
 		return usersToInvite;

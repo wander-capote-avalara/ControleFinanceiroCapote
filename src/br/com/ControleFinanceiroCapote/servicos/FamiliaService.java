@@ -157,5 +157,22 @@ public class FamiliaService {
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
 		jdbcFamilia.acceptInvite(id, userId);
 		conec.fecharConexao();
+	}	
+	
+	public boolean hasFamily(int userId) {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
+		boolean hasFamily = jdbcFamilia.hasFamily(userId);
+		conec.fecharConexao();
+		return hasFamily;
+	}
+	
+	public void createFamily(Familia family, int userId) throws Exception {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
+		jdbcFamilia.createFamily(family, userId);
+		conec.fecharConexao();
 	}
 }
