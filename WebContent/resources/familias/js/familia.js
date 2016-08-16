@@ -239,6 +239,11 @@ var iniciaFamilia = function() {
 
             var invite = new Object();
             invite.usersToInvite = $("#tokenizeInvite").val();
+            
+            if(invite.usersToInvite == null || invite.usersToInvite == ""){
+            	alertPopUp("Preencha o campo corretamente!")
+            	return false;
+            }
 
             cfg = {
                 type: "POST",
@@ -246,7 +251,7 @@ var iniciaFamilia = function() {
                 data: invite,
                 success: function(msg) {
                     $("#tokenizeInvite").tokenize().clear();
-                    $("#conteudoRegistro .btn-danger").click();
+                    alertPopUp(msg);
                 },
                 error: function(err) {
                     alert("Erro na ação!" + err.responseText);

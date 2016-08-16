@@ -36,7 +36,7 @@ $(document).ready(
                         html += "<tr>";
                         html += "<td>"+invites[x].familyName+"</td>";
                         html += "<td>"+invites[x].ownerName+"</td>";
-                        html += "<td colspan='2'><button type='reset' onclick='CFINAC.index.declineInvite("+invites[x].familyOwner+")' class='btn btn-danger buttom'>Recusar</button><button type='button' class='btn btn-success buttom' onclick='CFINAC.index.acceptInvite("+invites[x].familyOwner+")'>Aceitar</button></td>";
+                        html += "<td colspan='2'><button type='reset' onclick='CFINAC.index.declineInvite("+invites[x].familyId+")' class='btn btn-danger buttom'>Recusar</button><button type='button' class='btn btn-success buttom' onclick='CFINAC.index.acceptInvite("+invites[x].familyId+")'>Aceitar</button></td>";
                         html += "</tr>";
                     }
                 }
@@ -93,6 +93,11 @@ $(document).ready(
 				
 			CFINAC.familia.getInvites();
 			setInterval(CFINAC.familia.getInvites, 30000);
+			
+			$("#refresh").on("click", function(){
+				CFINAC.index.getUserInfo();
+				CFINAC.familia.getInvites();
+			})
 			
 			CFINAC.index.getUserInfo = function() {
 				var cfg = {

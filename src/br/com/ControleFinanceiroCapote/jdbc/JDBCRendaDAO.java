@@ -6,7 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import com.mysql.jdbc.Statement;
@@ -54,7 +57,7 @@ public class JDBCRendaDAO implements RendaDAO {
 					renda.setId(rs.getInt(1));
 
 					if (renda.getTimes() != 0) {
-						insertParcels(renda.getId(), renda.getTimes(), renda.getTotalValue(), renda.getParcelValue());
+						insertParcels(renda.getId(), renda.getTimes(), renda.getTotalValue(), renda.getParcelValue(), (Date) renda.getStartDate());
 					}
 				}
 			} catch (Exception e) {
@@ -84,7 +87,7 @@ public class JDBCRendaDAO implements RendaDAO {
 				p.execute();
 				if (renda.getTimes() != 0) {
 					deleteParcels(renda.getId());
-					insertParcels(renda.getId(), renda.getTimes(), renda.getTotalValue(), renda.getParcelValue());
+					insertParcels(renda.getId(), renda.getTimes(), renda.getTotalValue(), renda.getParcelValue(), (Date) renda.getStartDate());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -135,15 +138,17 @@ public class JDBCRendaDAO implements RendaDAO {
 
 	}
 
-	public void insertParcels(int incomeId, int times, double totalValue, double parcelValue) {
+	public void insertParcels(int incomeId, int times, double totalValue, double parcelValue, Date startDate) {
 		double math = ((parcelValue * times) - totalValue);
 		boolean hasDifference = (parcelValue * times) - totalValue != 0;
-
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(startDate);
+		
 		StringBuilder comando = new StringBuilder();
 		comando.append("INSERT INTO parcela_renda");
-		comando.append("(Id_Renda, Valor_Parcela, Status_Parcela)");
+		comando.append("(Id_Renda, Valor_Parcela, Status_Parcela, Data_Vencimento)");
 		comando.append(" VALUES ");
-		comando.append("(?,?,?)");
+		comando.append("(?,?,?,?)");
 
 		PreparedStatement p;
 
@@ -151,9 +156,11 @@ public class JDBCRendaDAO implements RendaDAO {
 			p = this.conexao.prepareStatement(comando.toString());
 
 			for (int x = 0; x < times; x++) {
+				cal.add(Calendar.MONTH, 1);
 				p.setInt(1, incomeId);
 				p.setDouble(2, hasDifference ? parcelValue - math : parcelValue);
 				p.setInt(3, 1);
+				p.setDate(4, new Date(cal.getTimeInMillis()));//Calendar.getInstance().get(Calendar.MONTH) + 2
 				p.execute();
 				hasDifference = false;
 			}

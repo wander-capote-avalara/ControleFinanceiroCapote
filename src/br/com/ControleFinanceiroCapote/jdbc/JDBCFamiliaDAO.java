@@ -484,8 +484,8 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 
 	public List<Invite> getInvites(int userId) {
 		StringBuilder comando = new StringBuilder();
-		comando.append("SELECT id_membro_familia as inviteFrom FROM convites c ");
-		comando.append("WHERE c.id_convidado = ?");
+		comando.append("SELECT id_family as inviteFrom FROM convites c ");
+		comando.append("WHERE c.id_user = ?");
 		List<Invite> listInvite = new ArrayList<Invite>();
 		try {
 			PreparedStatement stmt = conexao.prepareStatement(comando
@@ -508,11 +508,11 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 
 	public List<Invite> getInvitesInfo(int userId) {
 		StringBuilder comando = new StringBuilder();
-		comando.append("SELECT u.Usuario AS userName, f.Nome AS familyName, c.id_membro_familia as familyId ");
+		comando.append("SELECT u.Usuario AS userName, f.Nome AS familyName, c.id_family as familyId ");
 		comando.append("FROM convites c ");
-		comando.append("INNER JOIN familias f ON f.Id_Familias = c.id_membro_familia ");
+		comando.append("INNER JOIN familias f ON f.Id_Familias = c.id_family ");
 		comando.append("INNER JOIN usuarios u ON u.Id_Usuarios = f.Id_Usuario ");
-		comando.append("WHERE c.id_convidado = ? ");
+		comando.append("WHERE c.id_user = ? ");
 		List<Invite> listInvite = new ArrayList<Invite>();
 		try {
 			PreparedStatement stmt = conexao.prepareStatement(comando
@@ -539,7 +539,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("DELETE FROM convites ");
-		comando.append("WHERE id_membro_familia = ? AND id_convidado = ?");
+		comando.append("WHERE id_family = ? AND id_user = ?");
 
 		PreparedStatement p;
 
