@@ -193,6 +193,7 @@ public class JDBCRendaDAO implements RendaDAO {
 		}
 
 		List<Renda> incomeList = new ArrayList<Renda>();
+		SimpleDateFormat date = new SimpleDateFormat("dd-MM-yyyy");
 		Renda income = null;
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
@@ -208,6 +209,7 @@ public class JDBCRendaDAO implements RendaDAO {
 				income.setStartDate(rs.getDate("endDate"));
 				income.setIsFixed(rs.getInt("isFixed"));
 				income.setTimes(rs.getInt("x"));
+				income.setFormatedDate(date.format(rs.getDate("endDate")).replace("-", "/"));
 
 				incomeList.add(income);
 			}
@@ -257,6 +259,7 @@ public class JDBCRendaDAO implements RendaDAO {
 		comando.append(" AND Status_Parcela <> 0");
 
 		List<Parcela> parcelList = new ArrayList<Parcela>();
+		SimpleDateFormat date = new SimpleDateFormat("dd-MM-yyyy");
 		Parcela parcel = null;
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
@@ -269,6 +272,7 @@ public class JDBCRendaDAO implements RendaDAO {
 				parcel.setStatus(rs.getInt("parcelStatus"));
 				parcel.setPaymentDate(rs.getDate("paymentDate"));
 				parcel.setDueDate(rs.getDate("dueDate"));
+				parcel.setFormatedDate(date.format(rs.getDate("dueDate")).replace("-", "/"));
 
 				parcelList.add(parcel);
 			}

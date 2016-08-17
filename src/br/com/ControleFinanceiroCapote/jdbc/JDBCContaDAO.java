@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import com.mysql.jdbc.Statement;
@@ -55,7 +56,7 @@ public class JDBCContaDAO implements ContaDAO {
 					conta.setId(rs.getInt(1));
 
 					if (conta.getTimes() != 0) {
-						insertParcels(conta.getId(), conta.getTimes(), conta.getParcelValue(), conta.getTotalValue());
+						insertParcels(conta.getId(), conta.getTimes(), conta.getParcelValue(), conta.getTotalValue(), (Date) conta.getStartDate());
 					}
 				}
 			} catch (Exception e) {
@@ -85,7 +86,7 @@ public class JDBCContaDAO implements ContaDAO {
 				p.execute();
 				if (conta.getTimes() != 0) {
 					deleteParcels(conta.getId());
-					insertParcels(conta.getId(), conta.getTimes(), conta.getParcelValue(), conta.getTotalValue());
+					insertParcels(conta.getId(), conta.getTimes(), conta.getParcelValue(), conta.getTotalValue(), (Date) conta.getStartDate());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -93,15 +94,17 @@ public class JDBCContaDAO implements ContaDAO {
 		}
 	}
 
-	private void insertParcels(int billIDd, int times, Double parcelValue, double totalValue) {
+	private void insertParcels(int billIDd, int times, Double parcelValue, double totalValue,  Date startDate) {
 		double math = ((parcelValue * times) - totalValue);
 		boolean hasDifference = (parcelValue * times) - totalValue != 0;
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(startDate);
 
 		StringBuilder comando = new StringBuilder();
 		comando.append("INSERT INTO parcela_conta");
-		comando.append("(Id_Conta, Valor_Parcela, Status_Parcela)");
+		comando.append("(Id_Conta, Valor_Parcela, Status_Parcela, Data_Vencimento)");
 		comando.append(" VALUES ");
-		comando.append("(?,?,?)");
+		comando.append("(?,?,?,?)");
 
 		PreparedStatement p;
 
@@ -109,9 +112,11 @@ public class JDBCContaDAO implements ContaDAO {
 			p = this.conexao.prepareStatement(comando.toString());
 
 			for (int x = 0; x < times; x++) {
+				cal.add(Calendar.MONTH, 1);
 				p.setInt(1, billIDd);
 				p.setDouble(2, hasDifference ? parcelValue - math : parcelValue);
 				p.setInt(3, 1);
+				p.setDate(4, new Date(cal.getTimeInMillis()));//Calendar.getInstance().get(Calendar.MONTH) + 2
 				p.execute();
 				hasDifference = false;
 			}
@@ -186,6 +191,7 @@ public class JDBCContaDAO implements ContaDAO {
 		}
 
 		List<Conta> billsList = new ArrayList<Conta>();
+		SimpleDateFormat date = new SimpleDateFormat("dd-MM-yyyy");
 		Conta income = null;
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
@@ -201,6 +207,7 @@ public class JDBCContaDAO implements ContaDAO {
 				income.setStartDate(rs.getDate("endDate"));
 				income.setHasDeadline(rs.getInt("isFixed"));
 				income.setTimes(rs.getInt("x"));
+				income.setFormatedDate(date.format(rs.getDate("endDate")).replace("-", "/"));
 
 				billsList.add(income);
 			}
@@ -286,6 +293,8 @@ public class JDBCContaDAO implements ContaDAO {
 		comando.append(" AND Status_Parcela <> 0");
 
 		List<Parcela> parcelList = new ArrayList<Parcela>();
+		SimpleDateFormat date = new SimpleDateFormat("dd-MM-yyyy");
+		
 		Parcela parcel = null;
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
@@ -297,7 +306,7 @@ public class JDBCContaDAO implements ContaDAO {
 				parcel.setParcelValue(rs.getDouble("parcelValue"));
 				parcel.setStatus(rs.getInt("parcelStatus"));
 				parcel.setPaymentDate(rs.getDate("paymentDate"));
-				parcel.setDueDate(rs.getDate("dueDate"));
+				parcel.setFormatedDate(date.format(rs.getDate("dueDate")).replace("-", "/"));
 
 				parcelList.add(parcel);
 			}

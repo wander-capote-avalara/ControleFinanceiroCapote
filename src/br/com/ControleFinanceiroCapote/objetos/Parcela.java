@@ -12,6 +12,7 @@ public class Parcela implements Serializable{
 	private int status;
 	private Date paymentDate;
 	private Date dueDate;
+	private String formatedDate;
 	
 	public int getId() {
 		return id;
@@ -42,6 +43,12 @@ public class Parcela implements Serializable{
 	}
 	public void setDueDate(Date dueDate) {
 		this.dueDate = dueDate;
+	}
+	public String getFormatedDate() {
+		return formatedDate;
+	}
+	public void setFormatedDate(String formatedDate) {
+		this.formatedDate = formatedDate;
 	}
 	
 }

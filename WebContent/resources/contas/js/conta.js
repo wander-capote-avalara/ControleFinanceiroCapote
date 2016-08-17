@@ -79,7 +79,7 @@ iniciaConta = function() {
                                 data: "totalValue",
                                 className: "center",
                             }, {
-                                data: "startDate",
+                                data: "formatedDate",
                                 className: "center",
                             }, {
                                 data: "hasDeadline",
@@ -166,7 +166,7 @@ iniciaConta = function() {
                             html += "<td>" +
                                 paymentDate(detailedList[x].paymentDate) +
                                 "</td>";
-                            html += "<td>" + detailedList[x].dueDate +
+                            html += "<td>" + detailedList[x].formatedDate +
                                 "</td>";
                             html += "</tr>";
                         }

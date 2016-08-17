@@ -53,7 +53,7 @@ iniciaRenda = function() {
                                 data: "totalValue",
                                 className: "center",
                             }, {
-                                data: "startDate",
+                                data: "formatedDate",
                                 className: "center",
                             }, {
                                 data: "isFixed",
@@ -149,7 +149,7 @@ iniciaRenda = function() {
                             html += "<td>" +
                                 paymentDate(detailedList[x].paymentDate) +
                                 "</td>";
-                            html += "<td>" + detailedList[x].dueDate +
+                            html += "<td>" + detailedList[x].formatedDate +
                                 "</td>";
                             html += "</tr>";
                         }

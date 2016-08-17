@@ -274,10 +274,8 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
 			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
 		comando.append("SELECT SUM(Valor_Contas) as vlrConta FROM contas a ");
-		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Conta = 1 ");
+		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Conta = 1 AND a.Conta_Fixa = 0");
 		comando.append(next ? " AND MONTH(a.Data_Vencimento) = "+nextMonth : " AND MONTH(a.Data_Vencimento) <= "+thisMonth);
-		comando.append(" OR ");
-		comando.append("a.Data_Vencimento IS NULL AND a.Id_Usuario = "+id+" AND a.Status_Conta = 1 AND a.Conta_Fixa = 1");
 
 		int balance = 0;
 		try {
@@ -287,6 +285,9 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			while (rs.next()) {
 				balance += (int)rs.getInt("vlrConta");
 			}
+			
+			balance += getParcelsValues(id, next);
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
@@ -295,6 +296,30 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	}
 	
 	
+	private double getParcelsValues(int id, boolean next) {
+		StringBuilder comando = new StringBuilder();
+		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
+			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+		comando.append("SELECT SUM(Valor_Parcela) as vlrConta FROM parcela_conta a ");
+		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Conta IN (SELECT c.Id_Contas FROM contas c where c.Id_Usuario = "+id+") AND MONTH(a.Data_Vencimento) = "+thisMonth);
+		comando.append(next ? " AND MONTH(a.Data_Vencimento) = "+nextMonth : " AND MONTH(a.Data_Vencimento) <= "+thisMonth);
+
+		double balance = 0;
+		try {
+			java.sql.Statement stmt = conexao.createStatement();
+			ResultSet rs = stmt.executeQuery(comando.toString());
+			
+			while (rs.next()) {
+				balance += (int)rs.getInt("vlrConta");
+			}
+			
+			return balance;		
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
 	private int getActualRentsById(int id, boolean next) {
 		StringBuilder comando = new StringBuilder();
 		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
