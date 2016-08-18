@@ -286,7 +286,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				balance += (int)rs.getInt("vlrConta");
 			}
 			
-			balance += getParcelsValues(id, next);
+			balance += getBillsParcelsValues(id, next);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -296,12 +296,12 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	}
 	
 	
-	private double getParcelsValues(int id, boolean next) {
+	private double getBillsParcelsValues(int id, boolean next) {
 		StringBuilder comando = new StringBuilder();
 		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
 			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
 		comando.append("SELECT SUM(Valor_Parcela) as vlrConta FROM parcela_conta a ");
-		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Conta IN (SELECT c.Id_Contas FROM contas c where c.Id_Usuario = "+id+") AND MONTH(a.Data_Vencimento) = "+thisMonth);
+		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Conta IN (SELECT c.Id_Contas FROM contas c where c.Id_Usuario = "+id+")");
 		comando.append(next ? " AND MONTH(a.Data_Vencimento) = "+nextMonth : " AND MONTH(a.Data_Vencimento) <= "+thisMonth);
 
 		double balance = 0;
@@ -325,10 +325,8 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
 			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
 		comando.append("SELECT SUM(Valor_Rendas) as vlrRenda FROM rendas a ");
-		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Renda = 1");
+		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Renda = 1 AND a.Renda_Fixa = 1");
 		comando.append(next ? " AND MONTH(a.Data_Vencimento) = "+nextMonth : " AND MONTH(a.Data_Vencimento) <= "+thisMonth);
-		comando.append(" OR ");
-		comando.append("a.Data_Vencimento IS NULL AND a.Id_Usuario = "+id+" AND a.Status_Renda = 1 AND a.Renda_Fixa = 1");
 		
 		int balance = 0;
 		try {
@@ -338,11 +336,37 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			while (rs.next()) {
 				balance += (int)rs.getInt("vlrRenda");
 			}
+			balance += getRentsParcelsValues(id, next);
+			return balance;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
 		}
-		return balance;
+	}
+	
+	private double getRentsParcelsValues(int id, boolean next) {
+		StringBuilder comando = new StringBuilder();
+		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
+			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+		comando.append("SELECT SUM(Valor_Parcela) as vlrRenda FROM parcela_renda a ");
+		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Renda IN (SELECT c.Id_Rendas FROM rendas c WHERE c.Id_Usuario = "+id+")");
+		comando.append(next ? " AND MONTH(a.Data_Vencimento) = "+nextMonth : " AND MONTH(a.Data_Vencimento) <= "+thisMonth);
+
+
+		double balance = 0;
+		try {
+			java.sql.Statement stmt = conexao.createStatement();
+			ResultSet rs = stmt.executeQuery(comando.toString());
+			
+			while (rs.next()) {
+				balance += (int)rs.getInt("vlrRenda");
+			}
+			
+			return balance;		
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}
 	}
 
 	@Override
