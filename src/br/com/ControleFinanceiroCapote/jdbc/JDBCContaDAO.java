@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.collections.ListUtils;
+
 import com.mysql.jdbc.Statement;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
@@ -70,7 +72,6 @@ public class JDBCContaDAO implements ContaDAO {
 			comando.append(" WHERE Id_contas = ?");
 
 			PreparedStatement p;
-			ResultSet rs = null;
 
 			try {
 				p = this.conexao.prepareStatement(comando.toString(), Statement.RETURN_GENERATED_KEYS);
@@ -167,6 +168,7 @@ public class JDBCContaDAO implements ContaDAO {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Conta> getBills(int id, int userId, RangeDTO range) {
 		StringBuilder comando = new StringBuilder();
@@ -188,6 +190,8 @@ public class JDBCContaDAO implements ContaDAO {
 			comando.append("'" + range.getFirstYear() + "/" + range.getFirstMonth() + "/01'");
 			comando.append(" AND ");
 			comando.append("'" + range.getSecondYear() + "/" + range.getSecondMonth() + "/31'");
+			comando.append(" AND ");
+			comando.append(" r.conta_fixa = 0 ");
 		}
 
 		List<Conta> billsList = new ArrayList<Conta>();
@@ -219,11 +223,54 @@ public class JDBCContaDAO implements ContaDAO {
 					inc.setCategoriaName("Não há categoria");
 				}
 			}
+			
+			if (range != null) {
+				return ListUtils.union(billsList, getBillsParcels(userId, range));
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return billsList;
+	}
+	
+	private List<Conta> getBillsParcels(int id, RangeDTO dates) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT a.Valor_Parcela as vlrConta, a.Status_Parcela as status, ca.Descricao as descr, c.Descricao_Contas as dcs ");
+		comando.append("FROM parcela_conta a ");
+		comando.append("INNER JOIN contas c ON c.Id_Contas = a.Id_Conta  ");
+		comando.append("INNER JOIN categorias ca ON ca.Id_Categorias = c.Id_Categoria  ");
+		comando.append("WHERE a.Status_Parcela = 1 ");
+		comando.append("AND a.Data_Vencimento between date(?) AND date(?) ");
+		comando.append("AND c.Id_Usuario = ?");
+
+		List<Conta> bills = new ArrayList<Conta>();
+		PreparedStatement p;
+		ResultSet rs = null;
+		try {
+			
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setString(1, dates.getFirstYear() + "/" + dates.getFirstMonth() + "/01");
+			p.setString(2, dates.getSecondYear() + "/" + dates.getSecondMonth() + "/31");
+			p.setInt(3, id);
+			rs = p.executeQuery();
+			
+			while (rs.next()) {
+				Conta bill = new Conta();
+					
+					bill.setTotalValue(rs.getDouble("vlrConta"));
+					bill.setStatus(rs.getInt("status"));
+					bill.setCategoriaName(rs.getString("descr"));
+					bill.setDescription(rs.getString("dcs"));
+				
+				bills.add(bill);
+			}
+			
+			return bills;		
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public List<Graph> getBillsByCategory(int userId, RangeDTO range) {
@@ -319,11 +366,12 @@ public class JDBCContaDAO implements ContaDAO {
 
 	public int getBillsTotalValue(RangeDTO dates, int userId) {
 		StringBuilder comando = new StringBuilder();
-
+		int sum = 0;
 		comando.append("SELECT SUM(Valor_Contas) as summ FROM contas a ");
 		comando.append("WHERE Id_Usuario = ? ");
 		comando.append("AND Status_Conta = 1 ");
-		comando.append("AND Data_Vencimento between ? AND ?");
+		comando.append("AND Data_Vencimento between ? AND ? ");
+		comando.append("AND Conta_Fixa = 0 ");
 
 		PreparedStatement p;
 		ResultSet rs = null;
@@ -336,12 +384,42 @@ public class JDBCContaDAO implements ContaDAO {
 			rs = p.executeQuery();
 
 			if (rs.next()) {
-				return rs.getInt("summ");
+				sum = rs.getInt("summ");
 			}
+			sum += getBillsParcelsValues(userId, dates);
+			return sum;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+	
+	private double getBillsParcelsValues(int id, RangeDTO dates) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT SUM(Valor_Parcela) as vlrConta FROM parcela_conta a ");
+		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Conta IN (SELECT c.Id_Contas FROM contas c where c.Id_Usuario = ?)");
+		comando.append(" AND Data_Vencimento between date(?) AND date(?) ");
+
+		double balance = 0;
+		PreparedStatement p;
+		ResultSet rs = null;
+		try {
+			
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, id);
+			p.setString(2, dates.getFirstYear() + "/" + dates.getFirstMonth() + "/01");
+			p.setString(3, dates.getSecondYear() + "/" + dates.getSecondMonth() + "/31");
+			rs = p.executeQuery();
+			
+			while (rs.next()) {
+				balance += (int)rs.getInt("vlrConta");
+			}
+			
+			return balance;		
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}
 	}
 
 	public List<Conta> getAllFamilyBills(int idFamily) {

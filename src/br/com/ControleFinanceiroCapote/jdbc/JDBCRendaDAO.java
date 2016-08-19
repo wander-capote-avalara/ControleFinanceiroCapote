@@ -325,11 +325,12 @@ public class JDBCRendaDAO implements RendaDAO {
 
 	public int getTotalValueIncome(RangeDTO dates, int userId) {
 		StringBuilder comando = new StringBuilder();
+		int sum = 0;
 
 		comando.append("SELECT SUM(Valor_Rendas) as summ FROM rendas a ");
 		comando.append("WHERE Id_Usuario = ? ");
 		comando.append("AND Status_Renda = 1 ");
-		comando.append("AND Data_Vencimento between ? AND ?");
+		comando.append("AND Renda_Fixa = 1 ");
 
 		PreparedStatement p;
 		ResultSet rs = null;
@@ -337,17 +338,46 @@ public class JDBCRendaDAO implements RendaDAO {
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 			p.setInt(1, userId);
-			p.setString(2, dates.getFirstYear() + "/" + dates.getFirstMonth() + "/01");
-			p.setString(3, dates.getSecondYear() + "/" + dates.getSecondMonth() + "/31");
 			rs = p.executeQuery();
 
 			if (rs.next()) {
-				return rs.getInt("summ");
+				sum = rs.getInt("summ");
 			}
+			
+			sum += getIncomesParcelsValues(userId, dates);
+			return sum;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+	
+	private double getIncomesParcelsValues(int id, RangeDTO dates) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT SUM(Valor_Parcela) as vlrRenda FROM parcela_renda a ");
+		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Renda IN (SELECT c.Id_Rebdas FROM rendas c where c.Id_Usuario = ?)");
+		comando.append(" AND a.Data_Vencimento BETWEEN date(?) AND date(?) ");
+
+		double balance = 0;
+		PreparedStatement p;
+		ResultSet rs = null;
+		try {
+			
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, id);
+			p.setString(2, dates.getFirstYear() + "/" + dates.getFirstMonth() + "/01");
+			p.setString(3, dates.getSecondYear() + "/" + dates.getSecondMonth() + "/31");
+			rs = p.executeQuery();
+			
+			while (rs.next()) {
+				balance += (int)rs.getInt("vlrRenda");
+			}
+			
+			return balance;		
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}
 	}
 
 	public List<Renda> getAllFamilyIncomes(int idFamily) {
