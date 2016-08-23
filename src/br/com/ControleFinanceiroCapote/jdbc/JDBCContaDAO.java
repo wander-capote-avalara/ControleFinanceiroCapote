@@ -175,8 +175,9 @@ public class JDBCContaDAO implements ContaDAO {
 
 		comando.append("SELECT r.Id_Contas as id, r.Id_Categoria as categoryId, ");
 		comando.append("r.Descricao_Contas as descr, r.Valor_Contas as totalValue, r.Status_Conta as status, ");
-		comando.append("r.Data_Vencimento as endDate, r.Conta_Fixa as isFixed, r.Vezes as x ");
+		comando.append("r.Data_Vencimento as endDate, r.Conta_Fixa as isFixed, r.Vezes as x, ca.Descricao as categ ");
 		comando.append("FROM contas r ");
+		comando.append("INNER JOIN categorias ca ON ca.Id_Categorias = r.Id_Categoria ");
 		comando.append("WHERE r.Id_Usuario = " + userId);
 		comando.append(" AND ");
 		comando.append("Status_Conta = 1");
@@ -212,16 +213,9 @@ public class JDBCContaDAO implements ContaDAO {
 				income.setHasDeadline(rs.getInt("isFixed"));
 				income.setTimes(rs.getInt("x"));
 				income.setFormatedDate(date.format(rs.getDate("endDate")).replace("-", "/"));
-
+				income.setCategoriaName(rs.getString("categ"));
+			
 				billsList.add(income);
-			}
-
-			for (Conta inc : billsList) {
-				try {
-					inc.setCategoriaName(getCategoriesName(inc.getCategoria()));
-				} catch (Exception e) {
-					inc.setCategoriaName("Não há categoria");
-				}
 			}
 			
 			if (range != null) {
@@ -241,7 +235,7 @@ public class JDBCContaDAO implements ContaDAO {
 		comando.append("INNER JOIN contas c ON c.Id_Contas = a.Id_Conta  ");
 		comando.append("INNER JOIN categorias ca ON ca.Id_Categorias = c.Id_Categoria  ");
 		comando.append("WHERE a.Status_Parcela = 1 ");
-		comando.append("AND a.Data_Vencimento between date(?) AND date(?) ");
+		comando.append("AND a.Data_Vencimento between ? AND ? ");
 		comando.append("AND c.Id_Usuario = ?");
 
 		List<Conta> bills = new ArrayList<Conta>();
@@ -398,7 +392,7 @@ public class JDBCContaDAO implements ContaDAO {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT SUM(Valor_Parcela) as vlrConta FROM parcela_conta a ");
 		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Conta IN (SELECT c.Id_Contas FROM contas c where c.Id_Usuario = ?)");
-		comando.append(" AND Data_Vencimento between date(?) AND date(?) ");
+		comando.append(" AND Data_Vencimento between ? AND ? ");
 
 		double balance = 0;
 		PreparedStatement p;

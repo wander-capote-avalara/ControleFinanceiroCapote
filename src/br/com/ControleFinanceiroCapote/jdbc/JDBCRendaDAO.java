@@ -12,10 +12,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.collections.ListUtils;
+
 import com.mysql.jdbc.Statement;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.RendaDAO;
+import br.com.ControleFinanceiroCapote.objetos.Conta;
 import br.com.ControleFinanceiroCapote.objetos.Graph;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
 import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
@@ -169,14 +172,27 @@ public class JDBCRendaDAO implements RendaDAO {
 		}
 	}
 
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Renda> getIncomes(int id, int userId, RangeDTO range) {
 		StringBuilder comando = new StringBuilder();
+		
 
+		/*comando.append("SELECT r.Id_Rendas as id, r.Id_Categoria as categoryId, r.Descricao_Rendas as descr, ");
+		comando.append("ifnull(a.Valor_Parcela ,r.Valor_Rendas) as totalValue, ifnull(a.Status_Parcela, r.Status_Renda) as status, ");
+		comando.append("ifnull(a.Data_Vencimento, date(r.Data_Vencimento)) as endDate, r.Renda_Fixa as isFixed, r.Vezes as x ");
+		comando.append("FROM rendas r ");
+		comando.append("LEFT JOIN parcela_renda a ON r.Id_Rendas = a.Id_Renda AND a.Status_Parcela = 1");
+		comando.append("WHERE r.Id_Usuario = "+userId+" AND r.Status_Renda = 1 ");
+		comando.append("AND ifnull(a.Data_Vencimento, date(r.Data_Vencimento)) between date('2010/8/01') AND date('2016/8/31')");*/
+		
+		
 		comando.append("SELECT r.Id_Rendas as id, r.Id_Categoria as categoryId, ");
 		comando.append("r.Descricao_Rendas as descr, r.Valor_Rendas as totalValue, r.Status_Renda as status, ");
-		comando.append("r.Data_Vencimento as endDate, r.Renda_Fixa as isFixed, r.Vezes as x ");
+		comando.append("r.Data_Vencimento as endDate, r.Renda_Fixa as isFixed, r.Vezes as x, ca.Descricao as categ ");
 		comando.append("FROM rendas r ");
+		comando.append("INNER JOIN categorias ca ON ca.Id_Categorias = r.Id_Categoria ");
 		comando.append("WHERE r.Id_Usuario = " + userId);
 		comando.append(" AND ");
 		comando.append("Status_Renda = 1");
@@ -186,10 +202,9 @@ public class JDBCRendaDAO implements RendaDAO {
 		}
 		if (range != null) {
 			comando.append(" AND ");
-			comando.append("r.Data_Vencimento between ");
-			comando.append("'" + range.getFirstYear() + "/" + range.getFirstMonth() + "/01'");
+			comando.append(" r.renda_fixa = 1 ");
 			comando.append(" AND ");
-			comando.append("'" + range.getSecondYear() + "/" + range.getSecondMonth() + "/31'");
+			comando.append(" MONTH(r.Data_Vencimento) <= "+range.getSecondMonth());
 		}
 
 		List<Renda> incomeList = new ArrayList<Renda>();
@@ -210,22 +225,58 @@ public class JDBCRendaDAO implements RendaDAO {
 				income.setIsFixed(rs.getInt("isFixed"));
 				income.setTimes(rs.getInt("x"));
 				income.setFormatedDate(date.format(rs.getDate("endDate")).replace("-", "/"));
+				income.setCategoriaName(rs.getString("categ"));
 
 				incomeList.add(income);
 			}
-
-			for (Renda inc : incomeList) {
-				try {
-					inc.setCategoriaName(getCategoriesName(inc.getCategoria()));
-				} catch (Exception e) {
-					inc.setCategoriaName("Não há categoria");
-				}
+			
+			if (range != null) {
+				return ListUtils.union(incomeList, getIncomeParcels(userId, range));
 			}
-
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return incomeList;
+	}
+	
+	private List<Renda> getIncomeParcels(int id, RangeDTO dates) {
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT a.Valor_Parcela as vlrRenda, a.Status_Parcela as status, ca.Descricao as descr, c.Descricao_Rendas as dcs ");
+		comando.append("FROM parcela_renda a ");
+		comando.append("INNER JOIN rendas c ON c.Id_Rendas = a.Id_Renda  ");
+		comando.append("INNER JOIN categorias ca ON ca.Id_Categorias = c.Id_Categoria  ");
+		comando.append("WHERE a.Status_Parcela = 1 ");
+		comando.append("AND a.Data_Vencimento between ? AND ? ");
+		comando.append("AND c.Id_Usuario = ?");
+
+		List<Renda> incomes = new ArrayList<Renda>();
+		PreparedStatement p;
+		ResultSet rs = null;
+		try {
+			
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setString(1, dates.getFirstYear() + "/" + dates.getFirstMonth() + "/01");
+			p.setString(2, dates.getSecondYear() + "/" + dates.getSecondMonth() + "/31");
+			p.setInt(3, id);
+			rs = p.executeQuery();
+			
+			while (rs.next()) {
+				Renda income = new Renda();
+					
+				income.setTotalValue(rs.getDouble("vlrRenda"));
+				income.setStatus(rs.getInt("status"));
+				income.setCategoriaName(rs.getString("descr"));
+				income.setDescription(rs.getString("dcs"));
+				
+				incomes.add(income);
+			}
+			
+			return incomes;		
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	private String getCategoriesName(int categoria) throws SQLException {
@@ -331,6 +382,8 @@ public class JDBCRendaDAO implements RendaDAO {
 		comando.append("WHERE Id_Usuario = ? ");
 		comando.append("AND Status_Renda = 1 ");
 		comando.append("AND Renda_Fixa = 1 ");
+		comando.append(" AND ");
+		comando.append(" MONTH(Data_Vencimento) <= "+dates.getSecondMonth());
 
 		PreparedStatement p;
 		ResultSet rs = null;
@@ -355,8 +408,8 @@ public class JDBCRendaDAO implements RendaDAO {
 	private double getIncomesParcelsValues(int id, RangeDTO dates) {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT SUM(Valor_Parcela) as vlrRenda FROM parcela_renda a ");
-		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Renda IN (SELECT c.Id_Rebdas FROM rendas c where c.Id_Usuario = ?)");
-		comando.append(" AND a.Data_Vencimento BETWEEN date(?) AND date(?) ");
+		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Renda IN (SELECT c.Id_Rendas FROM rendas c where c.Id_Usuario = ?) ");
+		comando.append("AND a.Data_Vencimento BETWEEN ? AND ? ");
 
 		double balance = 0;
 		PreparedStatement p;

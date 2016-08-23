@@ -322,11 +322,8 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 
 	private int getActualRentsById(int id, boolean next) {
 		StringBuilder comando = new StringBuilder();
-		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
-			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
 		comando.append("SELECT SUM(Valor_Rendas) as vlrRenda FROM rendas a ");
-		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Renda = 1 AND a.Renda_Fixa = 1");
-		comando.append(next ? " AND MONTH(a.Data_Vencimento) = "+nextMonth : " AND MONTH(a.Data_Vencimento) <= "+thisMonth);
+		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Renda = 1 AND a.Renda_Fixa = 1 AND a.Data_Vencimento <= Now()");
 		
 		int balance = 0;
 		try {
