@@ -14,6 +14,8 @@ import br.com.ControleFinanceiroCapote.jdbcinterface.FamiliaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
 import br.com.ControleFinanceiroCapote.objetos.Invite;
 import br.com.ControleFinanceiroCapote.objetos.Usuario;
+import br.com.ControleFinanceiroCapote.validacao.ValidaFamilia;
+import br.com.ControleFinanceiroCapote.validacao.ValidaUsuario;
 
 public class JDBCFamiliaDAO implements FamiliaDAO {
 
@@ -22,6 +24,9 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 	public JDBCFamiliaDAO(Connection conexao) {
 		this.conexao = conexao;
 	}
+
+	ValidaFamilia validf = new ValidaFamilia();
+	ValidaUsuario valid = new ValidaUsuario();
 
 	@Override
 	public void inserir(Familia family) throws ValidationException {
@@ -32,6 +37,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		}
 
 		if (family.getId() == 0) {
+			validf.insertValidation(family);
 			StringBuilder comando = new StringBuilder();
 
 			comando.append("INSERT INTO familias ");
@@ -55,6 +61,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				e.printStackTrace();
 			}
 		} else {
+			validf.updateValidation(family);
 			StringBuilder comando = new StringBuilder();
 			comando.append("UPDATE familias set Nome = ?, Id_Usuario = ? ");
 			comando.append("WHERE Id_Familias = ?");
@@ -75,7 +82,9 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		}
 	}
 
-	public void createFamily(Familia family, int userId) {
+	public void createFamily(Familia family, int userId)
+			throws ValidationException {
+		validf.familyNameValidation(family.getName());
 		StringBuilder comando = new StringBuilder();
 		comando.append("INSERT INTO familias ");
 		comando.append("(Nome, Id_Usuario) VALUES (?,?)");
@@ -95,12 +104,16 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			}
 			afterCreate(userId, family.getId());
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException();
 		}
 
 	}
 
-	public void afterCreate(int userId, int idFamilia) {
+	public void afterCreate(int userId, int idFamilia)
+			throws ValidationException {
+
+		valid.userValidation(userId);
+		validf.familyValidation(idFamilia);
 
 		StringBuilder comando = new StringBuilder();
 
@@ -115,11 +128,14 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			p.setInt(2, userId);
 			p.execute();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException();
 		}
 	}
 
-	public boolean hasFamily(int userId) {
+	public boolean hasFamily(int userId) throws ValidationException {
+
+		valid.userValidation(userId);
+
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT Familia_Id FROM user_family ");
@@ -136,12 +152,16 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			return rs.next() ? true : false;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException();
 		}
-		return false;
 	}
 
-	public void inviteUsers(Invite invite) {
+	public void inviteUsers(Invite invite) throws ValidationException {
+
+		validf.familyValidation(invite.getFamilyId());
+
+		for (Integer id : invite.getUsersToInvite())
+			valid.userValidation(id);
 
 		StringBuilder comando = new StringBuilder();
 
@@ -158,12 +178,17 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				p.execute();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException();
 		}
 
 	}
 
-	public boolean listUserValidadeById(List<Integer> usersId) {
+	public boolean listUserValidadeById(List<Integer> usersId)
+			throws ValidationException {
+
+		for (Integer id : usersId)
+			valid.userValidation(id);
+
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT Id_Usuarios FROM usuarios ");
 		comando.append("WHERE Id_Usuarios = ?");
@@ -181,12 +206,17 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(
+					"Adicione somente usuários existentes!", e);
 		}
 		return true;
 	}
 
-	public void updateFamilies(List<Integer> users, int idFamilia) {
+	public void updateFamilies(List<Integer> users, int idFamilia)
+			throws ValidationException {
+
+		validf.familyValidation(idFamilia);
+		listUserValidadeById(users);
 
 		beforeInsert(idFamilia);
 
@@ -205,11 +235,16 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				p.execute();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException();
 		}
 	}
 
-	private void beforeInsert(int id) {
+	private void beforeInsert(int id) throws ValidationException {
+
+		validf.familyValidation(id);
+		if (getFamilyById(id) == null)
+			throw new ValidationException();
+
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("DELETE FROM user_family ");
@@ -223,12 +258,13 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 
 			p.execute();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException("Erro ao deletar família!", e);
 		}
 	}
 
 	@Override
-	public List<Familia> getFamily(int id) {
+	public List<Familia> getFamily(int id) throws ValidationException {
+
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT fa.Id_Familias as idfamilia, ");
 		comando.append("fa.Nome as nomeFamilia, us.Usuario as owner FROM familias fa ");
@@ -236,6 +272,10 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		comando.append("INNER JOIN usuarios us ON us.Id_Usuarios = uf.Usuario_Id ");
 		comando.append("WHERE fa.Id_Usuario = uf.Usuario_Id ");
 		if (id != 0) {
+			validf.familyValidation(id);
+			if (getFamilyById(id) == null)
+				throw new ValidationException();
+
 			comando.append("AND ");
 			comando.append("fa.Id_Familias = " + id);
 		}
@@ -266,12 +306,17 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 		return listFamilias;
 	}
 
-	public String getUserByFamilyId(int id) {
+	public String getUserByFamilyId(int id) throws ValidationException {
+
+		validf.familyValidation(id);
+
+		if (getFamilyById(id) == null)
+			throw new ValidationException();
 
 		StringBuilder comando2 = new StringBuilder();
 		comando2.append("SELECT uss.Usuario as user from usuarios uss ");
@@ -290,7 +335,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				names.add(rs2.getString("user"));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 
 		String user = names.get(0);
@@ -303,8 +348,11 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 	}
 
 	public void deletaFamilia(int id) throws Exception {
+
+		validf.familyValidation(id);
+
 		if (getUserByFamilyId(id) == null) {
-			throw new Exception("Família inexistente");
+			throw new ValidationException("Família inexistente!");
 		}
 
 		beforeInsert(id);
@@ -322,11 +370,14 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 
 			p.execute();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 	}
 
-	public Familia getFamilyById(int id) {
+	public Familia getFamilyById(int id) throws ValidationException {
+
+		validf.familyValidation(id);
+
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT * FROM familias ");
 		comando.append("WHERE Id_Familias = ?");
@@ -346,13 +397,19 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				newFamily.setUsersName(getUserAndId(id));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 		return newFamily;
 	}
 
-	public List<Usuario> getUserAndId(int id) {
+	public List<Usuario> getUserAndId(int id) throws ValidationException {
 
+		validf.familyValidation(id);
+
+		if (getUserByFamilyId(id) == null) {
+			throw new ValidationException("Família inexistente!");
+		}
+		
 		List<Usuario> listUser = new ArrayList<Usuario>();
 
 		StringBuilder comando2 = new StringBuilder();
@@ -373,12 +430,12 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				listUser.add(user);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 		return listUser;
 	}
 
-	public List<Usuario> getFamilyMembers(int userId) {
+	public List<Usuario> getFamilyMembers(int userId) throws ValidationException {
 		return getUserAndId(getFamilyByUserId(userId));
 	}
 

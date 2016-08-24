@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import com.google.gson.Gson;
 
 import br.com.ControleFinanceiroCapote.bd.conexao.Conexao;
+import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.helpers.Helper;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCUsuarioDAO;
 import br.com.ControleFinanceiroCapote.objetos.Usuario;
@@ -28,7 +29,7 @@ public class AuthUser extends HttpServlet {
 	}
 
 	private void process(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, SQLException, NoSuchAlgorithmException {
+			throws ServletException, IOException, SQLException, NoSuchAlgorithmException, ValidationException {
 		Usuario user = new Usuario();
 		try {
 			String context = request.getServletContext().getContextPath();
@@ -94,6 +95,9 @@ public class AuthUser extends HttpServlet {
 		try {
 			process(request, response);
 		} catch (SQLException | NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ValidationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

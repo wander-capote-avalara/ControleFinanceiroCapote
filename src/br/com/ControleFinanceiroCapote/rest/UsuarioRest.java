@@ -44,9 +44,9 @@ public class UsuarioRest extends UtilRest {
 		try {
 			Usuario usuario = new ObjectMapper().readValue(usuarioParam, Usuario.class);
 			service.AddUser(usuario);
-			return this.buildResponse("Operação feita com sucesso!");
+			return this.buildResponse("OperaÃ§Ã£o feita com sucesso!");
 		} catch (Exception e) {
-			return this.buildErrorResponse("Ocorreu um erro ao fazer a operação!");
+			return this.buildErrorResponse("Ocorreu um erro ao fazer a operaÃ§Ã£o!");
 		}
 	}
 
@@ -68,9 +68,9 @@ public class UsuarioRest extends UtilRest {
 	public Response deletaUsuario(@PathParam("id") int id) throws ValidationException {
 		try {
 			service.DeleteUser(id);
-			return this.buildResponse("Usuário deletado com sucesso.");
+			return this.buildResponse("UsuÃ¡rio deletado com sucesso.");
 		} catch (Exception e) {
-			return this.buildErrorResponse("Não foi possível deletar o usuário.");
+			return this.buildErrorResponse("NÃ£o foi possÃ­vel deletar o usuÃ¡rio.");
 		}
 	}
 
@@ -79,9 +79,9 @@ public class UsuarioRest extends UtilRest {
 	public Response ativaUsuario(@PathParam("id") int id) throws ValidationException {
 		try {
 			service.ActiveUser(id);
-			return this.buildResponse("Usuário ativado com sucesso.");
+			return this.buildResponse("UsuÃ¡rio ativado com sucesso.");
 		} catch (Exception e) {
-			return this.buildErrorResponse("Não foi possível ativar o usuário.");
+			return this.buildErrorResponse("NÃ£o foi possÃ­vel ativar o usuÃ¡rio.");
 		}
 	}
 

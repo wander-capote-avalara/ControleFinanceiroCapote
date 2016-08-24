@@ -9,7 +9,6 @@ import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.helpers.Helper;
 import br.com.ControleFinanceiroCapote.jdbc.JDBCUsuarioDAO;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
-import br.com.ControleFinanceiroCapote.objetos.Invite;
 import br.com.ControleFinanceiroCapote.objetos.Usuario;
 
 public class UsuarioService {
@@ -54,7 +53,7 @@ public class UsuarioService {
 		conec.fecharConexao();
 	}
 
-	public List<Familia> GetFamilies() {
+	public List<Familia> GetFamilies() throws ValidationException {
 		List<Familia> data = new ArrayList<Familia>();
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
@@ -65,7 +64,7 @@ public class UsuarioService {
 		return data;
 	}
 	
-	public List<Usuario> GetUsers(String text) {
+	public List<Usuario> GetUsers(String text) throws ValidationException {
 		List<Usuario> data = new ArrayList<Usuario>();
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
@@ -76,7 +75,7 @@ public class UsuarioService {
 		return data;
 	}
 	
-	public Usuario getUserInfo(int id) {
+	public Usuario getUserInfo(int id) throws ValidationException {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCUsuarioDAO jdbcContato = new JDBCUsuarioDAO(conexao);

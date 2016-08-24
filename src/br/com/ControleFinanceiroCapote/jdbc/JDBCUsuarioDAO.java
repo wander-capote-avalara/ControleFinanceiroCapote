@@ -15,6 +15,7 @@ import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.UsuarioDAO;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
 import br.com.ControleFinanceiroCapote.objetos.Usuario;
+import br.com.ControleFinanceiroCapote.validacao.ValidaFamilia;
 import br.com.ControleFinanceiroCapote.validacao.ValidaUsuario;
 
 public class JDBCUsuarioDAO implements UsuarioDAO {
@@ -26,9 +27,11 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	}
 
 	ValidaUsuario valid = new ValidaUsuario();
+	ValidaFamilia validf = new ValidaFamilia();
 
 	public boolean inserir(Usuario user) throws ValidationException {
 		valid.insertValidation(user);
+		validf.familyValidation(user.getId_familia());
 		int id = user.getId(), familyId = user.getId_familia();
 
 		if (id == 0) {
@@ -53,11 +56,12 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
+				new ValidationException("Erro ao inserir usuário!", e);
 			}
 			return true;
 		} else {
+			valid.updateValidation(user);
+			validf.familyValidation(familyId);
 			String comando = "Update usuarios set Usuario=?, Senha=?, Email=?, Nivel=?, Ativo=? ";
 			comando += "where Id_Usuarios=?";
 
@@ -77,14 +81,15 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 					setFamily(id, familyId, getFamilyByUserID(id) == 0 ? true : false);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
+				new ValidationException("Erro ao atualizar usuário!", e);
 			}
 			return true;
 		}
 	}
 
-	private void setFamily(int id, int familyId, boolean iOu) {
+	private void setFamily(int id, int familyId, boolean iOu) throws ValidationException {
+		valid.userValidation(id);
+		validf.familyValidation(familyId);
 		StringBuilder comando = new StringBuilder();
 		if (iOu) {
 			comando.append("insert into user_family ");
@@ -105,12 +110,12 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			p.execute();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException("Erro ao incluir usuário na família!", e);
 		}
 	}
 
 	@Override
-	public List<Usuario> getUsers(String text) {
+	public List<Usuario> getUsers(String text) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT *, familias.Nome AS NomeFamilia from usuarios ");
 		comando.append("LEFT JOIN user_family ON user_family.Usuario_Id = usuarios.Id_Usuarios ");
@@ -144,7 +149,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				listUsuario.add(usuario);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException("Erro ao pesquisar usuário!", e);
 		}
 		return listUsuario;
 	}
@@ -163,14 +168,13 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			p = this.conexao.createStatement();
 			p.execute(comando);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
+			throw new ValidationException("Erro ao deletar usuário!", e);
 		}
 		return true;
 	}
 
 	@Override
-	public Usuario authUser(Usuario user) throws SQLException {
+	public Usuario authUser(Usuario user) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT u.Id_Usuarios as userid, u.Usuario as user, ");
 		comando.append("u.Email as email, u.Nivel as nivel, uf.Familia_Id as familyId ");
@@ -201,12 +205,13 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException("Erro ao pesquisar usuário!", e);
 		}
 		return usuario;
 	}
 
-	public Usuario getUserInfoById(int id) {
+	public Usuario getUserInfoById(int id) throws ValidationException {
+		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT a.Usuario as userName, c.Nome as familyName  FROM usuarios a ");
 		comando.append("LEFT JOIN user_family b ON b.Usuario_Id = a.Id_Usuarios ");
@@ -230,17 +235,17 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			}
 			if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
+			throw new ValidationException("Erro ao pesquisar informações do usuário!", e);
 		}
 		return user;
 	}
 
-	private int getNextBalanceById(int id) {
+	private int getNextBalanceById(int id) throws ValidationException {
 		return getActualBalanceById(id, true) + getActualBalanceById(id, false);
 	}
 
-	private String getNextBill(int id) {
+	private String getNextBill(int id) throws ValidationException {
+		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT a.Data_Vencimento as lastDate FROM contas a ");
 		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Conta = 1 ");
@@ -260,16 +265,16 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				return "Não há próxima fatura";
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
+			throw new ValidationException("Erro ao pesquisar contas!", e);
 		}
 	}
 
-	private int getActualBalanceById(int id, boolean next) {
+	private int getActualBalanceById(int id, boolean next) throws ValidationException {
 		return getActualRentsById(id, next) - getActualBillsById(id, next);
 	}
 	
-	private int getActualBillsById(int id, boolean next) {
+	private int getActualBillsById(int id, boolean next) throws ValidationException {
+		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
 		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
 			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
@@ -289,14 +294,14 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			balance += getBillsParcelsValues(id, next);
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return 0;
+			throw new ValidationException("Erro ao pesquisar contas!", e);
 		}
 		return balance;
 	}
 	
 	
-	private double getBillsParcelsValues(int id, boolean next) {
+	private double getBillsParcelsValues(int id, boolean next) throws ValidationException {
+		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
 		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
 			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
@@ -315,12 +320,12 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			
 			return balance;		
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return 0;
+			throw new ValidationException("Erro ao pesquisar usuário!", e);
 		}
 	}
 
-	private int getActualRentsById(int id, boolean next) {
+	private int getActualRentsById(int id, boolean next) throws ValidationException {
+		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT SUM(Valor_Rendas) as vlrRenda FROM rendas a ");
 		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Renda = 1 AND a.Renda_Fixa = 1 AND a.Data_Vencimento <= Now()");
@@ -341,7 +346,8 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		}
 	}
 	
-	private double getRentsParcelsValues(int id, boolean next) {
+	private double getRentsParcelsValues(int id, boolean next) throws ValidationException {
+		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
 		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
 			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
@@ -361,8 +367,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			
 			return balance;		
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return 0;
+			throw new ValidationException("Erro ao pesquisar valores das parcelas!", e);
 		}
 	}
 
@@ -377,14 +382,13 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			p = this.conexao.createStatement();
 			p.execute(comando);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
+			throw new ValidationException("Erro ao ativar usuário!", e);
 		}
 		return true;
 	}
 
 	@Override
-	public List<Familia> getFamilies() {
+	public List<Familia> getFamilies() throws ValidationException {
 		String comando = "SELECT familias.Id_Familias as idfamilia, familias.Nome as nomeFamilia, usuarios.Usuario as owner FROM familias LEFT JOIN usuarios ON usuarios.Id_Usuarios = familias.Id_Usuario";
 
 		List<Familia> listFamilias = new ArrayList<Familia>();
@@ -404,7 +408,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				listFamilias.add(familia);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException("Erro ao pesquisar usuário!", e);
 		}
 		return listFamilias;
 	}
@@ -434,7 +438,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				user.setAtivo(ativo);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException("Erro ao pesquisar usuário!", e);
 		}
 		return user;
 	}
@@ -458,7 +462,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		return idFamilia;
 	}
 
-	public List<Usuario> getUsersInfo(List<Usuario> familyMembers) {
+	public List<Usuario> getUsersInfo(List<Usuario> familyMembers) throws ValidationException {
 		List<Usuario> membersWInfo = new ArrayList<Usuario>();
 		for (Usuario user : familyMembers) {
 			membersWInfo.add(getUserInfoById(user.getId()));
