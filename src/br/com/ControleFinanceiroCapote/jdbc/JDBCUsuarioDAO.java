@@ -31,7 +31,6 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 
 	public boolean inserir(Usuario user) throws ValidationException {
 		valid.insertValidation(user);
-		validf.familyValidation(user.getId_familia());
 		int id = user.getId(), familyId = user.getId_familia();
 
 		if (id == 0) {

@@ -405,10 +405,6 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 	public List<Usuario> getUserAndId(int id) throws ValidationException {
 
 		validf.familyValidation(id);
-
-		if (getUserByFamilyId(id) == null) {
-			throw new ValidationException("Família inexistente!");
-		}
 		
 		List<Usuario> listUser = new ArrayList<Usuario>();
 
