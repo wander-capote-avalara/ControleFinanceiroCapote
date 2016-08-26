@@ -10,12 +10,12 @@ import br.com.ControleFinanceiroCapote.objetos.Renda;
 
 public interface RendaDAO {
 
-	public void inserir(Renda renda);
+	public void inserir(Renda renda) throws ValidationException;
 	public boolean deletaRenda(int id) throws ValidationException;
-	public List<Renda> getIncomes(int id, int userId, RangeDTO range);
-	public List<Renda> getAllFamilyIncomes(int idFamily);
-	public List<Graph> getIncomesByCategory(int userId, RangeDTO  range);
-	public int getTotalValueIncome(RangeDTO dates, int userId);
-	public List<Graph> getFamilyIncomesTotalValue(int idFamily);
-	public List<Parcela> getParcelsById(int id);
+	public List<Renda> getIncomes(int id, int userId, RangeDTO range) throws ValidationException;
+	public List<Renda> getAllFamilyIncomes(int idFamily) throws ValidationException;
+	public List<Graph> getIncomesByCategory(int userId, RangeDTO  range) throws ValidationException;
+	public int getTotalValueIncome(RangeDTO dates, int userId) throws ValidationException;
+	public List<Graph> getFamilyIncomesTotalValue(int idFamily) throws ValidationException;
+	public List<Parcela> getParcelsById(int id) throws ValidationException;
 }

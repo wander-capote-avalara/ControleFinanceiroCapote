@@ -42,6 +42,7 @@ var iniciaUsuario = function() {
 	$(document)
 			.ready(
 					function() {
+						
 						CFINAC.usuario.add = function() {
 							var cfg;
 							var msg, username = $("#inputUsernameLogin").val(), email = $(

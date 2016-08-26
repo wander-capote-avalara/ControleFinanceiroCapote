@@ -435,7 +435,10 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		return getUserAndId(getFamilyByUserId(userId));
 	}
 
-	public int getFamilyByUserId(int userId) {
+	public int getFamilyByUserId(int userId) throws ValidationException {
+		
+		valid.userValidation(userId);
+		
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT uf.Familia_Id as familyId ");
@@ -459,7 +462,9 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		return 0;
 	}
 
-	public void leadProvider(int id) {
+	public void leadProvider(int id) throws ValidationException {
+		valid.userValidation(id);
+		
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("UPDATE familias fa SET Id_Usuario=? ");
@@ -474,11 +479,13 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 
 			p.execute();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 	}
 
-	public boolean isLeader(int id) {
+	public boolean isLeader(int id) throws ValidationException {
+		valid.userValidation(id);
+		
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT fa.Nome FROM familias fa ");
@@ -492,12 +499,13 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 
 			return p.executeQuery().next();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
-		return false;
 	}
 
-	public void kickUser(int id) {
+	public void kickUser(int id) throws ValidationException {
+		valid.userValidation(id);
+		
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("DELETE FROM user_family ");
@@ -513,11 +521,13 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				deleteFamily(id);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 	}
 
-	private void deleteFamily(int id) {
+	private void deleteFamily(int id) throws ValidationException {
+		valid.userValidation(id);
+		
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("DELETE FROM familias ");
@@ -530,12 +540,14 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			p.setInt(1, id);
 			p.execute();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 
 	}
 
-	public List<Invite> getInvites(int userId) {
+	public List<Invite> getInvites(int userId) throws ValidationException {
+		valid.userValidation(userId);
+		
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT id_family as inviteFrom FROM convites c ");
 		comando.append("WHERE c.id_user = ?");
@@ -553,13 +565,14 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				listInvite.add(newInvite);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
+			throw new ValidationException(e);
 		}
 		return listInvite;
 	}
 
-	public List<Invite> getInvitesInfo(int userId) {
+	public List<Invite> getInvitesInfo(int userId) throws ValidationException {
+		valid.userValidation(userId);
+		
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT u.Usuario AS userName, f.Nome AS familyName, c.id_family as familyId ");
 		comando.append("FROM convites c ");
@@ -582,13 +595,16 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				listInvite.add(newInvite);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
+			throw new ValidationException(e);
 		}
 		return listInvite;
 	}
 
-	public void declineInvite(int id, int userId) {
+	public void declineInvite(int id, int userId) throws ValidationException {
+
+		valid.userValidation(userId);
+		validf.familyValidation(id);
+		
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("DELETE FROM convites ");
@@ -602,13 +618,18 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			p.setInt(2, userId);
 			p.execute();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 	}
 
-	public void acceptInvite(int id, int userId) {
+	public void acceptInvite(int id, int userId) throws ValidationException {
+
+		valid.userValidation(userId);
+		validf.familyValidation(id);
+		
 		declineInvite(id, userId);
 		kickUser(userId);
+		
 
 		StringBuilder comando = new StringBuilder();
 
@@ -623,7 +644,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			p.setInt(2, userId);
 			p.execute();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 	}
 }

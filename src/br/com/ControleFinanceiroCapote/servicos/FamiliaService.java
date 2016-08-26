@@ -104,7 +104,7 @@ public class FamiliaService {
 		conec.fecharConexao();
 	}
 	
-	public List<Conta> getAllFamilyBills(int userId) {
+	public List<Conta> getAllFamilyBills(int userId) throws ValidationException {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCContaDAO jdbcConta = new JDBCContaDAO(conexao);	
@@ -114,7 +114,7 @@ public class FamiliaService {
 		return bills;
 	}
 
-	public List<Renda> getAllFamilyIncomes(int userId) {
+	public List<Renda> getAllFamilyIncomes(int userId) throws ValidationException {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCRendaDAO jdbcRenda = new JDBCRendaDAO(conexao);	
@@ -124,7 +124,7 @@ public class FamiliaService {
 		return incomes;
 	}
 
-	public List<Invite> getInvites(int userId) {
+	public List<Invite> getInvites(int userId) throws ValidationException {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
@@ -134,7 +134,7 @@ public class FamiliaService {
 		return invites;
 	}
 
-	public List<Invite> getInvitesInfo(int userId) {
+	public List<Invite> getInvitesInfo(int userId) throws ValidationException {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
@@ -144,7 +144,7 @@ public class FamiliaService {
 		return invites;
 	}
 
-	public void declineInvite(int id, int userId) {
+	public void declineInvite(int id, int userId) throws ValidationException {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
@@ -152,7 +152,7 @@ public class FamiliaService {
 		conec.fecharConexao();
 	}
 
-	public void acceptInvite(int id, int userId) {
+	public void acceptInvite(int id, int userId) throws ValidationException {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);

@@ -28,8 +28,9 @@ public class AuthUser extends HttpServlet {
 		super();
 	}
 
-	private void process(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, SQLException, NoSuchAlgorithmException, ValidationException {
+	private void process(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException,
+			SQLException, NoSuchAlgorithmException, ValidationException {
 		Usuario user = new Usuario();
 		try {
 			String context = request.getServletContext().getContextPath();
@@ -47,14 +48,16 @@ public class AuthUser extends HttpServlet {
 
 				HttpSession sessao = request.getSession();
 
-				//String usuario = request.getParameter("inputUsername");
-				//String senha = request.getParameter("inputSenha");
+				// String usuario = request.getParameter("inputUsername");
+				// String senha = request.getParameter("inputSenha");
 
-				//Encoder encoder = Base64.getEncoder();
-				//String encodedPassword = encoder.encodeToString(senha.getBytes());
+				// Encoder encoder = Base64.getEncoder();
+				// String encodedPassword =
+				// encoder.encodeToString(senha.getBytes());
 
 				sessao.setAttribute("id", Integer.toString(userExists.getId()));
-				sessao.setAttribute("familyId", Integer.toString(userExists.getId_familia()));
+				sessao.setAttribute("familyId",
+						Integer.toString(userExists.getId_familia()));
 				sessao.setAttribute("lvl", userExists.getNivel());
 
 				// Decoder decoder = Base64.getDecoder();
@@ -70,15 +73,11 @@ public class AuthUser extends HttpServlet {
 
 				// response.sendRedirect(context+"/resources/contato/views/teste.jsp");
 
-				response.sendRedirect(
-						userExists.getNivel() == 0 
-						? context + "/resources/Index.html"
-						: context + "/resources/admin/admin.html"
-						);
+				response.sendRedirect(userExists.getNivel() == 0 ? context
+						+ "/resources/Index.html" : context
+						+ "/resources/admin/admin.html");
 			} else {
-				HttpSession sessao = request.getSession();
-				sessao.setAttribute("msg", "Usuário e/ou senha incorretos");
-				response.sendRedirect(context + "/Admin.html");
+				response.sendRedirect(context + "/Login.html");
 				// msg.put("msg", "Usu�rio e/ou senha incorretos");
 			}
 			String json = new Gson().toJson(msg);
@@ -86,12 +85,12 @@ public class AuthUser extends HttpServlet {
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().write(json);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 		try {
 			process(request, response);
 		} catch (SQLException | NoSuchAlgorithmException e) {

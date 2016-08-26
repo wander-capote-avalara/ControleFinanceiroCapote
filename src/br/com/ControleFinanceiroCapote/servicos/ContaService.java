@@ -13,7 +13,7 @@ import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
 
 public class ContaService {
 
-	public void addConta(Conta conta) {
+	public void addConta(Conta conta) throws ValidationException {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
@@ -30,7 +30,7 @@ public class ContaService {
 
 	}
 
-	public List<Conta> getBills(int id, int userId) {
+	public List<Conta> getBills(int id, int userId) throws ValidationException {
 
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
@@ -41,7 +41,7 @@ public class ContaService {
 		return billList;
 	}
 
-	public List<Conta> getBillsByDate(RangeDTO range, int userId) {
+	public List<Conta> getBillsByDate(RangeDTO range, int userId) throws ValidationException {
 
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
@@ -52,7 +52,7 @@ public class ContaService {
 		return billList;
 	}
 
-	public List<Parcela> getParcelsById(int id) {
+	public List<Parcela> getParcelsById(int id) throws ValidationException {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
@@ -62,7 +62,7 @@ public class ContaService {
 		return parcelList;
 	}
 
-	public int getBillsTotalValue(RangeDTO datas, int userId) {
+	public int getBillsTotalValue(RangeDTO datas, int userId) throws ValidationException {
 
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
@@ -73,7 +73,7 @@ public class ContaService {
 		return billsValue;
 	}
 
-	public List<Graph> getBillsByCategory(RangeDTO datas, int userId) {
+	public List<Graph> getBillsByCategory(RangeDTO datas, int userId) throws ValidationException {
 
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
@@ -84,7 +84,7 @@ public class ContaService {
 		return bills;
 	}
 
-	public List<Graph> getFamilyBillsTotalValue(int familyId) {
+	public List<Graph> getFamilyBillsTotalValue(int familyId) throws ValidationException {
 
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();

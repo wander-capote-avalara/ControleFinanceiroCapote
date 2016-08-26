@@ -16,44 +16,74 @@
 <script src="resources/js/jquery.min.js"></script>
 <script src="resources/js/jquery-ui.js"></script>
 <script src="resources/js/ajax.js"></script>
-<script src="resources/usuarios/js/usuario.js"></script>
 <link href="resources/css/custom/logincss.css" rel="stylesheet">
 <link href="resources/css/jquery-ui.css" rel="stylesheet">
 <link href="resources/css/jquery-ui.structure.css" rel="stylesheet">
 <link href="resources/css/jquery-ui.theme.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="resources/css/css.css">
 <script>
-$(document).ready(function() {
-	iniciaUsuario();
-	
-    $("#rbutton").click(function() {
-        if ($("#registerForm").hasClass("col-xs-1")) {
-            $("#registerForm").removeClass("col-xs-1").addClass("col-xs-11");
-            $("#loginForm").removeClass("col-xs-11").addClass("col-xs-1");
-            $("#conteudoRegistro").removeClass("hidden-xs");
-            $("#counteudoLogin").addClass("hidden-xs");
-        } else {
-            $("#registerForm").removeClass("col-xs-11").addClass("col-xs-1");
-            $("#loginForm").removeClass("col-xs-1").addClass("col-xs-11");
-            $("#counteudoLogin").removeClass("hidden-xs");
-            $("#conteudoRegistro").addClass("hidden-xs");
-        }
-    });
-    
-    $("#lbutton").click(function() {
-        if ($("#loginForm").hasClass("col-xs-11")) {
-            $("#loginForm").removeClass("col-xs-11").addClass("col-xs-1");
-            $("#registerForm").removeClass("col-xs-1").addClass("col-xs-11");
-            $("#conteudoRegistro").removeClass("hidden-xs");
-            $("#counteudoLogin").addClass("hidden-xs");
-        } else {
-            $("#loginForm").removeClass("col-xs-1").addClass("col-xs-11");
-            $("#registerForm").removeClass("col-xs-11").addClass("col-xs-1");
-            $("#counteudoLogin").removeClass("hidden-xs");
-            $("#conteudoRegistro").addClass("hidden-xs");
-        }
-    });
-});
+	$(document)
+			.ready(
+					function() {
+						iniciaUsuario();
+
+						$("#rbutton")
+								.click(
+										function() {
+											if ($("#registerForm").hasClass(
+													"col-xs-1")) {
+												$("#registerForm").removeClass(
+														"col-xs-1").addClass(
+														"col-xs-11");
+												$("#loginForm").removeClass(
+														"col-xs-11").addClass(
+														"col-xs-1");
+												$("#conteudoRegistro")
+														.removeClass(
+																"hidden-xs");
+												$("#counteudoLogin").addClass(
+														"hidden-xs");
+											} else {
+												$("#registerForm").removeClass(
+														"col-xs-11").addClass(
+														"col-xs-1");
+												$("#loginForm").removeClass(
+														"col-xs-1").addClass(
+														"col-xs-11");
+												$("#counteudoLogin")
+														.removeClass(
+																"hidden-xs");
+												$("#conteudoRegistro")
+														.addClass("hidden-xs");
+											}
+										});
+
+						$("#lbutton").click(
+								function() {
+									if ($("#loginForm").hasClass("col-xs-11")) {
+										$("#loginForm")
+												.removeClass("col-xs-11")
+												.addClass("col-xs-1");
+										$("#registerForm").removeClass(
+												"col-xs-1").addClass(
+												"col-xs-11");
+										$("#conteudoRegistro").removeClass(
+												"hidden-xs");
+										$("#counteudoLogin").addClass(
+												"hidden-xs");
+									} else {
+										$("#loginForm").removeClass("col-xs-1")
+												.addClass("col-xs-11");
+										$("#registerForm").removeClass(
+												"col-xs-11").addClass(
+												"col-xs-1");
+										$("#counteudoLogin").removeClass(
+												"hidden-xs");
+										$("#conteudoRegistro").addClass(
+												"hidden-xs");
+									}
+								});
+					});
 </script>
 <title>Capote's Controle Financeiro</title>
 </head>
@@ -97,7 +127,8 @@ $(document).ready(function() {
 									</div>
 									<div class="form-group">
 										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-											<button type="submit" class="btn btn-success buttom">Entrar</button>
+											<button type="submit" class="btn btn-success buttom"
+												id="loginButton">Entrar</button>
 										</div>
 										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 											<button type="reset" class="btn btn-danger buttom">Limpa</button>
@@ -172,6 +203,9 @@ $(document).ready(function() {
 			Todos os direitos reservados!</div>
 	</div>
 	<div id="msg" style="display: none"></div>
+
+	<script src="resources/usuarios/js/usuario.js">iniciaUsuario();</script>
 </body>
+
 
 </html>

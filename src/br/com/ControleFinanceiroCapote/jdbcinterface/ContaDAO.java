@@ -10,12 +10,12 @@ import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
 
 public interface ContaDAO {
 	
-	public void inserir(Conta conta);
+	public void inserir(Conta conta) throws ValidationException;
 	public boolean deletaConta(int id) throws ValidationException;
-	public List<Conta> getBills(int id, int userId, RangeDTO range);
-	public List<Conta> getAllFamilyBills(int idFamily);
-	public List<Graph> getBillsByCategory(int userId, RangeDTO range); 
-	public int getBillsTotalValue(RangeDTO dates, int userId);  
-	public List<Graph> getFamilyBillsTotalValue(int idFamily); 
-	public List<Parcela> getParcelsById(int id); 
+	public List<Conta> getBills(int id, int userId, RangeDTO range)throws ValidationException;
+	public List<Conta> getAllFamilyBills(int idFamily)throws ValidationException;
+	public List<Graph> getBillsByCategory(int userId, RangeDTO range)throws ValidationException;
+	public int getBillsTotalValue(RangeDTO dates, int userId)throws ValidationException;  
+	public List<Graph> getFamilyBillsTotalValue(int idFamily)throws ValidationException;
+	public List<Parcela> getParcelsById(int id)throws ValidationException;
 } 

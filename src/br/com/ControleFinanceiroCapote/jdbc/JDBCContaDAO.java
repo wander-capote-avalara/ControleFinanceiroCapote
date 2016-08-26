@@ -20,6 +20,7 @@ import br.com.ControleFinanceiroCapote.objetos.Conta;
 import br.com.ControleFinanceiroCapote.objetos.Graph;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
 import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
+import br.com.ControleFinanceiroCapote.validacao.ValidaConta;
 
 public class JDBCContaDAO implements ContaDAO {
 
@@ -28,10 +29,13 @@ public class JDBCContaDAO implements ContaDAO {
 	public JDBCContaDAO(Connection conexao) {
 		this.conexao = conexao;
 	}
+	
+	ValidaConta validac = new ValidaConta();
 
 	@Override
-	public void inserir(Conta conta) {
+	public void inserir(Conta conta) throws ValidationException {
 		if (conta.getId() == 0) {
+			validac.insertValidation(conta);
 			StringBuilder comando = new StringBuilder();
 			comando.append("INSERT INTO contas ");
 			comando.append("(Id_Categoria, Id_Usuario, Descricao_Contas, Valor_Contas, ");
@@ -62,9 +66,10 @@ public class JDBCContaDAO implements ContaDAO {
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new ValidationException(e);
 			}
 		} else {
+			validac.updateValidation(conta);
 			StringBuilder comando = new StringBuilder();
 			comando.append("UPDATE contas ");
 			comando.append("SET Id_Categoria = ?, Id_Usuario = ?, Descricao_contas = ?, Valor_contas = ?, ");
@@ -90,12 +95,12 @@ public class JDBCContaDAO implements ContaDAO {
 					insertParcels(conta.getId(), conta.getTimes(), conta.getParcelValue(), conta.getTotalValue(), (Date) conta.getStartDate());
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new ValidationException(e);
 			}
 		}
 	}
 
-	private void insertParcels(int billIDd, int times, Double parcelValue, double totalValue,  Date startDate) {
+	private void insertParcels(int billIDd, int times, Double parcelValue, double totalValue,  Date startDate) throws ValidationException {
 		double math = ((parcelValue * times) - totalValue);
 		boolean hasDifference = (parcelValue * times) - totalValue != 0;
 		Calendar cal = Calendar.getInstance();
@@ -122,7 +127,7 @@ public class JDBCContaDAO implements ContaDAO {
 				hasDifference = false;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 	}
 
@@ -143,13 +148,12 @@ public class JDBCContaDAO implements ContaDAO {
 			p.execute();
 
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
+			throw new ValidationException(e);
 		}
 		return true;
 	}
 
-	private void deleteParcels(int id) {
+	private void deleteParcels(int id) throws ValidationException {
 
 		StringBuilder comando = new StringBuilder();
 		comando.append("UPDATE parcela_conta ");
@@ -164,13 +168,13 @@ public class JDBCContaDAO implements ContaDAO {
 			p.execute();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Conta> getBills(int id, int userId, RangeDTO range) {
+	public List<Conta> getBills(int id, int userId, RangeDTO range) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT r.Id_Contas as id, r.Id_Categoria as categoryId, ");
@@ -223,12 +227,12 @@ public class JDBCContaDAO implements ContaDAO {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 		return billsList;
 	}
 	
-	private List<Conta> getBillsParcels(int id, RangeDTO dates) {
+	private List<Conta> getBillsParcels(int id, RangeDTO dates) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT a.Valor_Parcela as vlrConta, a.Status_Parcela as status, ca.Descricao as descr, c.Descricao_Contas as dcs ");
 		comando.append("FROM parcela_conta a ");
@@ -262,12 +266,11 @@ public class JDBCContaDAO implements ContaDAO {
 			
 			return bills;		
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
+			throw new ValidationException(e);
 		}
 	}
 
-	public List<Graph> getBillsByCategory(int userId, RangeDTO range) {
+	public List<Graph> getBillsByCategory(int userId, RangeDTO range) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT SUM(root.Valor_Contas) as ValorTotal, c.Descricao as descricao ");
@@ -302,12 +305,11 @@ public class JDBCContaDAO implements ContaDAO {
 			return billList;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
-		return null;
 	}
 
-	private String getCategoriesName(int categoria) throws SQLException {
+	private String getCategoriesName(int categoria) throws SQLException, ValidationException {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT Descricao as descr ");
 		comando.append("FROM categorias ");
@@ -320,12 +322,12 @@ public class JDBCContaDAO implements ContaDAO {
 				return rs.getString("descr");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 		return null;
 	}
 
-	public List<Parcela> getParcelsById(int id) {
+	public List<Parcela> getParcelsById(int id) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT Id_Conta as id, Valor_Parcela as parcelValue, Status_Parcela as parcelStatus, ");
@@ -353,12 +355,12 @@ public class JDBCContaDAO implements ContaDAO {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 		return parcelList;
 	}
 
-	public int getBillsTotalValue(RangeDTO dates, int userId) {
+	public int getBillsTotalValue(RangeDTO dates, int userId) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 		int sum = 0;
 		comando.append("SELECT SUM(Valor_Contas) as summ FROM contas a ");
@@ -383,12 +385,11 @@ public class JDBCContaDAO implements ContaDAO {
 			sum += getBillsParcelsValues(userId, dates);
 			return sum;
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
-		return 0;
 	}
 	
-	private double getBillsParcelsValues(int id, RangeDTO dates) {
+	private double getBillsParcelsValues(int id, RangeDTO dates) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT SUM(Valor_Parcela) as vlrConta FROM parcela_conta a ");
 		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Conta IN (SELECT c.Id_Contas FROM contas c where c.Id_Usuario = ?)");
@@ -411,12 +412,11 @@ public class JDBCContaDAO implements ContaDAO {
 			
 			return balance;		
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return 0;
+			throw new ValidationException(e);
 		}
 	}
 
-	public List<Conta> getAllFamilyBills(int idFamily) {
+	public List<Conta> getAllFamilyBills(int idFamily) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT c.Valor_Contas AS BillValue, u.Usuario AS Name, ");
@@ -451,13 +451,11 @@ public class JDBCContaDAO implements ContaDAO {
 			
 			return bills;
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
-
-		return null;
 	}
 	
-	public List<Graph> getFamilyBillsTotalValue(int idFamily) {
+	public List<Graph> getFamilyBillsTotalValue(int idFamily) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 		
 		comando.append("SELECT SUM(c.Valor_Contas) AS BillValue, u.Usuario AS Name ");
@@ -488,10 +486,8 @@ public class JDBCContaDAO implements ContaDAO {
 			
 			return bills;
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
-		
-		return null;
 	}
 
 }

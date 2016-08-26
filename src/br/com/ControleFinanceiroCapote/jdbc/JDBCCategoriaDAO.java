@@ -7,12 +7,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.CategoriaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Categoria;
+import br.com.ControleFinanceiroCapote.validacao.ValidaCategoria;
+import br.com.ControleFinanceiroCapote.validacao.ValidaFamilia;
+import br.com.ControleFinanceiroCapote.validacao.ValidaUsuario;
 
 public class JDBCCategoriaDAO implements CategoriaDAO {
 
-
+	ValidaCategoria validac =  new ValidaCategoria();
+	ValidaFamilia validaf = new ValidaFamilia();
+	ValidaUsuario valida = new ValidaUsuario();
+	
 	private Connection conexao;
 
 	public JDBCCategoriaDAO(Connection conexao) {
@@ -20,7 +27,10 @@ public class JDBCCategoriaDAO implements CategoriaDAO {
 	}
 	
 	@Override
-	public List<Categoria> getCategories(int id, int userId) {
+	public List<Categoria> getCategories(int id, int userId) throws ValidationException {
+		
+		valida.userValidation(userId);
+		
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT c.Id_Categorias as idCategoria, c.Descricao as nomeCategoria ");
 		comando.append("FROM categorias c ");
@@ -28,6 +38,7 @@ public class JDBCCategoriaDAO implements CategoriaDAO {
 		comando.append(" AND ");
 		comando.append(" Id_Usuarios = " + userId);
 		if (id != 0) {
+			validac.idValidation(id);
 			comando.append(" AND ");
 			comando.append("c.Id_Categorias = " + id);
 		}
@@ -48,13 +59,15 @@ public class JDBCCategoriaDAO implements CategoriaDAO {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 		return listCategory;
 	}
 
-	public void inserir(Categoria categoria, int userId) {
+	public void inserir(Categoria categoria, int userId) throws ValidationException {
+		valida.userValidation(userId);
 		if (categoria.getId() == 0) {
+			validac.insertValidation(categoria);
 			StringBuilder comando = new StringBuilder();
 			comando.append("INSERT INTO categorias ");
 			comando.append("(Descricao, Status, Id_Usuarios) ");
@@ -69,9 +82,10 @@ public class JDBCCategoriaDAO implements CategoriaDAO {
 				p.setInt(3, userId);
 				p.execute();
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new ValidationException(e);
 			}
 		} else {
+			validac.updateValidation(categoria);
 			StringBuilder comando = new StringBuilder();
 			comando.append("UPDATE categorias ");
 			comando.append("SET Descricao = ? ");
@@ -85,12 +99,13 @@ public class JDBCCategoriaDAO implements CategoriaDAO {
 				p.setInt(2, categoria.getId());
 				p.execute();
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new ValidationException(e);
 			}
 		}
 	}
 
-	public void deletaCategoria(int id) {
+	public void deletaCategoria(int id) throws ValidationException {
+		validac.idValidation(id);
 		StringBuilder comando = new StringBuilder();
 		comando.append("UPDATE categorias ");
 		comando.append("SET Status = 0 ");
@@ -103,7 +118,7 @@ public class JDBCCategoriaDAO implements CategoriaDAO {
 			p.execute();
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 	}
 

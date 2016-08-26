@@ -6,8 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -18,11 +16,11 @@ import com.mysql.jdbc.Statement;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.jdbcinterface.RendaDAO;
-import br.com.ControleFinanceiroCapote.objetos.Conta;
 import br.com.ControleFinanceiroCapote.objetos.Graph;
 import br.com.ControleFinanceiroCapote.objetos.Parcela;
 import br.com.ControleFinanceiroCapote.objetos.RangeDTO;
 import br.com.ControleFinanceiroCapote.objetos.Renda;
+import br.com.ControleFinanceiroCapote.validacao.ValidaRenda;
 
 public class JDBCRendaDAO implements RendaDAO {
 
@@ -32,9 +30,12 @@ public class JDBCRendaDAO implements RendaDAO {
 		this.conexao = conexao;
 	}
 
+	ValidaRenda validar = new ValidaRenda();
+	
 	@Override
-	public void inserir(Renda renda) {
+	public void inserir(Renda renda) throws ValidationException {
 		if (renda.getId() == 0) {
+			validar.insertValidation(renda);
 			StringBuilder comando = new StringBuilder();
 			comando.append("INSERT INTO rendas ");
 			comando.append(
@@ -64,9 +65,10 @@ public class JDBCRendaDAO implements RendaDAO {
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new ValidationException(e);
 			}
 		} else {
+			validar.updateValidation(renda);
 			StringBuilder comando = new StringBuilder();
 			comando.append("UPDATE rendas ");
 			comando.append(
@@ -93,7 +95,7 @@ public class JDBCRendaDAO implements RendaDAO {
 					insertParcels(renda.getId(), renda.getTimes(), renda.getTotalValue(), renda.getParcelValue(), (Date) renda.getStartDate());
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new ValidationException(e);
 			}
 		}
 	}
@@ -115,13 +117,12 @@ public class JDBCRendaDAO implements RendaDAO {
 			p.execute();
 
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
+			throw new ValidationException(e);
 		}
 		return true;
 	}
 
-	private void deleteParcels(int id) {
+	private void deleteParcels(int id) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("UPDATE parcela_renda ");
@@ -136,12 +137,12 @@ public class JDBCRendaDAO implements RendaDAO {
 			p.execute();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 
 	}
 
-	public void insertParcels(int incomeId, int times, double totalValue, double parcelValue, Date startDate) {
+	public void insertParcels(int incomeId, int times, double totalValue, double parcelValue, Date startDate) throws ValidationException {
 		double math = ((parcelValue * times) - totalValue);
 		boolean hasDifference = (parcelValue * times) - totalValue != 0;
 		Calendar cal = Calendar.getInstance();
@@ -168,14 +169,14 @@ public class JDBCRendaDAO implements RendaDAO {
 				hasDifference = false;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 	}
 
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Renda> getIncomes(int id, int userId, RangeDTO range) {
+	public List<Renda> getIncomes(int id, int userId, RangeDTO range) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 		
 
@@ -235,12 +236,12 @@ public class JDBCRendaDAO implements RendaDAO {
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 		return incomeList;
 	}
 	
-	private List<Renda> getIncomeParcels(int id, RangeDTO dates) {
+	private List<Renda> getIncomeParcels(int id, RangeDTO dates) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT a.Valor_Parcela as vlrRenda, a.Status_Parcela as status, ca.Descricao as descr, c.Descricao_Rendas as dcs ");
 		comando.append("FROM parcela_renda a ");
@@ -274,12 +275,11 @@ public class JDBCRendaDAO implements RendaDAO {
 			
 			return incomes;		
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
+			throw new ValidationException(e);
 		}
 	}
 
-	private String getCategoriesName(int categoria) throws SQLException {
+	private String getCategoriesName(int categoria) throws SQLException, ValidationException {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT Descricao as descr ");
 		comando.append("FROM categorias ");
@@ -294,14 +294,14 @@ public class JDBCRendaDAO implements RendaDAO {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 
 		return null;
 
 	}
 
-	public List<Parcela> getParcelsById(int id) {
+	public List<Parcela> getParcelsById(int id) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT Id_Renda as id, Valor_Parcela as parcelValue, Status_Parcela as parcelStatus, ");
@@ -329,12 +329,12 @@ public class JDBCRendaDAO implements RendaDAO {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
 		return parcelList;
 	}
 
-	public List<Graph> getIncomesByCategory(int userId, RangeDTO range) {
+	public List<Graph> getIncomesByCategory(int userId, RangeDTO range) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT SUM(root.Valor_Rendas) as ValorTotal, c.Descricao as descricao ");
@@ -369,12 +369,11 @@ public class JDBCRendaDAO implements RendaDAO {
 			return incomeList;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
-		return null;
 	}
 
-	public int getTotalValueIncome(RangeDTO dates, int userId) {
+	public int getTotalValueIncome(RangeDTO dates, int userId) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 		int sum = 0;
 
@@ -400,12 +399,11 @@ public class JDBCRendaDAO implements RendaDAO {
 			sum += getIncomesParcelsValues(userId, dates);
 			return sum;
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
-		return 0;
 	}
 	
-	private double getIncomesParcelsValues(int id, RangeDTO dates) {
+	private double getIncomesParcelsValues(int id, RangeDTO dates) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT SUM(Valor_Parcela) as vlrRenda FROM parcela_renda a ");
 		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Renda IN (SELECT c.Id_Rendas FROM rendas c where c.Id_Usuario = ?) ");
@@ -428,12 +426,11 @@ public class JDBCRendaDAO implements RendaDAO {
 			
 			return balance;		
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return 0;
+			throw new ValidationException(e);
 		}
 	}
 
-	public List<Renda> getAllFamilyIncomes(int idFamily) {
+	public List<Renda> getAllFamilyIncomes(int idFamily) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT r.Valor_Rendas AS incomeValue, u.Usuario AS Name, ");
@@ -467,13 +464,11 @@ public class JDBCRendaDAO implements RendaDAO {
 
 			return incomes;
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
-
-		return null;
 	}
 
-	public List<Graph> getFamilyIncomesTotalValue(int familyId) {
+	public List<Graph> getFamilyIncomesTotalValue(int familyId) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT SUM(r.Valor_Rendas) AS IncomeValue, u.Usuario AS Name ");
@@ -504,10 +499,8 @@ public class JDBCRendaDAO implements RendaDAO {
 
 			return incomes;
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ValidationException(e);
 		}
-
-		return null;
 	}
 
 }

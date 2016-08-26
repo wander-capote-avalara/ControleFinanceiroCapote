@@ -23,7 +23,7 @@ public class RendaService {
 		jdbcRendadao.inserir(renda);
 		conec.fecharConexao();
 	}
-	public List<Renda> getIncomes(int id, int userId) {
+	public List<Renda> getIncomes(int id, int userId) throws ValidationException {
 
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
@@ -41,7 +41,7 @@ public class RendaService {
 		jdbcRendadao.deletaRenda(id);
 		conec.fecharConexao();
 	}
-	public List<Parcela> getParcelsById(int id) {
+	public List<Parcela> getParcelsById(int id) throws ValidationException {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCRendaDAO jdbcRendadao = new JDBCRendaDAO(conexao);
@@ -50,7 +50,7 @@ public class RendaService {
 
 		return parcelList;
 	}
-	public int getTotalValueIncome(RangeDTO datas, int userId) {
+	public int getTotalValueIncome(RangeDTO datas, int userId) throws ValidationException {
 		
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
@@ -60,7 +60,7 @@ public class RendaService {
 		
 		return incomesValue;
 	}
-	public List<Renda> getIncomesDate(RangeDTO range, int userId) {
+	public List<Renda> getIncomesDate(RangeDTO range, int userId) throws ValidationException {
 		
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
@@ -71,7 +71,7 @@ public class RendaService {
 		return incomeList;
 	}
 		
-	public List<Graph> getIncomesByCategory(RangeDTO datas, int userId) {
+	public List<Graph> getIncomesByCategory(RangeDTO datas, int userId) throws ValidationException {
 			
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
@@ -81,7 +81,7 @@ public class RendaService {
 		
 		return incomes;
 	}
-	public List<Graph> getFamilyIncomesTotalValue(int familyId) {
+	public List<Graph> getFamilyIncomesTotalValue(int familyId) throws ValidationException {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCRendaDAO jdbcRendadao = new JDBCRendaDAO(conexao);
