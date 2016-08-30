@@ -182,7 +182,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		if (!user.equals("null") || !user.equals("")) {
 			comando.append("WHERE Usuario=? AND Senha=?");
 			comando.append(" AND ");
-			comando.append("Ativo > 0");
+			comando.append("Ativo > 0 ");
 		}
 		PreparedStatement p;
 		ResultSet rs = null;
