@@ -10,7 +10,7 @@ public class Conexao {
 		try {
 			Class.forName("org.gjt.mm.mysql.Driver");
 			conexao = java.sql.DriverManager
-					.getConnection("jdbc:mysql://localhost:3306/financeirodb", "root", "root");
+					.getConnection("jdbc:mysql://localhost:3306/financeirodb", "root", "");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
