@@ -3,18 +3,18 @@ package br.com.ControleFinanceiroCapote.objetos;
 import java.util.List;
 
 public class DataTable {
-	List data;
+	List<?> data;
 	
-	public DataTable(List data) {
+	public DataTable(List<?> data) {
 		super();
 		this.data = data;
 	}
 
-	public List getData() {
+	public List<?> getData() {
 		return data;
 	}
 
-	public void setData(List data) {
+	public void setData(List<?> data) {
 		this.data = data;
 	}
 }

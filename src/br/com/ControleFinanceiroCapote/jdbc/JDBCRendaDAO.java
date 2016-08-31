@@ -77,7 +77,6 @@ public class JDBCRendaDAO implements RendaDAO {
 			comando.append(" WHERE Id_Rendas = ?");
 
 			PreparedStatement p;
-			ResultSet rs = null;
 
 			try {
 				p = this.conexao.prepareStatement(comando.toString(), Statement.RETURN_GENERATED_KEYS);
@@ -277,28 +276,6 @@ public class JDBCRendaDAO implements RendaDAO {
 		} catch (SQLException e) {
 			throw new ValidationException(e);
 		}
-	}
-
-	private String getCategoriesName(int categoria) throws SQLException, ValidationException {
-		StringBuilder comando = new StringBuilder();
-		comando.append("SELECT Descricao as descr ");
-		comando.append("FROM categorias ");
-		comando.append("WHERE Id_Categorias = " + categoria);
-
-		try {
-			java.sql.Statement stmt = conexao.createStatement();
-			ResultSet rs = stmt.executeQuery(comando.toString());
-
-			while (rs.next()) {
-				return rs.getString("descr");
-			}
-
-		} catch (Exception e) {
-			throw new ValidationException(e);
-		}
-
-		return null;
-
 	}
 
 	public List<Parcela> getParcelsById(int id) throws ValidationException {

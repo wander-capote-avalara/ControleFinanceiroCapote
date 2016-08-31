@@ -1,6 +1,5 @@
 package br.com.ControleFinanceiroCapote.jdbcinterface;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;

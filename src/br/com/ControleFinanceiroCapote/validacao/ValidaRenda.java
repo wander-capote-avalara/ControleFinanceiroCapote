@@ -2,7 +2,6 @@ package br.com.ControleFinanceiroCapote.validacao;
 
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
 import br.com.ControleFinanceiroCapote.objetos.Renda;
-import br.com.ControleFinanceiroCapote.objetos.Usuario;
 
 public class ValidaRenda {
 	public ValidaRenda(){}
