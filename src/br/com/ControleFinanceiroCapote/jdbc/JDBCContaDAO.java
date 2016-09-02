@@ -313,7 +313,7 @@ public class JDBCContaDAO implements ContaDAO {
 		StringBuilder comando = new StringBuilder();
 
 		comando.append("SELECT Id_Conta as id, Valor_Parcela as parcelValue, Status_Parcela as parcelStatus, ");
-		comando.append("Data_Pagamento as paymentDate, Data_Vencimento as dueDate ");
+		comando.append("Data_Pagamento as paymentDate, Data_Vencimento as dueDate, Id_Parcela_Conta as parcelId ");
 		comando.append("FROM parcela_conta WHERE Id_Conta = " + id);
 		comando.append(" AND Status_Parcela <> 0");
 
@@ -331,7 +331,13 @@ public class JDBCContaDAO implements ContaDAO {
 				parcel.setParcelValue(rs.getDouble("parcelValue"));
 				parcel.setStatus(rs.getInt("parcelStatus"));
 				parcel.setPaymentDate(rs.getDate("paymentDate"));
+				try{
+					parcel.setPaymentDateFormated(date.format(rs.getDate("paymentDate")).replace("-", "/"));				
+				}catch(Exception e){
+					parcel.setPaymentDateFormated("");
+				}
 				parcel.setFormatedDate(date.format(rs.getDate("dueDate")).replace("-", "/"));
+				parcel.setParcelId(rs.getInt("parcelId"));
 
 				parcelList.add(parcel);
 			}
@@ -468,6 +474,24 @@ public class JDBCContaDAO implements ContaDAO {
 			
 			return bills;
 		} catch (Exception e) {
+			throw new ValidationException(e);
+		}
+	}
+
+	public void payParcel(int id) throws ValidationException {
+		StringBuilder comando = new StringBuilder();
+		comando.append("UPDATE parcela_conta SET ");
+		comando.append("Data_Pagamento = NOW(), Status_Parcela = 3 ");
+		comando.append("WHERE Id_Parcela_Conta = ?");
+
+		PreparedStatement p;
+		try {
+			
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, id);
+			p.execute();
+				
+		} catch (SQLException e) {
 			throw new ValidationException(e);
 		}
 	}

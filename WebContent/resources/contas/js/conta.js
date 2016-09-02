@@ -1,5 +1,21 @@
 CFINAC.contas = new Object();
 
+function payParcel(id, accountId){
+    var cfg = {
+            type: "POST",
+            url: "../rest/conta/payParcel/" + id,
+            data: "id=" + id,
+            success: function(r) {
+                CFINAC.contas.detalheConta(accountId);
+                alertPopUp(r)
+            },
+            error: function(e) {
+                alertPopUp("Erro na ação!")
+            }
+        };
+        CFINAC.ajax.post(cfg);
+}
+
 iniciaConta = function() {
     function alertPopUp(msg) {
         cfg = {
@@ -147,6 +163,7 @@ iniciaConta = function() {
                     html += "<th>Status</th>";
                     html += "<th>Data de Pagamento</th>";
                     html += "<th>Data de Vencimento</th>";
+                    html += "<th>Pagar</th>";
                     html += "</tr>";
                     html += "</thead>";
                     if (detailedList == null || detailedList == "") {
@@ -155,29 +172,29 @@ iniciaConta = function() {
                         html += "</tr>";
                     } else {
                         for (var x = 0; x < detailedList.length; x++) {
-                            var status = showStatus(detailedList[x].status),
-                                naqfi = x + 1;
+                            var status = showStatus(detailedList[x].status);
                             html += "<tr>";
-                            html += "<td>" + naqfi + "</td>";
+                            html += "<td>" + detailedList[x].parcelId + "</td>";
                             html += "<td>" +
                                 detailedList[x].parcelValue +
                                 "</td>";
                             html += "<td>" + status + "</td>";
                             html += "<td>" +
-                                paymentDate(detailedList[x].paymentDate) +
+                                paymentDate(detailedList[x].paymentDateFormated) +
                                 "</td>";
                             html += "<td>" + detailedList[x].formatedDate +
-                                "</td>";
+                            "</td>";
+                            html += "<td><a class='link' onclick='payParcel("+detailedList[x].parcelId+","+detailedList[x].id+")'><i class='fa fa-credit-card' aria-hidden='true'></i></a></td>";
                             html += "</tr>";
                         }
                     }
-                    html += "</table>"
+                    html += "</table>";
                     html += "</div>";
                     $("#content").html(html);
                 };
 
                 function paymentDate(date) {
-                    return date == null ? "A pagar" : date;
+                    return date == "" ? "A pagar" : date;
                 }
 
                 function showStatus(status) {

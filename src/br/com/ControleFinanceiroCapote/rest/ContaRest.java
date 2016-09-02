@@ -119,6 +119,20 @@ public class ContaRest extends UtilRest  {
 		}
 	}
 	
+	@POST
+	@Path("/payParcel/{id}")
+	@Consumes("application/*")
+	@Produces("text/plain")
+	public Response payParcel(@PathParam("id") int id) {
+		try {
+			serviceConta.payParcel(id);
+			return this.buildResponse("Ação executada com sucesso");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
+		}
+	}
+	
 	@GET
 	@Path("/getParcelsById/{id}")
 	@Produces("text/plain")

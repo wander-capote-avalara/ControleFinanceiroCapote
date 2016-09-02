@@ -8,11 +8,13 @@ public class Parcela implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private int id;
+	private int parcelId;
 	private double parcelValue;
 	private int status;
 	private Date paymentDate;
 	private Date dueDate;
 	private String formatedDate;
+	private String paymentDateFormated;
 	
 	public int getId() {
 		return id;
@@ -49,6 +51,18 @@ public class Parcela implements Serializable{
 	}
 	public void setFormatedDate(String formatedDate) {
 		this.formatedDate = formatedDate;
+	}
+	public int getParcelId() {
+		return parcelId;
+	}
+	public void setParcelId(int parcelId) {
+		this.parcelId = parcelId;
+	}
+	public String getPaymentDateFormated() {
+		return paymentDateFormated;
+	}
+	public void setPaymentDateFormated(String paymentDateFormated) {
+		this.paymentDateFormated = paymentDateFormated;
 	}
 	
 }

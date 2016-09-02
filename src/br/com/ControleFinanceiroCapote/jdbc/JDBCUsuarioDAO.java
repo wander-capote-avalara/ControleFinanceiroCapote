@@ -202,11 +202,29 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				usuario.setNivel(rs.getInt("nivel"));
 				usuario.setId_familia(rs.getInt("familyId"));
 			}
-
+			updateStatusBill(usuario.getId());
 		} catch (Exception e) {
 			throw new ValidationException("Erro ao pesquisar usuário!", e);
 		}
 		return usuario;
+	}
+
+	private void updateStatusBill(int id) throws ValidationException {
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("UPDATE parcela_conta SET Status_Parcela = 2 ");
+		comando.append("WHERE Data_Vencimento < NOW() AND Status_Parcela = 1 AND ");
+		comando.append("Id_Conta IN (SELECT Id_Contas FROM contas WHERE Id_Usuario = ?)");
+
+		PreparedStatement p;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, id);
+			p.execute();
+		} catch (Exception e) {
+			throw new ValidationException("Erro ao atualizar contas e rendas do usuário!", e);
+		}
 	}
 
 	public Usuario getUserInfoById(int id) throws ValidationException {
@@ -216,13 +234,12 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		comando.append("LEFT JOIN user_family b ON b.Usuario_Id = a.Id_Usuarios ");
 		comando.append("LEFT JOIN familias c ON c.Id_Familias = b.Familia_Id ");
 		comando.append("WHERE a.Id_Usuarios = ?");
-		Usuario user = null ;
+		Usuario user = null;
 		try {
 			PreparedStatement stmt = conexao.prepareStatement(comando.toString());
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
-			
-		
+
 			while (rs.next()) {
 				user = new Usuario();
 				user.setId(id);
@@ -232,7 +249,11 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				user.setNext(getNextBill(id));
 				user.setSaldoProx(getNextBalanceById(id));
 			}
-			if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException ignore) {
+				}
 		} catch (SQLException e) {
 			throw new ValidationException("Erro ao pesquisar informações do usuário!", e);
 		}
@@ -247,19 +268,19 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT a.Data_Vencimento as lastDate FROM contas a ");
-		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Conta = 1 ");
+		comando.append("WHERE a.Id_Usuario = " + id + " AND a.Status_Conta = 1 ");
 		comando.append("ORDER BY lastDate DESC LIMIT 1");
 
 		Date lastDate = null;
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
 			ResultSet rs = stmt.executeQuery(comando.toString());
-			
+
 			while (rs.next()) {
 				lastDate = rs.getDate("lastDate");
 			}
 			try {
-				return new SimpleDateFormat("dd/MM/yyyy").format(lastDate);	
+				return new SimpleDateFormat("dd/MM/yyyy").format(lastDate);
 			} catch (Exception e) {
 				return "Não há próxima fatura";
 			}
@@ -271,53 +292,56 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	private int getActualBalanceById(int id, boolean next) throws ValidationException {
 		return getActualRentsById(id, next) - getActualBillsById(id, next);
 	}
-	
+
 	private int getActualBillsById(int id, boolean next) throws ValidationException {
 		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
 		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
-			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+				thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
 		comando.append("SELECT SUM(Valor_Contas) as vlrConta FROM contas a ");
-		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Conta = 1 AND a.Conta_Fixa = 0");
-		comando.append(next ? " AND MONTH(a.Data_Vencimento) = "+nextMonth : " AND MONTH(a.Data_Vencimento) <= "+thisMonth);
+		comando.append("WHERE a.Id_Usuario = " + id + " AND a.Status_Conta = 1 AND a.Conta_Fixa = 0");
+		comando.append(next ? " AND MONTH(a.Data_Vencimento) = " + nextMonth
+				: " AND MONTH(a.Data_Vencimento) <= " + thisMonth);
 
 		int balance = 0;
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
 			ResultSet rs = stmt.executeQuery(comando.toString());
-			
+
 			while (rs.next()) {
-				balance += (int)rs.getInt("vlrConta");
+				balance += (int) rs.getInt("vlrConta");
 			}
-			
+
 			balance += getBillsParcelsValues(id, next);
-			
+
 		} catch (SQLException e) {
 			throw new ValidationException("Erro ao pesquisar contas!", e);
 		}
 		return balance;
 	}
-	
-	
+
 	private double getBillsParcelsValues(int id, boolean next) throws ValidationException {
 		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
 		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
-			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+				thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
 		comando.append("SELECT SUM(Valor_Parcela) as vlrConta FROM parcela_conta a ");
-		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Conta IN (SELECT c.Id_Contas FROM contas c where c.Id_Usuario = "+id+")");
-		comando.append(next ? " AND MONTH(a.Data_Vencimento) = "+nextMonth : " AND MONTH(a.Data_Vencimento) <= "+thisMonth);
+		comando.append(
+				"WHERE a.Status_Parcela = 1 AND a.Id_Conta IN (SELECT c.Id_Contas FROM contas c where c.Id_Usuario = "
+						+ id + ")");
+		comando.append(next ? " AND MONTH(a.Data_Vencimento) = " + nextMonth
+				: " AND MONTH(a.Data_Vencimento) <= " + thisMonth);
 
 		double balance = 0;
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
 			ResultSet rs = stmt.executeQuery(comando.toString());
-			
+
 			while (rs.next()) {
-				balance += (int)rs.getInt("vlrConta");
+				balance += (int) rs.getInt("vlrConta");
 			}
-			
-			return balance;		
+
+			return balance;
 		} catch (SQLException e) {
 			throw new ValidationException("Erro ao pesquisar usuário!", e);
 		}
@@ -327,15 +351,16 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT SUM(Valor_Rendas) as vlrRenda FROM rendas a ");
-		comando.append("WHERE a.Id_Usuario = "+id+" AND a.Status_Renda = 1 AND a.Renda_Fixa = 1 AND a.Data_Vencimento <= Now()");
-		
+		comando.append("WHERE a.Id_Usuario = " + id
+				+ " AND a.Status_Renda = 1 AND a.Renda_Fixa = 1 AND a.Data_Vencimento <= Now()");
+
 		int balance = 0;
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
 			ResultSet rs = stmt.executeQuery(comando.toString());
-			
+
 			while (rs.next()) {
-				balance += (int)rs.getInt("vlrRenda");
+				balance += (int) rs.getInt("vlrRenda");
 			}
 			balance += getRentsParcelsValues(id, next);
 			return balance;
@@ -344,27 +369,29 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			return 0;
 		}
 	}
-	
+
 	private double getRentsParcelsValues(int id, boolean next) throws ValidationException {
 		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
 		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
-			thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+				thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
 		comando.append("SELECT SUM(Valor_Parcela) as vlrRenda FROM parcela_renda a ");
-		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Renda IN (SELECT c.Id_Rendas FROM rendas c WHERE c.Id_Usuario = "+id+")");
-		comando.append(next ? " AND MONTH(a.Data_Vencimento) = "+nextMonth : " AND MONTH(a.Data_Vencimento) <= "+thisMonth);
-
+		comando.append(
+				"WHERE a.Status_Parcela = 1 AND a.Id_Renda IN (SELECT c.Id_Rendas FROM rendas c WHERE c.Id_Usuario = "
+						+ id + ")");
+		comando.append(next ? " AND MONTH(a.Data_Vencimento) = " + nextMonth
+				: " AND MONTH(a.Data_Vencimento) <= " + thisMonth);
 
 		double balance = 0;
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
 			ResultSet rs = stmt.executeQuery(comando.toString());
-			
+
 			while (rs.next()) {
-				balance += (int)rs.getInt("vlrRenda");
+				balance += (int) rs.getInt("vlrRenda");
 			}
-			
-			return balance;		
+
+			return balance;
 		} catch (SQLException e) {
 			throw new ValidationException("Erro ao pesquisar valores das parcelas!", e);
 		}

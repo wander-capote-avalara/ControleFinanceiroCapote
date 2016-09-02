@@ -95,4 +95,12 @@ public class ContaService {
 		return bills;
 	}
 
+	public void payParcel(int id) throws ValidationException {
+		Conexao conec = new Conexao();
+		Connection conexao = conec.abrirConexao();
+		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
+		jdbcContadao.payParcel(id);
+		conec.fecharConexao();
+	}
+
 }
