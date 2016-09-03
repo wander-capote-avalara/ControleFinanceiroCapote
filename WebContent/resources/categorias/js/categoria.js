@@ -1,21 +1,6 @@
 CFINAC.categorias = new Object();
 
 iniciaCategoria = function() {
-    function alertPopUp(msg) {
-        cfg = {
-            title: "Mensagem",
-            height: 250,
-            width: 400,
-            modal: true,
-            buttons: {
-                "OK": function() {
-                    $(this).dialog("close");
-                }
-            }
-        };
-        $("#msg").html(msg);
-        $("#msg").dialog(cfg);
-    }
 
     $(document)
         .ready(
@@ -35,7 +20,7 @@ iniciaCategoria = function() {
                             url: "../rest/categoria/add",
                             data: newCategory,
                             success: function(r) {
-                                alertPopUp(r);
+                            	CFINAC.Message(r, "success")
                                 $("#conteudoRegistro .btn-danger")
                                     .click();
                                 table.ajax.reload(null, false);
@@ -46,7 +31,7 @@ iniciaCategoria = function() {
                         };
                         CFINAC.ajax.post(cfg);
                     }else{
-                    	alertPopUp("Preencha todos os campos!");
+                    	CFINAC.Message("Preencha todos os campos!", "error");
                     }
                 }
 
@@ -105,7 +90,7 @@ iniciaCategoria = function() {
                             $("#inputCategory").val(categoryData[0].name);
                         },
                         error: function(rest) {
-                            alert("Erro ao editar a categoria!");
+                        	CFINAC.Message(rest, "error");
                         }
                     };
                     CFINAC.ajax.post(cfg);
@@ -126,11 +111,11 @@ iniciaCategoria = function() {
 								url : "../rest/categoria/deletaCategoria/" + id,
 								data : "id=" + id,
 								success : function(msg) {
-									alertPopUp(msg);
+			                    	CFINAC.Message(msg, "success");
 									table.ajax.reload(null, false);
 								},
 								error : function(e) {
-									alertPopUp("Erro na ação!")
+		                        	CFINAC.Message(e, "error");
 								}
 							};
 							CFINAC.ajax.post(cfg);

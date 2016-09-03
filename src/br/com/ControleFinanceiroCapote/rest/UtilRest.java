@@ -11,7 +11,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class UtilRest {
 
 	@Context
-	HttpServletRequest request = null;
+	protected HttpServletRequest request = null;
 
 	public int userId() {
 		return Integer.parseInt((String) request.getSession().getAttribute("id"));

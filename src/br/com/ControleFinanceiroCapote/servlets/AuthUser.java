@@ -77,13 +77,9 @@ public class AuthUser extends HttpServlet {
 						+ "/resources/Index.html" : context
 						+ "/resources/admin/admin.html");
 			} else {
-				response.sendRedirect(context + "/Login.html");
+				response.sendRedirect(context + "/Login.html?incorrect");
 				// msg.put("msg", "Usu�rio e/ou senha incorretos");
 			}
-			String json = new Gson().toJson(msg);
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write(json);
 		} catch (IOException e) {
 			throw new ValidationException(e);
 		}

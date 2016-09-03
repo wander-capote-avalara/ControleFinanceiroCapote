@@ -11,7 +11,7 @@ var iniciaProjecao = function() {
 				showBillsAndIncomes(bills, 0);
 			},
 			error : function(e) {
-				alertPopUp("Erro na ação!");
+            	CFINAC.Message(e.responseText, "error");
 			}
 		};
 		CFINAC.ajax.post(cfg);
@@ -27,7 +27,7 @@ var iniciaProjecao = function() {
 				sum();
 			},
 			error : function(e) {
-				alertPopUp("Erro na ação!");
+            	CFINAC.Message(e.responseText, "error");
 			}
 		};
 		CFINAC.ajax.post(cfg);
@@ -128,7 +128,7 @@ var iniciaProjecao = function() {
 				type == 0 ? "#billsForm #value" : "#incomesForm #value").val();
 
 		if (desc == "" || desc == null || !+value) {
-			alertPopUp("Preecha os campos corretamente");
+        	CFINAC.Message("Preencha os campos corretamentes!", "error");
 			return false;
 		}
 
@@ -144,7 +144,7 @@ var iniciaProjecao = function() {
 			showBillsAndIncomes(incomesList, type);
 		}
 		sum();
-		alertPopUp("Done!");
+    	CFINAC.Message("Adicionado!", "success");
 	}
 
 	CFINAC.projecao.update = function() {

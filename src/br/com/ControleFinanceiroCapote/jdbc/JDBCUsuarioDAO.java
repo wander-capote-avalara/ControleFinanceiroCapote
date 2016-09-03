@@ -202,7 +202,8 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 				usuario.setNivel(rs.getInt("nivel"));
 				usuario.setId_familia(rs.getInt("familyId"));
 			}
-			updateStatusBill(usuario.getId());
+			if(usuario != null)
+				updateStatusBill(usuario.getId());
 		} catch (Exception e) {
 			throw new ValidationException("Erro ao pesquisar usuário!", e);
 		}

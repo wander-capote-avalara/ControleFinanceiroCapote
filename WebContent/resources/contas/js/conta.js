@@ -7,31 +7,16 @@ function payParcel(id, accountId){
             data: "id=" + id,
             success: function(r) {
                 CFINAC.contas.detalheConta(accountId);
-                alertPopUp(r)
+            	CFINAC.Message(r, "success");
             },
             error: function(e) {
-                alertPopUp("Erro na ação!")
+            	CFINAC.Message(e.responseText, "error");
             }
         };
         CFINAC.ajax.post(cfg);
 }
 
 iniciaConta = function() {
-    function alertPopUp(msg) {
-        cfg = {
-            title: "Mensagem",
-            height: 250,
-            width: 400,
-            modal: true,
-            buttons: {
-                "OK": function() {
-                    $(this).dialog("close");
-                }
-            }
-        };
-        $("#msg").html(msg);
-        $("#msg").dialog(cfg);
-    }
 
     var changes = function() {
         if (+$("#inputParcels").val()) {
@@ -146,7 +131,7 @@ iniciaConta = function() {
                                 .exibirDetalhes(listaDeParcelas);
                         },
                         error: function(e) {
-                            alertPopUp("Erro na ação!")
+                        	CFINAC.Message(e.responseText, "error");
                         }
                     };
                     CFINAC.ajax.post(cfg);
@@ -175,7 +160,7 @@ iniciaConta = function() {
                             var status = showStatus(detailedList[x].status);
                             html += "<tr>";
                             html += "<td>" + detailedList[x].parcelId + "</td>";
-                            html += "<td>" +
+                            html += "<td>(R$)" +
                                 detailedList[x].parcelValue +
                                 "</td>";
                             html += "<td>" + status + "</td>";
@@ -220,7 +205,7 @@ iniciaConta = function() {
                                 .exibirCategorias(listaDeCategorias);
                         },
                         error: function(e) {
-                            alertPopUp("Erro na ação!")
+                        	CFINAC.Message(e.responseText, "error");
                         }
                     };
                     CFINAC.ajax.post(cfg);
@@ -242,12 +227,12 @@ iniciaConta = function() {
                                         id,
                                     data: "id=" + id,
                                     success: function(msg) {
-                                        alertPopUp(msg);
+                                    	CFINAC.Message(msg, "success");
                                         table.ajax.reload(null, false);
                                         CFINAC.contas.graphDetail();
                                     },
                                     error: function(e) {
-                                        alertPopUp("Erro na ação!")
+                                    	CFINAC.Message(e.responseText, "error");
                                     }
                                 };
                                 CFINAC.ajax.post(cfg);
@@ -282,7 +267,7 @@ iniciaConta = function() {
                         startDate != "" && totalValue != "" &&
                         categoria != 0) {
                         if (hasDeadline == 1 && times == 0) {
-                            alertPopUp("Preencha todos os campos!");
+                        	CFINAC.Message("Preencha todos os campos!", "error");
                             return false;
                         }
                         var newBill = new Object();
@@ -299,19 +284,19 @@ iniciaConta = function() {
                             url: "../rest/conta/add",
                             data: newBill,
                             success: function(r) {
-                                alertPopUp(r);
+                            	CFINAC.Message(r, "success");
                                 $("#conteudoRegistro .btn-danger")
                                     .click();
                                 table.ajax.reload(null, false);
                                 CFINAC.contas.graphDetail();
                             },
                             error: function(err) {
-                                alert("Erro na ação" + err.responseText);
+                            	CFINAC.Message(e.responseText, "error");
                             }
                         };
                         CFINAC.ajax.post(cfg);
                     } else {
-                        alertPopUp("Preencha todos os campos!");
+                    	CFINAC.Message("Preencha todos os campos!", "error");
                     }
                 }
 
@@ -339,7 +324,7 @@ iniciaConta = function() {
 
                         },
                         error: function(rest) {
-                            alert("Erro ao editar a renda");
+                        	CFINAC.Message(rest.responseText, "error");
                         }
                     };
                     CFINAC.ajax.post(cfg);
@@ -417,8 +402,7 @@ iniciaConta = function() {
                         	graph(data);
                         },
                         error: function(e) {
-                            alertPopUp("Erro ao buscar informações sobre o gráfico!" +
-                                e)
+                        	CFINAC.Message(e.responseText, "error");
                         }
                     };
                     CFINAC.ajax.post(cfg);

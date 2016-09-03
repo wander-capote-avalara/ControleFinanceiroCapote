@@ -1,22 +1,6 @@
 CFINAC.fluxoCaixa = new Object();
 
 iniciaFluxoCaixa = function() {
-    function alertPopUp(msg) {
-        cfg = {
-            title: "Mensagem",
-            height: 250,
-            width: 400,
-            modal: true,
-            buttons: {
-                "OK": function() {
-                    $(this).dialog("close");
-                }
-            }
-        };
-        $("#msg").html(msg);
-        $("#msg").dialog(cfg);
-    }
-
     $(document)
         .ready(
             function() {
@@ -176,8 +160,7 @@ iniciaFluxoCaixa = function() {
                             CFINAC.ajax.post(cfg);
                         },
                         error: function(e) {
-                            alertPopUp("Erro ao buscar informações sobre o gráfico!" +
-                                e)
+                        	CFINAC.Message(e.responseText, "error");
                         }
                     };
                     CFINAC.ajax.post(cfg);

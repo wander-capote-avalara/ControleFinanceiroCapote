@@ -1,22 +1,6 @@
 CFINAC.rendas = new Object();
 
 iniciaRenda = function() {
-    function alertPopUp(msg) {
-        cfg = {
-            title: "Mensagem",
-            height: 250,
-            width: 400,
-            modal: true,
-            buttons: {
-                "OK": function() {
-                    $(this).dialog("close");
-                }
-            }
-        };
-        $("#msg").html(msg);
-        $("#msg").dialog(cfg);
-    }
-
     $(document)
         .ready(
             function() {
@@ -115,7 +99,7 @@ iniciaRenda = function() {
                                 .exibirDetalhes(listaDeParcelas);
                         },
                         error: function(e) {
-                            alertPopUp("Erro na ação!")
+                        	CFINAC.Message(e.responseText, "error");
                         }
                     };
                     CFINAC.ajax.post(cfg);
@@ -128,8 +112,6 @@ iniciaRenda = function() {
                     html += "<tr>";
                     html += "<th>#</th>";
                     html += "<th>Valor da Renda(R$)</th>";
-                    html += "<th>Status</th>";
-                    html += "<th>Data de Pagamento</th>";
                     html += "<th>Data de Vencimento</th>";
                     html += "</tr>";
                     if (detailedList == null || detailedList == "") {
@@ -142,12 +124,8 @@ iniciaRenda = function() {
 
                             html += "<tr>";
                             html += "<td>" + naqfi + "</td>";
-                            html += "<td>" +
+                            html += "<td>(R$)" +
                                 detailedList[x].parcelValue +
-                                "</td>";
-                            html += "<td>" + showStatus(detailedList[x].status) + "</td>";
-                            html += "<td>" +
-                                paymentDate(detailedList[x].paymentDate) +
                                 "</td>";
                             html += "<td>" + detailedList[x].formatedDate +
                                 "</td>";
@@ -181,7 +159,7 @@ iniciaRenda = function() {
 
                         },
                         error: function(rest) {
-                            alert("Erro ao editar a renda");
+                        	CFINAC.Message(rest.responseText, "error");
                         }
                     };
                     CFINAC.ajax.post(cfg);
@@ -202,12 +180,12 @@ iniciaRenda = function() {
                                     url: "../rest/renda/deletaRenda/" + id,
                                     data: "id=" + id,
                                     success: function(msg) {
-                                        alertPopUp(msg);
+                                    	CFINAC.Message(msg, "success");
                                         table.ajax.reload(null, false);
                                         CFINAC.rendas.graphDetail();
                                     },
                                     error: function(e) {
-                                        alertPopUp("Erro na ação!")
+                                    	CFINAC.Message(e.responseText, "error");
                                     }
                                 };
                                 CFINAC.ajax.post(cfg);
@@ -254,18 +232,18 @@ iniciaRenda = function() {
                             url: "../rest/renda/add",
                             data: newIncome,
                             success: function(r) {
-                                alertPopUp(r);
+                            	CFINAC.Message(r, "success");
                                 $("#conteudoRegistro .btn-danger").click();
                                 table.ajax.reload(null, false);
                                 CFINAC.rendas.graphDetail();
                             },
                             error: function(err) {
-                                alert("Erro na ação" + err.responseText);
+                            	CFINAC.Message(err.responseText, "error");
                             }
                         };
                         CFINAC.ajax.post(cfg);
                     } else {
-                        alertPopUp("Preencha os campos corretamente!");
+                    	CFINAC.Message("Preencha todos os campos!", "error");
                     }
                 }
 
@@ -280,7 +258,7 @@ iniciaRenda = function() {
                 CFINAC.rendas.exibirCategorias(listaDeCategorias);
             },
             error: function(e) {
-                alertPopUp("Erro na ação!")
+            	CFINAC.Message(e.responseText, "error");
             }
         };
         CFINAC.ajax.post(cfg);
@@ -357,8 +335,7 @@ iniciaRenda = function() {
                 graph(data);
             },
             error: function(e) {
-                alertPopUp("Erro ao buscar informações sobre o gráfico!" +
-                    e)
+            	CFINAC.Message(e.responseText, "error");
             }
         };
         CFINAC.ajax.post(cfg);

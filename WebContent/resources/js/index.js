@@ -1,8 +1,7 @@
 CFINAC.index = new Object();
 
-
 $(document).ready(
-		function() {
+		function() {		
 			
 			CFINAC.index.allInvites = function(){
                 var cfg = {
@@ -12,7 +11,7 @@ $(document).ready(
                     	CFINAC.index.showInvites(invites);
                     },
                     error: function(e) {
-                        alertPopUp("Erro na ação!")
+                    	CFINAC.Message(e.responseText, "error");
                     }
                 };
                 CFINAC.ajax.post(cfg);
@@ -54,7 +53,7 @@ $(document).ready(
 							CFINAC.index.allInvites();
 						},
 						error : function(e) {
-							alertPopUp("Erro ao recusar o convite!");
+                        	CFINAC.Message(e.responseText, "error");
 						}
 					};
 					CFINAC.ajax.post(cfg);	
@@ -70,7 +69,7 @@ $(document).ready(
 							CFINAC.index.getUserInfo();
 						},
 						error : function(e) {
-							alertPopUp("Erro ao aceitar o convite!");
+                        	CFINAC.Message(e.responseText, "error");
 						}
 					};
 					CFINAC.ajax.post(cfg);
@@ -85,7 +84,7 @@ $(document).ready(
 								$("#invites").html(" "+invites.length);
 						},
 						error : function(e) {
-							alertPopUp("Erro ao buscar convites!");
+                        	CFINAC.Message(e.responseText, "error");
 						}
 					};
 					CFINAC.ajax.post(cfg);
@@ -113,7 +112,8 @@ $(document).ready(
 								"Saldo próx. mês(R$): " + userInfo.saldoProx)
 					},
 					error : function(e) {
-						window.location="../Login.html";
+                    	CFINAC.Message(e.responseText, "error");
+						window.location="../Login.html?invalid";
 					}
 				};
 				CFINAC.ajax.post(cfg);
@@ -136,7 +136,7 @@ $(document).ready(
 								"Saldo próx. mês(R$): " + userInfo.saldoProx)
 					},
 					error : function(e) {
-						alert("errou");
+                    	CFINAC.Message(e.responseText, "error");
 					}
 				};
 				CFINAC.ajax.post(cfg);

@@ -9,22 +9,11 @@ $(document).bind({
 	}
 });
 
-
-function alertPopUp(msg) {
-	cfg = {
-		title : "Mensagem",
-		height : 250,
-		width : 400,
-		modal : true,
-		buttons : {
-			"OK" : function() {
-				$(this).dialog("close");
-			}
-		}
-	};
-	$("#msg").html(msg);
-	$("#msg").dialog(cfg);
-}
+var url = document.URL.split('?')[1];
+if(url == "invalid")
+	CFINAC.Message("Area privada!","error")
+else if(url == "incorrect")
+	CFINAC.Message("Usuario ou senha inválidos!","error")
 
 function validaEmail(email) {
 	msg = "";
@@ -56,7 +45,7 @@ var iniciaUsuario = function() {
 							urli = "rest/usuario/add", patt = /\d/;
 
 							if (!nivel.match(patt)) {
-								alertPopUp("Acho que o senhor não deveria estar nem aqui!\n");
+	                        	CFINAC.Message("Area privada", "error");
 								return false;
 							} else if (nivel != 0) {
 								urli = "../../rest/usuario/add";
@@ -66,13 +55,13 @@ var iniciaUsuario = function() {
 
 							if (username == "" || email == "" || password == ""
 									|| confirmPass == "") {
-								alertPopUp("Todos os campos são obrigatórios de preenchimento correto!\n");
+	                        	CFINAC.Message("Todos os campos são obrigatórios de preenchimento correto!\n", "error");
 								return false;
 							} else if (password != confirmPass) {
-								alertPopUp("As senhas devem ser iguais para completar o cadastro!\n");
+	                        	CFINAC.Message("As senhas devem ser iguais para completar o cadastro!\n", "error");
 								return false;
 							} else if (msg != "") {
-								alertPopUp(msg);
+	                        	CFINAC.Message(msg, "error");
 								return false;
 							} else {
 								var newUser = new Object();
@@ -89,7 +78,7 @@ var iniciaUsuario = function() {
 									url : urli,
 									data : newUser,
 									success : function(msg) {
-										alertPopUp(msg);
+			                        	CFINAC.Message(msg, "success");
 										$("#conteudoRegistro .btn-danger")
 												.click();
 										if (urli == "../../rest/usuario/add") {
@@ -97,8 +86,7 @@ var iniciaUsuario = function() {
 										}
 									},
 									error : function(err) {
-										alert("Erro na ação!"
-												+ err.responseText);
+			                        	CFINAC.Message(err.responseText, "error");
 									}
 								};
 								CFINAC.ajax.post(cfg);
@@ -181,12 +169,11 @@ var iniciaUsuario = function() {
 											url : urli + id,
 											data : "id=" + id,
 											success : function(msg) {
-												alertPopUp("Usuário " + type
-														+ " com sucesso");
+					                        	CFINAC.Message("Usuário"+type+" com sucesso!", "success");
 												table.ajax.reload(null, false);
 											},
 											error : function(e) {
-												alertPopUp("Erro na ação!")
+					                        	CFINAC.Message(e.responseText, "error");
 											}
 										};
 										CFINAC.ajax.post(cfg);
@@ -233,7 +220,7 @@ var iniciaUsuario = function() {
 
 								},
 								error : function(rest) {
-									alert("Erro ao editar o usuário");
+		                        	CFINAC.Message(rest.responseText, "error");
 								}
 							};
 							CFINAC.ajax.post(cfg);
@@ -248,7 +235,7 @@ var iniciaUsuario = function() {
 											.exibirFamilias(listaDeFamilias);
 								},
 								error : function(e) {
-									alertPopUp("Erro na ação!")
+		                        	CFINAC.Message(e.responseText, "error");
 								}
 							};
 							CFINAC.ajax.post(cfg);
@@ -302,8 +289,7 @@ var iniciaUsuario = function() {
 													.exibirUsuarios(listaDeUsuarios);
 										},
 										error : function(err) {
-											alert("Erro ao consultar os usuarios: "
-													+ err.responseText);
+				                        	CFINAC.Message(err.responseText, "error");
 										}
 									};
 									CFINAC.ajax.post(cfg);

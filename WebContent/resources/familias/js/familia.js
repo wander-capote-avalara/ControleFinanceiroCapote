@@ -1,21 +1,6 @@
 CFINAC.familia = new Object();
 
 var iniciaFamilia = function() {
-        function alertPopUp(msg) {
-            cfg = {
-                title: "Mensagem",
-                height: 250,
-                width: 400,
-                modal: true,
-                buttons: {
-                    "OK": function() {
-                        $(this).dialog("close");
-                    }
-                }
-            };
-            $("#msg").html(msg);
-            $("#msg").dialog(cfg);
-        }
 
         $("#tokenizeClean").click(function() {
             $("#tokenize").tokenize().clear();
@@ -118,7 +103,7 @@ var iniciaFamilia = function() {
                                 }
                             },
                             error: function(rest) {
-                                alert("Erro ao editar o usuário");
+                            	CFINAC.Message(rest.responseText, "error");
                             }
                         };
                         CFINAC.ajax.post(cfg);
@@ -143,11 +128,11 @@ var iniciaFamilia = function() {
                                                 id,
                                             data: "id=" + id,
                                             success: function(msg) {
-                                                alertPopUp("Família excluída com sucesso");
+                                            	CFINAC.Message(msg, "success");
                                                 table.ajax.reload(null, false);
                                             },
                                             error: function(e) {
-                                                alertPopUp("Erro na ação!")
+                                            	CFINAC.Message(e.responseText, "error");
                                             }
                                         };
                                         CFINAC.ajax.post(cfg);
@@ -169,9 +154,9 @@ var iniciaFamilia = function() {
                             .val();
 
                         if (nomeFamilia == "" || nomeFamilia == null) {
-                            alertPopUp("Preencha corretamente o campo Nome da Familia!")
+                        	CFINAC.Message("Preencha corretamente o campo Nome da Familia!", "error");
                         } else if (listaUsers == null || listaUsers == "") {
-                            alertPopUp("Adicione pelo menos um integrante na familia!")
+                        	CFINAC.Message("Adicione pelo menos um integrante na familia!", "error");
                         }
 
                         var newFamily = new Object();
@@ -185,13 +170,13 @@ var iniciaFamilia = function() {
                             url: "../../rest/familia/add/",
                             data: newFamily,
                             success: function(msg) {
-                                alertPopUp(msg);
+                            	CFINAC.Message(msg, "success");
                                 table.ajax.reload(null, false);
                                 $("#tokenize").tokenize().clear();
                                 $("#conteudoRegistro .btn-danger").click();
                             },
                             error: function(err) {
-                                alert("Erro na ação!" + err.responseText);
+                            	CFINAC.Message(e.responseText, "error");
                             }
                         };
                         CFINAC.ajax.post(cfg);
@@ -215,12 +200,12 @@ var iniciaFamilia = function() {
                                 url: "../rest/familia/leadProvider/" + id,
                                 data: "id=" + id,
                                 success: function(msg) {
-                                    alertPopUp(msg);
+                                	CFINAC.Message(msg, "success");
                                     membersTable.ajax.reload(null, false);
                                 },
                                 error: function(e) {
-                                    alertPopUp("Você precisa ser dono da familia para fazer essa operação!")
-                                }
+                                	CFINAC.Message(e.responseText, "error");
+                                	}
                             };
                             CFINAC.ajax.post(cfg);
                         },
@@ -241,7 +226,7 @@ var iniciaFamilia = function() {
             invite.usersToInvite = $("#tokenizeInvite").val();
             
             if(invite.usersToInvite == null || invite.usersToInvite == ""){
-            	alertPopUp("Preencha o campo corretamente!")
+            	CFINAC.Message("Preencha o campo corretamente!", "error");
             	return false;
             }
 
@@ -251,10 +236,10 @@ var iniciaFamilia = function() {
                 data: invite,
                 success: function(msg) {
                     $("#tokenizeInvite").tokenize().clear();
-                    alertPopUp(msg);
+                	CFINAC.Message(msg, "success");
                 },
                 error: function(err) {
-                    alert("Erro na ação!" + err.responseText);
+                	CFINAC.Message(err.responseText, "error");
                 }
             };
             CFINAC.ajax.post(cfg);
@@ -276,13 +261,13 @@ var iniciaFamilia = function() {
                                 url: "../rest/familia/kickUser/" + id,
                                 data: "id=" + id,
                                 success: function(msg) {
-                                    alertPopUp(msg);
+                                	CFINAC.Message(msg, "success");
                                     membersTable.ajax.reload(null, false);
                                     CFINAC.familia.hasFamily();
                                 },
                                 error: function(e) {
-                                    alertPopUp("Você precisa ser dono da familia para fazer essa operação!")
-                                }
+                                	CFINAC.Message(e.responseText, "error");
+                                	}
                             };
                             CFINAC.ajax.post(cfg);
                         },
@@ -448,8 +433,7 @@ var iniciaFamilia = function() {
                     graph(data);
                 },
                 error: function(e) {
-                    alertPopUp("Erro ao buscar informações sobre o gráfico de contas!" +
-                        e)
+                	CFINAC.Message(e.responseText, "error");
                 }
             };
             CFINAC.ajax.post(cfg);
@@ -500,8 +484,7 @@ var iniciaFamilia = function() {
                     graphIncomes(data);
                 },
                 error: function(e) {
-                    alertPopUp("Erro ao buscar informações sobre o gráfico de contas!" +
-                        e)
+                	CFINAC.Message(e.responseText, "error");
                 }
             };
             CFINAC.ajax.post(cfg);
@@ -522,8 +505,7 @@ var iniciaFamilia = function() {
                 	}
                 },
                 error: function(e) {
-                    alertPopUp("Erro ao buscar informações sobre a familia!" +
-                        e)
+                	CFINAC.Message(e.responseText, "error");
                 }
             };
             CFINAC.ajax.post(cfg);
@@ -537,7 +519,7 @@ var iniciaFamilia = function() {
         	var nomeFamilia = $("#inputFamilyName").val();
 
         if (nomeFamilia == "" || nomeFamilia == null) {
-            alertPopUp("Preencha corretamente o campo Nome da Familia!")
+        	CFINAC.Message("Preencha corretamente o campo Nome da Familia!", "error");
         } 
 
         var newFamily = new Object();
@@ -548,12 +530,12 @@ var iniciaFamilia = function() {
             url: "../rest/familia/createFamily/",
             data: newFamily,
             success: function(msg) {
-                alertPopUp(msg);
+            	CFINAC.Message(msg, "success");
                 CFINAC.familia.hasFamily();
                 location.reload();
             },
             error: function(err) {
-                alert("Erro na ação!" + err.responseText);
+            	CFINAC.Message(err.responseText, "error");
             }
         };
         CFINAC.ajax.post(cfg);
