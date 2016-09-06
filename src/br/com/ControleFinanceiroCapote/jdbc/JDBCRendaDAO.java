@@ -73,7 +73,7 @@ public class JDBCRendaDAO implements RendaDAO {
 			comando.append("UPDATE rendas ");
 			comando.append(
 					"SET Id_Categoria = ?, Id_Usuario = ?, Descricao_Rendas = ?, Valor_Rendas = ?, Status_Renda = ?, Data_Vencimento = ?, ");
-			comando.append(renda.getIsFixed() == 0 ? "Vezes = ?" : "Renda_Fixa = ?");
+			comando.append("Vezes = ?, Renda_Fixa = ?");
 			comando.append(" WHERE Id_Rendas = ?");
 
 			PreparedStatement p;
@@ -86,12 +86,19 @@ public class JDBCRendaDAO implements RendaDAO {
 				p.setDouble(4, renda.getTotalValue());
 				p.setInt(5, 1);
 				p.setDate(6, (Date) renda.getStartDate());
-				p.setInt(7, renda.getIsFixed() == 0 ? renda.getTimes() : renda.getIsFixed());
-				p.setInt(8, renda.getId());
+				p.setInt(7, renda.getTimes());
+				p.setInt(8, renda.getIsFixed());
+				p.setInt(9, renda.getId());
 				p.execute();
 				if (renda.getTimes() != 0) {
 					deleteParcels(renda.getId());
 					insertParcels(renda.getId(), renda.getTimes(), renda.getTotalValue(), renda.getParcelValue(), (Date) renda.getStartDate());
+				}else if(renda.getIsFixed() == 1){
+					try{
+						deleteParcels(renda.getId());					
+					}catch(Exception e){
+						//Não há parcelas
+					}				
 				}
 			} catch (Exception e) {
 				throw new ValidationException(e);

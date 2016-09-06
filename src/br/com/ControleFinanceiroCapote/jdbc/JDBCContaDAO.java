@@ -93,6 +93,12 @@ public class JDBCContaDAO implements ContaDAO {
 				if (conta.getTimes() != 0) {
 					deleteParcels(conta.getId());
 					insertParcels(conta.getId(), conta.getTimes(), conta.getParcelValue(), conta.getTotalValue(), (Date) conta.getStartDate());
+				}else if(conta.getHasDeadline() == 0){
+					try{
+						deleteParcels(conta.getId());					
+					}catch(Exception e){
+						//Não há parcelas
+					}				
 				}
 			} catch (Exception e) {
 				throw new ValidationException(e);

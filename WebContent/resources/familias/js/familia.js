@@ -1,7 +1,27 @@
 CFINAC.familia = new Object();
 
 var iniciaFamilia = function() {
+    CFINAC.familia.hasFamily = function() {
 
+        var cfg = {
+            type: "GET",
+            url: "../rest/familia/hasFamily/",
+            success: function(hasFamily) {
+            	if(hasFamily){
+            		$("#form").removeClass("hid");
+            		$("#noFamily").addClass("hid");
+            	}else{
+            		$("#noFamily").removeClass("hid");
+            		$("#form").addClass("hid");
+            	}
+            },
+            error: function(e) {
+            	CFINAC.Message(e.responseText, "error");
+            }
+        };
+        CFINAC.ajax.post(cfg);
+    };
+    
         $("#tokenizeClean").click(function() {
             $("#tokenize").tokenize().clear();
         });
@@ -185,70 +205,22 @@ var iniciaFamilia = function() {
                 })
 
         CFINAC.familia.leadProvider = function(id) {
-        	
-        	bootbox.dialog({
-        		  message: sMsg,
-        		  title: "Mensagem",
-        		  buttons: {
-        		    danger: {
-        		      label: "Cancelar!",
-        		      className: "btn-danger"
-        		    },
-        		    success: {
-        		      label: "Ok!",
-        		      className: "btn-success",
-        		      callback: function() {
-        		    	  var cfg = {
-        		                     type: "POST",
-        		                            url: "../rest/familia/leadProvider/" + id,
-        		                            data: "id=" + id,
-        		                            success: function(msg) {
-        		                            	CFINAC.Message(msg, "success");
-        		                                membersTable.ajax.reload(null, false);
-        		                            },
-        		                            error: function(e) {
-        		                            	CFINAC.Message(e.responseText, "error");
-        		                            	}
-        		                        };
-        		                        CFINAC.ajax.post(cfg);
-        		      }
-        		    }
-        		  }
-        		});
-           /* var msg = "Você deseja realmente torna-lo lider?",
-                cfg = {
-                    title: "Mensagem",
-                    height: 250,
-                    width: 400,
-                    modal: true,
-                    trigger: false,
-                    buttons: {
-                        "OK": function() {
-                            $(this).dialog("close");
-                            var cfg = {
-                                type: "POST",
-                                url: "../rest/familia/leadProvider/" + id,
-                                data: "id=" + id,
-                                success: function(msg) {
-                                	CFINAC.Message(msg, "success");
-                                    membersTable.ajax.reload(null, false);
-                                },
-                                error: function(e) {
-                                	CFINAC.Message(e.responseText, "error");
-                                	}
-                            };
-                            CFINAC.ajax.post(cfg);
-                        },
-                        Cancel: function() {
-                            $(this).dialog("close");
-                        }
-                    }
-                }
-            $("#msg").html(msg);
-            $("#msg").dialog(cfg);*/
+        	var cfg = {
+	        	type: "POST",
+                url: "../rest/familia/leadProvider/" + id,
+                data: "id=" + id,
+                success: function(msg) {
+                	CFINAC.Message(msg, "success");
+                    membersTable.ajax.reload(null, false);
+                },
+                error: function(e) {
+                	CFINAC.Message(e.responseText, "error");
+                	}
+        	};
+        	CFINAC.Dialog("Você deseja realmente torna-lo lider?", cfg);
         }
 
-       //CFINAC.Dialog("Você deseja realmente torna-lo lider?", msg);
+       
 
 
         CFINAC.familia.invite = function() {
@@ -277,38 +249,21 @@ var iniciaFamilia = function() {
         }
 
         CFINAC.familia.kickUser = function(id) {
-            var msg = "Você deseja realmente expulsa-lo?",
-                cfg = {
-                    title: "Mensagem",
-                    height: 250,
-                    width: 400,
-                    modal: true,
-                    trigger: false,
-                    buttons: {
-                        "OK": function() {
-                            $(this).dialog("close");
-                            var cfg = {
-                                type: "POST",
-                                url: "../rest/familia/kickUser/" + id,
-                                data: "id=" + id,
-                                success: function(msg) {
-                                	CFINAC.Message(msg, "success");
-                                    membersTable.ajax.reload(null, false);
-                                    CFINAC.familia.hasFamily();
-                                },
-                                error: function(e) {
-                                	CFINAC.Message(e.responseText, "error");
-                                	}
-                            };
-                            CFINAC.ajax.post(cfg);
-                        },
-                        Cancel: function() {
-                            $(this).dialog("close");
-                        }
-                    }
-                }
-            $("#msg").html(msg);
-            $("#msg").dialog(cfg);
+        	var cfg = {
+        			type: "POST",
+                    url: "../rest/familia/kickUser/" + id,
+                    data: "id=" + id,
+                    success: function(msg) {
+                    	CFINAC.Message(msg, "success");
+                        membersTable.ajax.reload(null, false);
+                        CFINAC.familia.hasFamily();
+                    },
+                    error: function(e) {
+                    	CFINAC.Message(e.responseText, "error");
+                    	}
+                };
+        	CFINAC.Dialog("Você deseja realmente expulsa-lo?", cfg);
+                                  
         }
 
         var membersTable = $('#familyTable')
@@ -513,27 +468,6 @@ var iniciaFamilia = function() {
                 url: "../rest/renda/getFamilyIncomesTotalValue/",
                 success: function(data) {
                     graphIncomes(data);
-                },
-                error: function(e) {
-                	CFINAC.Message(e.responseText, "error");
-                }
-            };
-            CFINAC.ajax.post(cfg);
-        };
-        
-        CFINAC.familia.hasFamily = function() {
-
-            var cfg = {
-                type: "GET",
-                url: "../rest/familia/hasFamily/",
-                success: function(hasFamily) {
-                	if(hasFamily){
-                		$("#form").removeClass("hid");
-                		$("#noFamily").addClass("hid");
-                	}else{
-                		$("#noFamily").removeClass("hid");
-                		$("#form").addClass("hid");
-                	}
                 },
                 error: function(e) {
                 	CFINAC.Message(e.responseText, "error");

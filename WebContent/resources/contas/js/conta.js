@@ -20,17 +20,15 @@ iniciaConta = function() {
 
     var changes = function() {
         if (+$("#inputParcels").val()) {
-
             var value = $("#inputTotalValue").val() / $("#inputParcels").val();
             $("#inputParcelValue").val(value.toFixed(2));
         } else {
             $("#inputParcelValue").val($("#inputTotalValue").val());
-
         }
     }
 
-    $("#inputTotalValue").change(changes);
-    $("#inputParcels").change(changes);
+    $("#inputTotalValue").keyup(changes);
+    $("#inputParcels").keyup(changes);
 
     var disab = function() {
         if ($("#hasDeadline").val() == 1) {
@@ -212,39 +210,21 @@ iniciaConta = function() {
                 };
 
                 CFINAC.contas.deletaConta = function(id) {
-                    var cfgg = {
-                        title: "Mensagem",
-                        height: 250,
-                        width: 400,
-                        modal: true,
-                        trigger: false,
-                        buttons: {
-                            "OK": function() {
-                                $(this).dialog("close");
-                                var cfg = {
-                                    type: "POST",
-                                    url: "../rest/conta/deletaConta/" +
-                                        id,
-                                    data: "id=" + id,
-                                    success: function(msg) {
-                                    	CFINAC.Message(msg, "success");
-                                        table.ajax.reload(null, false);
-                                        CFINAC.contas.graphDetail();
-                                    },
-                                    error: function(e) {
-                                    	CFINAC.Message(e.responseText, "error");
-                                    }
-                                };
-                                CFINAC.ajax.post(cfg);
+                	var cfg = {
+                            type: "POST",
+                            url: "../rest/conta/deletaConta/" +
+                                id,
+                            data: "id=" + id,
+                            success: function(msg) {
+                            	CFINAC.Message(msg, "success");
+                                table.ajax.reload(null, false);
+                                CFINAC.contas.graphDetail();
                             },
-                            Cancel: function() {
-                                $(this).dialog("close");
+                            error: function(e) {
+                            	CFINAC.Message(e.responseText, "error");
                             }
-                        }
-                    }
-                    $("#msg").html(
-                        "Deseja realmente excluir essa conta?");
-                    $("#msg").dialog(cfgg);
+                        };
+                	CFINAC.Dialog("Deseja realmente excluir essa conta?", cfg);                               
                 }
 
                 CFINAC.contas.add = function() {

@@ -5,6 +5,30 @@ iniciaRenda = function() {
         .ready(
             function() {
 
+            	var changes = function() {
+                    if (+$("#inputTimes").val()) {
+                        var value = $("#inputTotalValue").val() / $("#inputTimes").val();
+                        $("#inputParcelValue").val(value.toFixed(2));
+                    } else {
+                        $("#inputParcelValue").val($("#inputTotalValue").val());
+                    }
+                }
+
+                $("#inputTotalValue").keyup(changes);
+                $("#inputTimes").keyup(changes);
+                
+                var disab = function() {
+                    if ($("#isFixed").val() == 0) {
+                        $("#inputTimes").prop("disabled", false);
+                    } else {
+                        $("#inputTimes").prop("disabled", true);
+                        $("#inputTimes").val("");
+                        $("#inputParcelValue").val("");
+                    }
+                };
+
+                $("#isFixed").change(disab);
+                
                 var table = $('#example')
                     .DataTable({
                         aLengthMenu: [
@@ -156,6 +180,7 @@ iniciaRenda = function() {
                             $("#inputTotalValue").val(incomeData[0].totalValue);
                             $("#inputTimes").val(incomeData[0].times);
                             changes();
+                            disab();
 
                         },
                         error: function(rest) {
@@ -166,37 +191,20 @@ iniciaRenda = function() {
                 };
 
                 CFINAC.rendas.deletaRenda = function(id) {
-                    var cfgg = {
-                        title: "Mensagem",
-                        height: 250,
-                        width: 400,
-                        modal: true,
-                        trigger: false,
-                        buttons: {
-                            "OK": function() {
-                                $(this).dialog("close");
-                                var cfg = {
-                                    type: "POST",
-                                    url: "../rest/renda/deletaRenda/" + id,
-                                    data: "id=" + id,
-                                    success: function(msg) {
-                                    	CFINAC.Message(msg, "success");
-                                        table.ajax.reload(null, false);
-                                        CFINAC.rendas.graphDetail();
-                                    },
-                                    error: function(e) {
-                                    	CFINAC.Message(e.responseText, "error");
-                                    }
-                                };
-                                CFINAC.ajax.post(cfg);
+                	var cfg = {
+                            type: "POST",
+                            url: "../rest/renda/deletaRenda/" + id,
+                            data: "id=" + id,
+                            success: function(msg) {
+                            	CFINAC.Message(msg, "success");
+                                table.ajax.reload(null, false);
+                                CFINAC.rendas.graphDetail();
                             },
-                            Cancel: function() {
-                                $(this).dialog("close");
+                            error: function(e) {
+                            	CFINAC.Message(e.responseText, "error");
                             }
-                        }
-                    }
-                    $("#msg").html("Deseja realmente excluir essa renda?");
-                    $("#msg").dialog(cfgg);
+                        };
+                	CFINAC.Dialog("Deseja realmente excluir essa conta?", cfg);                            
                 }
 
                 CFINAC.rendas.add = function() {

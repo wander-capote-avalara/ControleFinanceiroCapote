@@ -3,6 +3,7 @@ package br.com.ControleFinanceiroCapote.rest;
 import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -19,6 +20,11 @@ public class UtilRest {
 	
 	public int familyId() {
 		return Integer.parseInt((String) request.getSession().getAttribute("familyId"));
+	}
+	
+	public void setFamilyId(int id){
+		HttpSession session = request.getSession();
+		session.setAttribute("familyId", Integer.toString(id));
 	}
 
 	public Response buildResponse(Object result) {

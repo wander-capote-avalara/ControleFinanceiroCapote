@@ -71,7 +71,10 @@ public class FamiliaService {
 		conec.fecharConexao();
 	}
 
-	public List<Usuario> getFamilyMembers(int userId) throws ValidationException {
+	public List<Usuario> getFamilyMembers(int userId, int familyId) throws ValidationException {
+		if(familyId == 0)
+			return null;
+		
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);	
@@ -96,11 +99,15 @@ public class FamiliaService {
 	public void kickUser(int id, int userId) throws Exception {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
+		conexao.setAutoCommit(false);
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
-		if (jdbcFamilia.isLeader(userId))
+		if (jdbcFamilia.isLeader(userId)){
 			jdbcFamilia.kickUser(id);
-		else 
+			conexao.commit();
+		}else{
+			conexao.rollback();
 			throw new Exception("Você precisa ser dono da familia para fazer essa operação!");
+		}
 		conec.fecharConexao();
 	}
 	
@@ -169,11 +176,12 @@ public class FamiliaService {
 		return hasFamily;
 	}
 	
-	public void createFamily(Familia family, int userId) throws Exception {
+	public int createFamily(Familia family, int userId) throws Exception {
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
-		jdbcFamilia.createFamily(family, userId);
+		int familyId = jdbcFamilia.createFamily(family, userId);
 		conec.fecharConexao();
+		return familyId;
 	}
 }

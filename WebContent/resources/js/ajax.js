@@ -24,26 +24,11 @@ CFINAC.Message = function(msg, type){
 	Command: toastr[type](msg, type == "error" ? "Erro":"Sucesso");	
 }
 
-/*CFINAC.Dialog = function(sMsg, msg){
-bootbox.dialog({
-	  message: sMsg,
-	  title: "Mensagem",
-	  buttons: {
-	    danger: {
-	      label: "Cancelar!",
-	      className: "btn-danger"
-	    },
-	    success: {
-	      label: "Ok!",
-	      className: "btn-success",
-	      callback: function() {
-	    	  msg;
-	      }
-	    }
-	  }
-	});
-}*/
-
+CFINAC.Dialog = function(sMsg, cfg){
+	bootbox.confirm(sMsg, function(result){
+		!result || CFINAC.ajax.post(cfg);
+	}); 
+}
 
 function ajaxRequestDefault() {
 	var def = {

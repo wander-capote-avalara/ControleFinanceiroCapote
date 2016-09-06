@@ -35,8 +35,8 @@ public class FamiliaRest extends UtilRest {
 
 	public Response createFamily(String familiaParam) {
 		try {
-			Familia family = new ObjectMapper().readValue(familiaParam, Familia.class);
-			serviceFamily.createFamily(family, userId());
+			Familia family = new ObjectMapper().readValue(familiaParam, Familia.class);			
+			setFamilyId(serviceFamily.createFamily(family, userId()));
 			return this.buildResponse("Operação feita com sucesso!");
 		} catch (Exception e) {
 			return this.buildErrorResponse("Erro na operação!");
@@ -203,7 +203,7 @@ public class FamiliaRest extends UtilRest {
 	@Produces("text/plain")
 	public Response getFamilyMembers() throws ValidationException {
 		try {
-			return this.buildResponse(serviceFamily.getFamilyMembers(userId()));
+			return this.buildResponse(serviceFamily.getFamilyMembers(userId(), familyId()));
 		} catch (Exception e) {
 			return this.buildErrorResponse("Erro ao buscar informações");
 		}
@@ -216,7 +216,7 @@ public class FamiliaRest extends UtilRest {
 			serviceFamily.kickUser(id, userId());
 			return this.buildResponse("Usuario expulso com sucesso!");
 		} catch (Exception e) {
-			return this.buildErrorResponse("Você precisa ser dono da familia para fazer essa operação!");
+			return this.buildErrorResponse(e.getMessage());
 		}
 	}
 	

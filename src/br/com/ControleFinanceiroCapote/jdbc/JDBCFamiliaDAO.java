@@ -83,7 +83,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		}
 	}
 
-	public void createFamily(Familia family, int userId)
+	public int createFamily(Familia family, int userId)
 			throws ValidationException {
 		validf.familyNameValidation(family.getName());
 		StringBuilder comando = new StringBuilder();
@@ -104,6 +104,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				family.setId(rs.getInt(1));
 			}
 			afterCreate(userId, family.getId());
+			return family.getId();
 		} catch (Exception e) {
 			throw new ValidationException();
 		}
@@ -605,7 +606,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				deleteFamily(id);
 			}
 		} catch (Exception e) {
-			throw new ValidationException(e);
+			throw new ValidationException(e.getMessage());
 		}
 	}
 
@@ -624,7 +625,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 			p.setInt(1, id);
 			p.execute();
 		} catch (Exception e) {
-			throw new ValidationException(e);
+			throw new ValidationException("Ainda há convites pendentes com essa familia!",e);
 		}
 
 	}

@@ -97,36 +97,19 @@ iniciaCategoria = function() {
                 };
                 
                 CFINAC.categorias.deletaCategoria = function(id) {
-                	var cfgg = {
-					title : "Mensagem",
-					height : 250,
-					width : 400,
-					modal : true,
-					trigger : false,
-					buttons : {
-						"OK" : function() {
-							$(this).dialog("close");
-							var cfg = {
-								type : "POST",
-								url : "../rest/categoria/deletaCategoria/" + id,
-								data : "id=" + id,
-								success : function(msg) {
-			                    	CFINAC.Message(msg, "success");
-									table.ajax.reload(null, false);
-								},
-								error : function(e) {
-					            	CFINAC.Message(e.responseText, "error");
-								}
-							};
-							CFINAC.ajax.post(cfg);
-						},
-						Cancel : function() {
-							$(this).dialog("close");
-						}
-					}
-				}
-				$("#msg").html("Deseja realmente excluir essa categoria?");
-				$("#msg").dialog(cfgg);
+                	var cfg = {
+							type : "POST",
+							url : "../rest/categoria/deletaCategoria/" + id,
+							data : "id=" + id,
+							success : function(msg) {
+		                    	CFINAC.Message(msg, "success");
+								table.ajax.reload(null, false);
+							},
+							error : function(e) {
+				            	CFINAC.Message(e.responseText, "error");
+							}
+						};	
+                	CFINAC.Dialog("Deseja realmente excluir essa categoria?", cfg);						
                 }
             })
 }
