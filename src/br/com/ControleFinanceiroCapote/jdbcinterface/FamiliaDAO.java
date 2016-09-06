@@ -18,7 +18,7 @@ public interface FamiliaDAO {
 	public List<Usuario> getFamilyMembers(int userId) throws ValidationException;
 	public List<Invite> getInvites(int userId) throws ValidationException;
 	public List<Invite> getInvitesInfo(int userId) throws ValidationException; 
-	public void inviteUsers(Invite invite) throws ValidationException;
+	public void inviteUsers(Invite invite, int ownerId) throws ValidationException;
 	public void kickUser(int id) throws ValidationException;
 	public void leadProvider(int id) throws ValidationException;
 	public int getFamilyByUserId(int userId) throws ValidationException;

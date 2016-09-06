@@ -291,7 +291,7 @@ iniciaConta = function() {
                                 CFINAC.contas.graphDetail();
                             },
                             error: function(err) {
-                            	CFINAC.Message(e.responseText, "error");
+                            	CFINAC.Message(err.responseText, "error");
                             }
                         };
                         CFINAC.ajax.post(cfg);

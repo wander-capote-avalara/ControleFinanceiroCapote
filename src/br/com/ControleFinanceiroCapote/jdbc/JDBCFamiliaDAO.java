@@ -14,6 +14,7 @@ import br.com.ControleFinanceiroCapote.jdbcinterface.FamiliaDAO;
 import br.com.ControleFinanceiroCapote.objetos.Familia;
 import br.com.ControleFinanceiroCapote.objetos.Invite;
 import br.com.ControleFinanceiroCapote.objetos.Usuario;
+import br.com.ControleFinanceiroCapote.sendEmail.SendMail;
 import br.com.ControleFinanceiroCapote.validacao.ValidaFamilia;
 import br.com.ControleFinanceiroCapote.validacao.ValidaUsuario;
 
@@ -156,8 +157,8 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		}
 	}
 
-	public void inviteUsers(Invite invite) throws ValidationException {
-
+	public void inviteUsers(Invite invite, int ownerId) throws ValidationException {
+		invite.setOwnerId(ownerId);
 		validf.familyValidation(invite.getFamilyId());
 
 		for (Integer id : invite.getUsersToInvite())
@@ -176,11 +177,94 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 				p.setInt(1, invite.getFamilyId());
 				p.setInt(2, userId);
 				p.execute();
+				sendEmail(invite, userId);
 			}
 		} catch (Exception e) {
 			throw new ValidationException();
 		}
 
+	}
+
+	private void sendEmail(Invite invite, int userId) throws Exception {
+		try{
+			invite.setFamilyName(getFamilyNameByInvite(invite));
+			invite.setOwnerName(getFamilyOwnerNameByInvite(invite));
+			
+			String assunto = "Convite da família: "+invite.getFamilyName().toUpperCase(),
+				mensagem = "O usuário "+invite.getOwnerName().toUpperCase()+" esta lhe convidando para participar da "
+						+ "sua familia: "+invite.getFamilyName();
+			SendMail sm = new SendMail();
+			sm.sendMail("controlefinanceirocapote@gmail.com",getEmailByUserId(userId),assunto,mensagem);		
+		}catch(Exception e){
+			throw new Exception(e.getMessage());
+		}
+	}
+	private String getFamilyNameByInvite(Invite invite) throws ValidationException{
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("SELECT Nome FROM familias ");
+		comando.append("WHERE Id_Familias = ?");
+
+		PreparedStatement p;
+		ResultSet rs = null;
+		
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, invite.getFamilyId());
+			rs = p.executeQuery();
+			
+			while(rs.next())
+				return rs.getString("Nome");
+
+		} catch (Exception e) {
+			throw new ValidationException();
+		}
+		return null;
+	}
+	
+	private String getFamilyOwnerNameByInvite(Invite invite) throws ValidationException{
+		StringBuilder comando = new StringBuilder();
+
+		comando.append("SELECT Usuario FROM usuarios ");
+		comando.append("WHERE Id_Usuarios = ?");
+
+		PreparedStatement p;
+		ResultSet rs = null;
+		
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, invite.getOwnerId());
+			rs = p.executeQuery();
+			
+			while(rs.next())
+				return rs.getString("Usuario");
+
+		} catch (Exception e) {
+			throw new ValidationException();
+		}
+		return null;
+	}
+
+	private String getEmailByUserId(int userId) throws ValidationException {
+		StringBuilder comando = new StringBuilder();
+		comando.append("SELECT Email FROM usuarios ");
+		comando.append("WHERE Id_Usuarios = ?");
+
+		PreparedStatement p;
+		ResultSet rs = null;
+
+		try {
+			p = this.conexao.prepareStatement(comando.toString());
+			p.setInt(1, userId);
+			rs = p.executeQuery();
+			
+			while(rs.next())
+				return rs.getString("Email");
+		} catch (Exception e) {
+			throw new ValidationException(
+					"Erro ao buscar email!", e);
+		}
+		return null;
 	}
 
 	public boolean listUserValidadeById(List<Integer> usersId)

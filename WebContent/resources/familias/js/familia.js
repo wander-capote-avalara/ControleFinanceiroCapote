@@ -176,7 +176,7 @@ var iniciaFamilia = function() {
                                 $("#conteudoRegistro .btn-danger").click();
                             },
                             error: function(err) {
-                            	CFINAC.Message(e.responseText, "error");
+                            	CFINAC.Message(err.responseText, "error");
                             }
                         };
                         CFINAC.ajax.post(cfg);
@@ -185,7 +185,37 @@ var iniciaFamilia = function() {
                 })
 
         CFINAC.familia.leadProvider = function(id) {
-            var msg = "Você deseja realmente torna-lo lider?",
+        	
+        	bootbox.dialog({
+        		  message: sMsg,
+        		  title: "Mensagem",
+        		  buttons: {
+        		    danger: {
+        		      label: "Cancelar!",
+        		      className: "btn-danger"
+        		    },
+        		    success: {
+        		      label: "Ok!",
+        		      className: "btn-success",
+        		      callback: function() {
+        		    	  var cfg = {
+        		                     type: "POST",
+        		                            url: "../rest/familia/leadProvider/" + id,
+        		                            data: "id=" + id,
+        		                            success: function(msg) {
+        		                            	CFINAC.Message(msg, "success");
+        		                                membersTable.ajax.reload(null, false);
+        		                            },
+        		                            error: function(e) {
+        		                            	CFINAC.Message(e.responseText, "error");
+        		                            	}
+        		                        };
+        		                        CFINAC.ajax.post(cfg);
+        		      }
+        		    }
+        		  }
+        		});
+           /* var msg = "Você deseja realmente torna-lo lider?",
                 cfg = {
                     title: "Mensagem",
                     height: 250,
@@ -215,9 +245,10 @@ var iniciaFamilia = function() {
                     }
                 }
             $("#msg").html(msg);
-            $("#msg").dialog(cfg);
+            $("#msg").dialog(cfg);*/
         }
 
+       //CFINAC.Dialog("Você deseja realmente torna-lo lider?", msg);
 
 
         CFINAC.familia.invite = function() {

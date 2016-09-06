@@ -11,6 +11,7 @@ public class Invite implements Serializable{
 	private List<Integer> usersToInvite;
 	private String familyName;
 	private String ownerName;
+	private int ownerId;
 	
 	
 	public int getFamilyId() {
@@ -36,6 +37,12 @@ public class Invite implements Serializable{
 	}
 	public void setOwnerName(String ownerName) {
 		this.ownerName = ownerName;
+	}
+	public int getOwnerId() {
+		return ownerId;
+	}
+	public void setOwnerId(int ownerId) {
+		this.ownerId = ownerId;
 	}
 
 }

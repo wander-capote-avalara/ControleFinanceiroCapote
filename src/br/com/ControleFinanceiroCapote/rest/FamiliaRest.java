@@ -70,7 +70,7 @@ public class FamiliaRest extends UtilRest {
 			serviceFamily.inviteUsers(invite, userId());
 			return this.buildResponse("Operação feita com sucesso!");
 		} catch (Exception e) {
-			return this.buildErrorResponse("Você precisa ser líder da família para fazer essa ação!");
+			return this.buildErrorResponse(e.getMessage());
 		}
 	}
 	

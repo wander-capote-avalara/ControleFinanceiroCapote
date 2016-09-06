@@ -35,7 +35,7 @@ public class FamiliaService {
 		Connection conexao = conec.abrirConexao();
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
 		if (jdbcFamilia.isLeader(owner))
-			jdbcFamilia.inviteUsers(invite);
+			jdbcFamilia.inviteUsers(invite, owner);
 		else 
 			throw new Exception("Você precisa ser dono da familia para fazer essa operação!");
 		conec.fecharConexao();

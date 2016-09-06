@@ -11,10 +11,12 @@ $(document).bind({
 
 var url = document.URL.split('?')[1];
 if(url == "invalid")
-	CFINAC.Message("Area privada!","error")
+	CFINAC.Message("Area privada!","error");
 else if(url == "incorrect")
-	CFINAC.Message("Usuario ou senha inválidos!","error")
-
+	CFINAC.Message("Usuario ou senha inválidos!","error");
+else if(url == "svError")
+	CFINAC.Message("Erro ao se conectar com o servidor!","error");
+	
 function validaEmail(email) {
 	msg = "";
 	if (email.indexOf("@") == -1 || email.indexOf(".") == -1

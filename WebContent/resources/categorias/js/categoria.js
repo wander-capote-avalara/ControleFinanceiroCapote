@@ -26,7 +26,7 @@ iniciaCategoria = function() {
                                 table.ajax.reload(null, false);
                             },
                             error: function(err) {
-                                alert("Erro na ação" + err.responseText);
+                            	CFINAC.Message(err.responseText, "error");
                             }
                         };
                         CFINAC.ajax.post(cfg);
@@ -90,7 +90,7 @@ iniciaCategoria = function() {
                             $("#inputCategory").val(categoryData[0].name);
                         },
                         error: function(rest) {
-                        	CFINAC.Message(rest, "error");
+                        	CFINAC.Message(rest.responseText, "error");
                         }
                     };
                     CFINAC.ajax.post(cfg);
@@ -115,7 +115,7 @@ iniciaCategoria = function() {
 									table.ajax.reload(null, false);
 								},
 								error : function(e) {
-		                        	CFINAC.Message(e, "error");
+					            	CFINAC.Message(e.responseText, "error");
 								}
 							};
 							CFINAC.ajax.post(cfg);

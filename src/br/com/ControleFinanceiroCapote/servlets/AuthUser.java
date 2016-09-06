@@ -92,9 +92,11 @@ public class AuthUser extends HttpServlet {
 		} catch (SQLException | NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			response.sendRedirect("Login.html?svError");
 		} catch (ValidationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			response.sendRedirect("Login.html?svError");
 		}
 	}
 }
