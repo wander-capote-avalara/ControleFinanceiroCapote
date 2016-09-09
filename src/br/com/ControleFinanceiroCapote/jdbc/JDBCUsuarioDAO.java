@@ -261,7 +261,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		return user;
 	}
 
-	private int getNextBalanceById(int id) throws ValidationException {
+	private double getNextBalanceById(int id) throws ValidationException {
 		return getActualBalanceById(id, true) + getActualBalanceById(id, false);
 	}
 
@@ -290,7 +290,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		}
 	}
 
-	private int getActualBalanceById(int id, boolean next) throws ValidationException {
+	private double getActualBalanceById(int id, boolean next) throws ValidationException {
 		return getActualRentsById(id, next) - getActualBillsById(id, next);
 	}
 
@@ -348,12 +348,38 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		}
 	}
 
-	private int getActualRentsById(int id, boolean next) throws ValidationException {
+	private double getActualRentsById(int id, boolean next) throws ValidationException {
 		valid.userValidation(id);
+		StringBuilder comando = new StringBuilder();
+		if(!next){
+			comando.append("SELECT SUM(Valor_Rendas * TIMESTAMPDIFF(MONTH, Data_Vencimento, NOW())) as vlrRenda FROM rendas a ");
+			comando.append("WHERE a.Id_Usuario = " + id + " AND a.Status_Renda = 1 AND a.Renda_Fixa = 1 AND a.Data_Vencimento <= Now() ");
+		}else{
+			comando.append("SELECT SUM(Valor_Rendas) as vlrRenda FROM rendas a ");
+			comando.append("WHERE a.Id_Usuario = " + id + " AND a.Status_Renda = 1 AND a.Renda_Fixa = 1 AND a.Data_Vencimento <= Now() ");	
+		}
+		double balance = 0;
+		try {
+			java.sql.Statement stmt = conexao.createStatement();
+			ResultSet rs = stmt.executeQuery(comando.toString());
+
+			while (rs.next()) {
+				balance += rs.getDouble("vlrRenda");
+			}
+			balance += aux(id);
+			balance += getRentsParcelsValues(id, next);
+			return balance;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+	
+	private double aux(int id) throws ValidationException{
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT SUM(Valor_Rendas) as vlrRenda FROM rendas a ");
 		comando.append("WHERE a.Id_Usuario = " + id
-				+ " AND a.Status_Renda = 1 AND a.Renda_Fixa = 1 AND a.Data_Vencimento <= Now()");
+				+ " AND a.Status_Renda = 1 AND a.Renda_Fixa = 1 AND a.Data_Vencimento = Now()");
 
 		int balance = 0;
 		try {
@@ -363,12 +389,11 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			while (rs.next()) {
 				balance += (int) rs.getInt("vlrRenda");
 			}
-			balance += getRentsParcelsValues(id, next);
 			return balance;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
-		}
+		}	
 	}
 
 	private double getRentsParcelsValues(int id, boolean next) throws ValidationException {

@@ -16,20 +16,20 @@ public class Usuario implements Serializable{
 	private int nivel;
 	private int ativo;
 	private String nomeFamilia;
-	private int saldoAtual; 
-	private int saldoProx; 
+	private double saldoAtual; 
+	private double saldoProx; 
 	private String next;
 	
-	public int getSaldoAtual() {
+	public double getSaldoAtual() {
 		return saldoAtual;
 	}
-	public void setSaldoAtual(int saldoAtual) {
+	public void setSaldoAtual(double saldoAtual) {
 		this.saldoAtual = saldoAtual;
 	}
-	public int getSaldoProx() {
+	public double getSaldoProx() {
 		return saldoProx;
 	}
-	public void setSaldoProx(int saldoProx) {
+	public void setSaldoProx(double saldoProx) {
 		this.saldoProx = saldoProx;
 	}
 	public String getNext() {
