@@ -107,7 +107,7 @@ $(document).ready(
 						$("#actualbalance").html(
 								"Saldo Atual(R$): " + userInfo.saldoAtual);
 						$("#family").html(userInfo.nomeFamilia);
-						$("#next").html("Próx. fatura: " + userInfo.next);
+						$("#next").html("Próx. conta: " + userInfo.next);
 						$("#nextbalance").html(
 								"Saldo próx. mês(R$): " + userInfo.saldoProx)
 					},

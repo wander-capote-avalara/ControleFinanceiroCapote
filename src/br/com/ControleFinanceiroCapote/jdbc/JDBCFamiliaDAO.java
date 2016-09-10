@@ -634,7 +634,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		valid.userValidation(userId);
 		
 		StringBuilder comando = new StringBuilder();
-		comando.append("SELECT id_family as inviteFrom FROM convites c ");
+		comando.append("SELECT distinct id_family as inviteFrom FROM convites c ");
 		comando.append("WHERE c.id_user = ?");
 		List<Invite> listInvite = new ArrayList<Invite>();
 		try {
@@ -659,7 +659,7 @@ public class JDBCFamiliaDAO implements FamiliaDAO {
 		valid.userValidation(userId);
 		
 		StringBuilder comando = new StringBuilder();
-		comando.append("SELECT u.Usuario AS userName, f.Nome AS familyName, c.id_family as familyId ");
+		comando.append("SELECT distinct u.Usuario AS userName, f.Nome AS familyName, c.id_family as familyId ");
 		comando.append("FROM convites c ");
 		comando.append("INNER JOIN familias f ON f.Id_Familias = c.id_family ");
 		comando.append("INNER JOIN usuarios u ON u.Id_Usuarios = f.Id_Usuario ");

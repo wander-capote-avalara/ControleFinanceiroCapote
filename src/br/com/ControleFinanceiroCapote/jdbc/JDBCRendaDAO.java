@@ -211,7 +211,7 @@ public class JDBCRendaDAO implements RendaDAO {
 			comando.append(" AND ");
 			comando.append(" r.renda_fixa = 1 ");
 			comando.append(" AND ");
-			comando.append(" MONTH(r.Data_Vencimento) <= "+range.getSecondMonth());
+			comando.append("r.Data_Vencimento <= '" + range.getSecondYear() + "/" + range.getSecondMonth() + "/31'");
 		}
 
 		List<Renda> incomeList = new ArrayList<Renda>();
@@ -366,7 +366,7 @@ public class JDBCRendaDAO implements RendaDAO {
 		comando.append("AND Status_Renda = 1 ");
 		comando.append("AND Renda_Fixa = 1 ");
 		comando.append(" AND ");
-		comando.append(" MONTH(Data_Vencimento) <= "+dates.getSecondMonth());
+		comando.append("Data_Vencimento <= '" + dates.getSecondYear() + "/" + dates.getSecondMonth() + "/31'");
 
 		PreparedStatement p;
 		ResultSet rs = null;

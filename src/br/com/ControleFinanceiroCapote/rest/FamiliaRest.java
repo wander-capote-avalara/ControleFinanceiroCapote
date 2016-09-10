@@ -141,7 +141,8 @@ public class FamiliaRest extends UtilRest {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response acceptInvite(@PathParam("id") int id) {
 		try {
-			serviceFamily.acceptInvite(id, userId());
+			serviceFamily.acceptInvite(id, userId());	
+			setFamilyId(id);
 			return this.buildResponse("Convite aceitado com sucesso!");
 		} catch (Exception e) {
 			e.printStackTrace();

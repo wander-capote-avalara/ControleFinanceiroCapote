@@ -244,7 +244,7 @@ public class JDBCContaDAO implements ContaDAO {
 		comando.append("FROM parcela_conta a ");
 		comando.append("INNER JOIN contas c ON c.Id_Contas = a.Id_Conta  ");
 		comando.append("INNER JOIN categorias ca ON ca.Id_Categorias = c.Id_Categoria  ");
-		comando.append("WHERE a.Status_Parcela = 1 ");
+		comando.append("WHERE a.Status_Parcela <> 0 ");
 		comando.append("AND a.Data_Vencimento between ? AND ? ");
 		comando.append("AND c.Id_Usuario = ?");
 
@@ -386,7 +386,7 @@ public class JDBCContaDAO implements ContaDAO {
 	private double getBillsParcelsValues(int id, RangeDTO dates) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT SUM(Valor_Parcela) as vlrConta FROM parcela_conta a ");
-		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Conta IN (SELECT c.Id_Contas FROM contas c where c.Id_Usuario = ?)");
+		comando.append("WHERE a.Status_Parcela <> 0 AND a.Id_Conta IN (SELECT c.Id_Contas FROM contas c where c.Id_Usuario = ?)");
 		comando.append(" AND Data_Vencimento between ? AND ? ");
 
 		double balance = 0;

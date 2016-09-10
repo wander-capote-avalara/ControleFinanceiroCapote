@@ -269,8 +269,8 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT a.Data_Vencimento as lastDate FROM contas a ");
-		comando.append("WHERE a.Id_Usuario = " + id + " AND a.Status_Conta = 1 ");
-		comando.append("ORDER BY lastDate DESC LIMIT 1");
+		comando.append("WHERE a.Id_Usuario = " + id + " AND a.Status_Conta = 1 AND a.Data_Vencimento >= NOW() ");
+		comando.append("ORDER BY lastDate ASC LIMIT 1");
 
 		Date lastDate = null;
 		try {
@@ -297,12 +297,11 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	private int getActualBillsById(int id, boolean next) throws ValidationException {
 		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
-		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
-				thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2;
 		comando.append("SELECT SUM(Valor_Contas) as vlrConta FROM contas a ");
 		comando.append("WHERE a.Id_Usuario = " + id + " AND a.Status_Conta = 1 AND a.Conta_Fixa = 0");
-		comando.append(next ? " AND MONTH(a.Data_Vencimento) = " + nextMonth
-				: " AND MONTH(a.Data_Vencimento) <= " + thisMonth);
+		comando.append(next ? " AND MONTH(a.Data_Vencimento) = " + nextMonth+" AND YEAR(a.Data_Vencimento) = YEAR(NOW())"
+				: " AND a.Data_Vencimento <= NOW()");
 
 		int balance = 0;
 		try {
@@ -324,14 +323,11 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	private double getBillsParcelsValues(int id, boolean next) throws ValidationException {
 		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
-		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
-				thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2;
 		comando.append("SELECT SUM(Valor_Parcela) as vlrConta FROM parcela_conta a ");
-		comando.append(
-				"WHERE a.Status_Parcela = 1 AND a.Id_Conta IN (SELECT c.Id_Contas FROM contas c where c.Id_Usuario = "
-						+ id + ")");
-		comando.append(next ? " AND MONTH(a.Data_Vencimento) = " + nextMonth
-				: " AND MONTH(a.Data_Vencimento) <= " + thisMonth);
+		comando.append("WHERE a.Status_Parcela <> 0 AND a.Id_Conta IN (SELECT c.Id_Contas ");
+		comando.append("FROM contas c where c.Id_Usuario = "+ id + ")");
+		comando.append(next ? " AND MONTH(a.Data_Vencimento) = " + nextMonth+" AND YEAR(a.Data_Vencimento) = YEAR(NOW())": " AND a.Data_Vencimento <= NOW()");
 
 		double balance = 0;
 		try {
@@ -378,8 +374,9 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	private double aux(int id) throws ValidationException{
 		StringBuilder comando = new StringBuilder();
 		comando.append("SELECT SUM(Valor_Rendas) as vlrRenda FROM rendas a ");
-		comando.append("WHERE a.Id_Usuario = " + id
-				+ " AND a.Status_Renda = 1 AND a.Renda_Fixa = 1 AND a.Data_Vencimento = Now()");
+		comando.append("WHERE a.Id_Usuario = " + id);
+		comando.append(" AND a.Status_Renda = 1 AND a.Renda_Fixa = 1 ");
+		comando.append("AND MONTH(a.Data_Vencimento) = MONTH(Now()) AND YEAR(a.Data_Vencimento) = YEAR(Now())");
 
 		int balance = 0;
 		try {
