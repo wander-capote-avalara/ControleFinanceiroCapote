@@ -362,7 +362,8 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			while (rs.next()) {
 				balance += rs.getDouble("vlrRenda");
 			}
-			balance += aux(id);
+			if(!next)
+				balance += aux(id);
 			balance += getRentsParcelsValues(id, next);
 			return balance;
 		} catch (SQLException e) {
@@ -399,11 +400,9 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
 				thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
 		comando.append("SELECT SUM(Valor_Parcela) as vlrRenda FROM parcela_renda a ");
-		comando.append(
-				"WHERE a.Status_Parcela = 1 AND a.Id_Renda IN (SELECT c.Id_Rendas FROM rendas c WHERE c.Id_Usuario = "
-						+ id + ")");
-		comando.append(next ? " AND MONTH(a.Data_Vencimento) = " + nextMonth
-				: " AND MONTH(a.Data_Vencimento) <= " + thisMonth);
+		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Renda IN ");
+		comando.append("(SELECT c.Id_Rendas FROM rendas c WHERE c.Id_Usuario = "+ id +")");
+		comando.append(next ? " AND MONTH(a.Data_Vencimento) = " + nextMonth +" AND YEAR(a.Data_Vencimento) = YEAR(NOW())":" AND MONTH(a.Data_Vencimento) <= MONTH(NOW()) AND YEAR(a.Data_Vencimento) = YEAR(NOW())");
 
 		double balance = 0;
 		try {

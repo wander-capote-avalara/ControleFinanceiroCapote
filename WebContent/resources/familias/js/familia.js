@@ -390,7 +390,7 @@ var iniciaFamilia = function() {
                     text: ''
                 },
                 tooltip: {
-                    format: '<b>{series.name}<b>{series.percentage:.1f}%',
+                    format: '<b>{series.name}<b>',
                 },
                 plotOptions: {
                     pie: {
@@ -398,7 +398,7 @@ var iniciaFamilia = function() {
                         cursor: 'pointer',
                         dataLabels: {
                             enabled: true,
-                            format: '<b>{point.name}: (R$)</b> {point.y:.2f}',
+                            format: '<b>{point.name}: {point.percentage:.2f}%',
                         },
                         showInLegend: true
                     }
@@ -441,7 +441,7 @@ var iniciaFamilia = function() {
                     text: ''
                 },
                 tooltip: {
-                    format: '<b>{series.name}<b>{series.percentage:.1f}%',
+                    format: '<b>{series.name}<b>',
                 },
                 plotOptions: {
                     pie: {
@@ -449,7 +449,7 @@ var iniciaFamilia = function() {
                         cursor: 'pointer',
                         dataLabels: {
                             enabled: true,
-                            format: '<b>{point.name}: (R$)</b> {point.y:.2f}',
+                            format: '<b>{point.name}: {point.percentage:.2f}%',
                         },
                         showInLegend: true
                     }
