@@ -21,7 +21,18 @@ toastr.options = {
 	}
 
 CFINAC.Message = function(msg, type){
-	Command: toastr[type](msg, type == "error" ? "Erro":"Sucesso");	
+	Command: toastr[type](msg, CFINAC.MessageTitle(type));	
+}
+
+CFINAC.MessageTitle = function(title){
+	switch(title){
+	case "error":
+		return "Erro!";
+	case "warning":
+		return "Cuidado!";
+	default:
+		return "Sucesso!";
+	}
 }
 
 CFINAC.Dialog = function(sMsg, cfg){

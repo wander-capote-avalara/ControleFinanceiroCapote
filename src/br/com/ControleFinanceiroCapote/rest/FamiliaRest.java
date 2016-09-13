@@ -226,7 +226,7 @@ public class FamiliaRest extends UtilRest {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getAllFamilyBills() {
 		try {
-			return this.buildResponse(serviceFamily.getAllFamilyBills(userId()));
+			return this.buildResponse(serviceFamily.getAllFamilyBills(userId(), familyId()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());
@@ -238,7 +238,7 @@ public class FamiliaRest extends UtilRest {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getAllFamilyIncomes() {
 		try {
-			return this.buildResponse(serviceFamily.getAllFamilyIncomes(userId()));
+			return this.buildResponse(serviceFamily.getAllFamilyIncomes(userId(), familyId()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());

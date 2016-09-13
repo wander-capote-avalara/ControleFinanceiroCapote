@@ -1,6 +1,7 @@
 package br.com.ControleFinanceiroCapote.servicos;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.ControleFinanceiroCapote.bd.conexao.Conexao;
@@ -72,14 +73,16 @@ public class FamiliaService {
 	}
 
 	public List<Usuario> getFamilyMembers(int userId, int familyId) throws ValidationException {
+		List<Usuario> users = new ArrayList<Usuario>();
+		
 		if(familyId == 0)
-			return null;
+			return users;
 		
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);	
 		JDBCUsuarioDAO userMethods = new JDBCUsuarioDAO(conexao);
-		List<Usuario> users = userMethods.getUsersInfo(jdbcFamilia.getFamilyMembers(userId));
+		users = userMethods.getUsersInfo(jdbcFamilia.getFamilyMembers(userId));
 		conec.fecharConexao();
 		return users;
 	}
@@ -111,22 +114,32 @@ public class FamiliaService {
 		conec.fecharConexao();
 	}
 	
-	public List<Conta> getAllFamilyBills(int userId) throws ValidationException {
+	public List<Conta> getAllFamilyBills(int userId, int familyId) throws ValidationException {
+		List<Conta> bills = new ArrayList<Conta>();
+		
+		if(familyId == 0)
+			return bills;
+		
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCContaDAO jdbcConta = new JDBCContaDAO(conexao);	
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
-		List<Conta> bills = jdbcConta.getAllFamilyBills(jdbcFamilia.getFamilyByUserId(userId));
+		bills = jdbcConta.getAllFamilyBills(jdbcFamilia.getFamilyByUserId(userId));
 		conec.fecharConexao();
 		return bills;
 	}
 
-	public List<Renda> getAllFamilyIncomes(int userId) throws ValidationException {
+	public List<Renda> getAllFamilyIncomes(int userId, int familyId) throws ValidationException {
+		List<Renda> incomes = new ArrayList<Renda>();
+		
+		if(familyId == 0)
+			return incomes;
+		
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCRendaDAO jdbcRenda = new JDBCRendaDAO(conexao);	
 		JDBCFamiliaDAO jdbcFamilia = new JDBCFamiliaDAO(conexao);
-		List<Renda> incomes = jdbcRenda.getAllFamilyIncomes(jdbcFamilia.getFamilyByUserId(userId));
+		incomes = jdbcRenda.getAllFamilyIncomes(jdbcFamilia.getFamilyByUserId(userId));
 		conec.fecharConexao();
 		return incomes;
 	}

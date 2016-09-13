@@ -40,7 +40,7 @@ public class SendMail {
 		props.put("mail.smtp.host", mailSMTPServer); //server SMTP do GMAIL
 		props.put("mail.smtp.auth", "true"); //ativa autenticacao
 		props.put("mail.smtp.user", from); //usuario ou seja, a conta que esta enviando o email (tem que ser do GMAIL)
-		props.put("mail.debug", "true");
+		props.put("mail.debug", "false");
 		props.put("mail.smtp.port", mailSMTPServerPort); //porta
 		props.put("mail.smtp.socketFactory.port", mailSMTPServerPort); //mesma porta para o socket
 		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
@@ -53,7 +53,7 @@ public class SendMail {
 		 * é responsavel por solicitar e retornar o usuário e senha para 
 		 * autenticação */
 		Session session = Session.getDefaultInstance(props, auth);
-		session.setDebug(true); //Habilita o LOG das ações executadas durante o envio do email
+		session.setDebug(false); //Habilita o LOG das ações executadas durante o envio do email
 		//Objeto que contém a mensagem
 		Message msg = new MimeMessage(session);
 		try {

@@ -1,6 +1,9 @@
 CFINAC.projecao = new Object();
 
 var iniciaProjecao = function() {
+	
+	CFINAC.Message("Poderá haver diferenças de saldos!", "warning");
+	
 	var billsList, incomesList, billsTtValue = 0, incomesTtValue = 0, firstDate = "MM/yyyy", secondDate = "MM/yyyy";
 	CFINAC.projecao.getBills = function() {
 		var cfg = {

@@ -1,5 +1,14 @@
 CFINAC.familia = new Object();
 
+$(document).bind({
+    ajaxStart: function() {
+        $(".loadModal").css("display", "block");
+    },
+    ajaxStop: function() {
+        $(".loadModal").css("display", "none");
+    }
+});
+
 var iniciaFamilia = function() {
     CFINAC.familia.hasFamily = function() {
 
@@ -24,15 +33,6 @@ var iniciaFamilia = function() {
     
         $("#tokenizeClean").click(function() {
             $("#tokenize").tokenize().clear();
-        });
-
-        $(document).bind({
-            ajaxStart: function() {
-                $(".loadModal").css("display", "block");
-            },
-            ajaxStop: function() {
-                $(".loadModal").css("display", "none");
-            }
         });
         $('#tokenize').tokenize({
             text: $(".TokenSearch input").val(),
