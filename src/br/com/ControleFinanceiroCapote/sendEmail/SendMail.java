@@ -78,7 +78,7 @@ public class SendMail {
 			 *  2 - seu nome de usuario do gmail
 			 *  3 - sua senha do gmail
 			 */
-			tr.connect(mailSMTPServer, "controlefinanceirocapote@gmail.com", "88063465aA");
+			tr.connect(mailSMTPServer, "controlefinanceirocapote@gmail.com", "emailparaenviaremail");
 			msg.saveChanges(); // don't forget this
 			//envio da mensagem
 			tr.sendMessage(msg, msg.getAllRecipients());
