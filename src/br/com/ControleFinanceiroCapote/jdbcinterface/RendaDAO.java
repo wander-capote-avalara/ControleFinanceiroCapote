@@ -15,7 +15,7 @@ public interface RendaDAO {
 	public List<Renda> getIncomes(int id, int userId, RangeDTO range) throws ValidationException;
 	public List<Renda> getAllFamilyIncomes(int idFamily) throws ValidationException;
 	public List<Graph> getIncomesByCategory(int userId, RangeDTO  range) throws ValidationException;
-	public int getTotalValueIncome(RangeDTO dates, int userId) throws ValidationException;
+	public double getTotalValueIncome(RangeDTO dates, int userId) throws ValidationException;
 	public List<Graph> getFamilyIncomesTotalValue(int idFamily) throws ValidationException;
 	public List<Parcela> getParcelsById(int id) throws ValidationException;
 }

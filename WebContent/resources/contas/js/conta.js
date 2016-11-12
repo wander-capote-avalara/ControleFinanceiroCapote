@@ -17,10 +17,13 @@ function payParcel(id, accountId){
 }
 
 iniciaConta = function() {
+	$("#inputTotalValue").maskMoney();
+	$("#inputParcelValue").maskMoney();
 
     var changes = function() {
         if (+$("#inputParcels").val()) {
-            var value = $("#inputTotalValue").val() / $("#inputParcels").val();
+        	var noMask = $("#inputTotalValue").val().replace(/,/g, ""),
+            value = noMask / $("#inputParcels").val();
             $("#inputParcelValue").val(value.toFixed(2));
         } else {
             $("#inputParcelValue").val($("#inputTotalValue").val());
@@ -75,8 +78,8 @@ iniciaConta = function() {
                                 data: "description",
                                 className: "center"
                             }, {
-                                data: "totalValue",
-                                className: "center",
+                                data: "formatedTotalValue",
+                                className: "text-right",
                             }, {
                                 data: "formatedDate",
                                 className: "center",
@@ -142,7 +145,7 @@ iniciaConta = function() {
                     html += "<thead>";
                     html += "<tr>";
                     html += "<th>#</th>";
-                    html += "<th>Valor da Parcela(R$)</th>";
+                    html += "<th style='text-align:right'>(R$)Valor da Parcela</th>";
                     html += "<th>Status</th>";
                     html += "<th>Data de Pagamento</th>";
                     html += "<th>Data de Vencimento</th>";
@@ -158,8 +161,8 @@ iniciaConta = function() {
                             var status = showStatus(detailedList[x].status);
                             html += "<tr>";
                             html += "<td>" + detailedList[x].parcelId + "</td>";
-                            html += "<td>(R$)" +
-                                detailedList[x].parcelValue +
+                            html += "<td style='text-align:right'>" +
+                                detailedList[x].parcelValueFormated +
                                 "</td>";
                             html += "<td>" + status + "</td>";
                             html += "<td>" +
@@ -237,7 +240,7 @@ iniciaConta = function() {
                         hasDeadline = $(
                             "#hasDeadline").val(),
                         totalValue = $(
-                            "#inputTotalValue").val(),
+                            "#inputTotalValue").val().replace(/,/g, ""),
                         times = $(
                             "#inputParcels").val(),
                         id = $("#id").val()
@@ -297,7 +300,7 @@ iniciaConta = function() {
                             $("#hasDeadline").val(
                                 billData[0].hasDeadline);
                             $("#inputTotalValue").val(
-                                billData[0].totalValue);
+                                billData[0].totalValueString);
                             $("#inputParcels").val(billData[0].times);
                             changes();
                             disab();
@@ -391,4 +394,4 @@ iniciaConta = function() {
                 CFINAC.contas.graphDetail();
             });
             }
-                // # sourceURL=sourcees.coffeee
+                //# sourceURL=sourcees.coffeee

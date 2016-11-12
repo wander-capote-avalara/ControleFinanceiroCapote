@@ -1,6 +1,7 @@
 package br.com.ControleFinanceiroCapote.servicos;
 
 import java.sql.Connection;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +81,9 @@ public class UsuarioService {
 		Connection conexao = conec.abrirConexao();
 		JDBCUsuarioDAO jdbcContato = new JDBCUsuarioDAO(conexao);
 		Usuario user = jdbcContato.getUserInfoById(id);
+		NumberFormat nf = NumberFormat.getCurrencyInstance();
+		user.setCurrentBallanceFormated(nf.format(user.getSaldoAtual()));
+		user.setNextBallanceFormated(nf.format(user.getSaldoProx()));
 		conec.fecharConexao();
 
 		return user;

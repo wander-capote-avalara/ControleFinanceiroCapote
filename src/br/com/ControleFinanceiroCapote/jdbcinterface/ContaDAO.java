@@ -15,7 +15,7 @@ public interface ContaDAO {
 	public List<Conta> getBills(int id, int userId, RangeDTO range)throws ValidationException;
 	public List<Conta> getAllFamilyBills(int idFamily)throws ValidationException;
 	public List<Graph> getBillsByCategory(int userId, RangeDTO range)throws ValidationException;
-	public int getBillsTotalValue(RangeDTO dates, int userId)throws ValidationException;  
+	public double getBillsTotalValue(RangeDTO dates, int userId)throws ValidationException;  
 	public List<Graph> getFamilyBillsTotalValue(int idFamily)throws ValidationException;
 	public List<Parcela> getParcelsById(int id)throws ValidationException;
 } 

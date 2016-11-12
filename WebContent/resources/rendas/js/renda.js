@@ -4,10 +4,12 @@ iniciaRenda = function() {
     $(document)
         .ready(
             function() {
-
+            	$("#inputTotalValue").maskMoney();
+            	$("#inputParcelValue").maskMoney();
             	var changes = function() {
                     if (+$("#inputTimes").val()) {
-                        var value = $("#inputTotalValue").val() / $("#inputTimes").val();
+                    	var noMask = $("#inputTotalValue").val().replace(/,/g, ""),
+                        value = noMask / $("#inputTimes").val();
                         $("#inputParcelValue").val(value.toFixed(2));
                     } else {
                         $("#inputParcelValue").val($("#inputTotalValue").val());
@@ -58,8 +60,8 @@ iniciaRenda = function() {
                                 data: "description",
                                 className: "center"
                             }, {
-                                data: "totalValue",
-                                className: "center",
+                                data: "formatedTotalValue",
+                                className: "text-right",
                             }, {
                                 data: "formatedDate",
                                 className: "center",
@@ -135,7 +137,7 @@ iniciaRenda = function() {
                     html += "<table class='table table-hover table-striped'>";
                     html += "<tr>";
                     html += "<th>#</th>";
-                    html += "<th>Valor da Renda(R$)</th>";
+                    html += "<th style='text-align:right;'>(R$)Valor da Renda</th>";
                     html += "<th>Data de Vencimento</th>";
                     html += "</tr>";
                     if (detailedList == null || detailedList == "") {
@@ -148,8 +150,8 @@ iniciaRenda = function() {
 
                             html += "<tr>";
                             html += "<td>" + naqfi + "</td>";
-                            html += "<td>(R$)" +
-                                detailedList[x].parcelValue +
+                            html += "<td style='text-align:right;'>" +
+                                detailedList[x].parcelValueFormated +
                                 "</td>";
                             html += "<td>" + detailedList[x].formatedDate +
                                 "</td>";
@@ -177,7 +179,7 @@ iniciaRenda = function() {
                             $("#inputInitialDate").val(incomeData[0].startDate);
                             $("#inputDescription").val(incomeData[0].description);
                             $("#isFixed").val(incomeData[0].isFixed);
-                            $("#inputTotalValue").val(incomeData[0].totalValue);
+                            $("#inputTotalValue").val(incomeData[0].totalValueString);
                             $("#inputTimes").val(incomeData[0].times);
                             changes();
                             disab();
@@ -217,7 +219,7 @@ iniciaRenda = function() {
                         isFixed = $(
                             "#isFixed").val(),
                         totalValue = $(
-                            "#inputTotalValue").val(),
+                            "#inputTotalValue").val().replace(/,/g, ""),
                         times = $(
                             "#inputTimes").val(),
                         value = $("#inputTotalValue").val() / $("#inputTimes").val();

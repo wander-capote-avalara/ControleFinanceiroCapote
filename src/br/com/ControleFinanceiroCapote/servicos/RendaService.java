@@ -50,12 +50,12 @@ public class RendaService {
 
 		return parcelList;
 	}
-	public int getTotalValueIncome(RangeDTO datas, int userId) throws ValidationException {
+	public double getTotalValueIncome(RangeDTO datas, int userId) throws ValidationException {
 		
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCRendaDAO jdbcRendadao = new JDBCRendaDAO(conexao);
-		int incomesValue = jdbcRendadao.getTotalValueIncome(datas, userId);
+		double incomesValue = jdbcRendadao.getTotalValueIncome(datas, userId);
 		conec.fecharConexao();
 		
 		return incomesValue;

@@ -1,7 +1,10 @@
 CFINAC.projecao = new Object();
 
-var iniciaProjecao = function() {
 	
+
+var iniciaProjecao = function() {
+	$("#firstTable #value").maskMoney();
+	$("#secondTable #value").maskMoney();
 	CFINAC.Message("Poderá haver diferenças de saldos!", "warning");
 	
 	var billsList, incomesList, billsTtValue = 0, incomesTtValue = 0, firstDate = "MM/yyyy", secondDate = "MM/yyyy";
@@ -12,6 +15,7 @@ var iniciaProjecao = function() {
 			success : function(bills) {
 				billsList = bills;
 				showBillsAndIncomes(bills, 0);
+				CFINAC.projecao.getIncomes();
 			},
 			error : function(e) {
             	CFINAC.Message(e.responseText, "error");
@@ -49,7 +53,8 @@ var iniciaProjecao = function() {
 				incomesTtValue += +incomesList[x].totalValue;
 			}
 		}
-		$("#showttvalue").html(incomesTtValue - billsTtValue);
+		var ballance = incomesTtValue - billsTtValue
+		$("#showttvalue").html(ballance.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'));
 	}
 
 	function showBillsAndIncomes(list, type) {
@@ -57,7 +62,7 @@ var iniciaProjecao = function() {
 		html += "<table class='table table-hover table-striped'>";
 		html += "<tr>";
 		html += "<th>Descrição</th>";
-		html += "<th>Valor(R$)</th>";
+		html += "<th style='text-align:right'>(R$)Valor</th>";
 		html += "<th>Ações</th>";
 		html += "</tr>"
 		if (list.length == 0) {
@@ -68,7 +73,7 @@ var iniciaProjecao = function() {
 			for (i = 0; i < list.length; i++) {
 				html += "<tr>";
 				html += "<td>" + list[i].description + "</td>";
-				html += "<td>" + list[i].totalValue + "</td>";
+				html += "<td style='text-align:right'>" + list[i].formatedTotalValue + "</td>";
 				html += "<td> ";
 				html += "<a class='link' onclick='CFINAC.projecao.RemoveFromTable("
 						+ i + ", " + type + ")'> ";
@@ -125,19 +130,18 @@ var iniciaProjecao = function() {
 	}
 
 	CFINAC.projecao.add = function(type) {
-		var desc = $(
-				type == 0 ? "#billsForm #description"
-						: "#incomesForm #description").val(), value = $(
-				type == 0 ? "#billsForm #value" : "#incomesForm #value").val();
-
-		if (desc == "" || desc == null || !+value) {
+		var desc = $(type == 0 ? "#billsForm #description" : "#incomesForm #description").val(), 
+			value = $(type == 0 ? "#billsForm #value" : "#incomesForm #value").val();
+			fValue = value.replace(/,/g, "");
+		if (desc == "" || desc == null || !+fValue) {
         	CFINAC.Message("Preencha os campos corretamentes!", "error");
 			return false;
 		}
 
 		var newProjection = {};
 		newProjection.description = desc;
-		newProjection.totalValue = value;
+		newProjection.totalValue = fValue;
+		newProjection.formatedTotalValue = "R$ "+value;
 
 		if (type == 0) {
 			billsList.push(newProjection)
@@ -152,9 +156,9 @@ var iniciaProjecao = function() {
 
 	CFINAC.projecao.update = function() {
 		CFINAC.projecao.getBills();
-		CFINAC.projecao.getIncomes();
 		$("#dateGraph").html(firstDate + " até " + secondDate);
 	}
 	CFINAC.projecao.update();
 
 }
+//# sourceURL = projections.js

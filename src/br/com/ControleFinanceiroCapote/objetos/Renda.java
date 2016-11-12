@@ -7,25 +7,33 @@ public class Renda implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
-	int id;
-	String description;
-	int times;
-	double totalValue;
-	java.sql.Date startDate;
-	int isFixed;
-	int categoria;
-	String categoriaName;
-	int userId;
-	String userName;
-	int status;
-	double parcelValue;
-	String formatedDate;
-
+	private int id;
+	private String description;
+	private int times;
+	private double totalValue;
+	private java.sql.Date startDate;
+	private int isFixed;
+	private int categoria;
+	private String categoriaName;
+	private int userId;
+	private String userName;
+	private int status;
+	private double parcelValue;
+	private String formatedDate;
+	private String formatedTotalValue;
+	private String totalValueString;
+	
 	public String getFormatedDate() {
 		return formatedDate;
 	}
 	public void setFormatedDate(String FormatedDate) {
 		this.formatedDate = FormatedDate;
+	}
+	public String getFormatedTotalValue() {
+		return formatedTotalValue;
+	}
+	public void setFormatedTotalValue(String formatedTotalValue) {
+		this.formatedTotalValue = formatedTotalValue;
 	}
 	public String getUserName() {
 		return userName;
@@ -99,5 +107,11 @@ public class Renda implements Serializable{
 	}
 	public void setStartDate(java.sql.Date startDate) {
 		this.startDate = startDate;
+	}
+	public String getTotalValueString() {
+		return totalValueString;
+	}
+	public void setTotalValueString(String totalValueString) {
+		this.totalValueString = totalValueString;
 	}
 }

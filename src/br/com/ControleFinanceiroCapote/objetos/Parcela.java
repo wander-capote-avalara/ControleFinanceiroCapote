@@ -15,6 +15,7 @@ public class Parcela implements Serializable{
 	private Date dueDate;
 	private String formatedDate;
 	private String paymentDateFormated;
+	private String parcelValueFormated;
 	
 	public int getId() {
 		return id;
@@ -63,6 +64,12 @@ public class Parcela implements Serializable{
 	}
 	public void setPaymentDateFormated(String paymentDateFormated) {
 		this.paymentDateFormated = paymentDateFormated;
+	}
+	public String getParcelValueFormated() {
+		return parcelValueFormated;
+	}
+	public void setParcelValueFormated(String parcelValueFormated) {
+		this.parcelValueFormated = parcelValueFormated;
 	}
 	
 }

@@ -76,7 +76,7 @@ public class AuthUser extends HttpServlet {
 				response.sendRedirect(userExists.getNivel() == 0 ? context
 						+ "/resources/Index.html" : context
 						+ "/resources/admin/admin.html");
-			} else {
+				} else {
 				response.sendRedirect(context + "/Login.html?incorrect");
 				// msg.put("msg", "Usu�rio e/ou senha incorretos");
 			}

@@ -331,8 +331,8 @@ var iniciaFamilia = function() {
                     data: "categoriaName",
                     className: "center"
                 }, {
-                    data: "totalValue",
-                    className: "center"
+                    data: "formatedTotalValue",
+                    className: "text-right"
                 }, {
                     data: "formatedDate",
                     className: "center"
@@ -367,8 +367,8 @@ var iniciaFamilia = function() {
                     data: "categoriaName",
                     className: "center"
                 }, {
-                    data: "totalValue",
-                    className: "center"
+                    data: "formatedTotalValue",
+                    className: "text-right"
                 }, {
                     data: "formatedDate",
                     className: "center"

@@ -5,10 +5,13 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.commons.collections.ListUtils;
 
@@ -25,6 +28,7 @@ import br.com.ControleFinanceiroCapote.validacao.ValidaConta;
 public class JDBCContaDAO implements ContaDAO {
 
 	private Connection conexao;
+	NumberFormat nf = NumberFormat.getCurrencyInstance();
 
 	public JDBCContaDAO(Connection conexao) {
 		this.conexao = conexao;
@@ -34,6 +38,7 @@ public class JDBCContaDAO implements ContaDAO {
 
 	@Override
 	public void inserir(Conta conta) throws ValidationException {
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		if (conta.getId() == 0) {
 			validac.insertValidation(conta);
 			StringBuilder comando = new StringBuilder();
@@ -75,9 +80,9 @@ public class JDBCContaDAO implements ContaDAO {
 			comando.append("SET Id_Categoria = ?, Id_Usuario = ?, Descricao_contas = ?, Valor_contas = ?, ");
 			comando.append("Status_conta = ?, Data_Vencimento = ?, Vezes = ?, Conta_Fixa = ?");
 			comando.append(" WHERE Id_contas = ?");
-
+				
 			PreparedStatement p;
-
+			 
 			try {
 				p = this.conexao.prepareStatement(comando.toString(), Statement.RETURN_GENERATED_KEYS);
 				p.setInt(1, conta.getCategoria());
@@ -85,7 +90,7 @@ public class JDBCContaDAO implements ContaDAO {
 				p.setString(3, conta.getDescription());
 				p.setDouble(4, conta.getTotalValue());
 				p.setInt(5, 1);
-				p.setDate(6, (Date) conta.getStartDate());
+				p.setDate(6, new Date(conta.getStartDate().getTime()));
 				p.setInt(7, conta.getTimes());
 				p.setInt(8, conta.getHasDeadline());
 				p.setInt(9, conta.getId());
@@ -110,7 +115,6 @@ public class JDBCContaDAO implements ContaDAO {
 		double math = ((parcelValue * times) - totalValue);
 		boolean hasDifference = (parcelValue * times) - totalValue != 0;
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(startDate);
 
 		StringBuilder comando = new StringBuilder();
 		comando.append("INSERT INTO parcela_conta");
@@ -119,12 +123,14 @@ public class JDBCContaDAO implements ContaDAO {
 		comando.append("(?,?,?,?)");
 
 		PreparedStatement p;
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 
 			for (int x = 0; x < times; x++) {
-				cal.add(Calendar.MONTH, 1);
+				cal.setTime(startDate);
+				cal.add(Calendar.MONTH, 1+x);
 				p.setInt(1, billIDd);
 				p.setDouble(2, hasDifference ? parcelValue - math : parcelValue);
 				p.setInt(3, 1);
@@ -224,6 +230,8 @@ public class JDBCContaDAO implements ContaDAO {
 				income.setTimes(rs.getInt("x"));
 				income.setFormatedDate(date.format(rs.getDate("endDate")).replace("-", "/"));
 				income.setCategoriaName(rs.getString("categ"));
+				income.setFormatedTotalValue(nf.format(rs.getDouble("totalValue")));
+				income.setTotalValueString(rs.getString("totalValue"));
 			
 				billsList.add(income);
 			}
@@ -266,6 +274,7 @@ public class JDBCContaDAO implements ContaDAO {
 					bill.setStatus(rs.getInt("status"));
 					bill.setCategoriaName(rs.getString("descr"));
 					bill.setDescription(rs.getString("dcs"));
+					bill.setFormatedTotalValue(nf.format(rs.getDouble("vlrConta")));
 				
 				bills.add(bill);
 			}
@@ -344,6 +353,7 @@ public class JDBCContaDAO implements ContaDAO {
 				}
 				parcel.setFormatedDate(date.format(rs.getDate("dueDate")).replace("-", "/"));
 				parcel.setParcelId(rs.getInt("parcelId"));
+				parcel.setParcelValueFormated(nf.format(rs.getDouble("parcelValue")));
 
 				parcelList.add(parcel);
 			}
@@ -354,9 +364,9 @@ public class JDBCContaDAO implements ContaDAO {
 		return parcelList;
 	}
 
-	public int getBillsTotalValue(RangeDTO dates, int userId) throws ValidationException {
+	public double getBillsTotalValue(RangeDTO dates, int userId) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
-		int sum = 0;
+		double sum = 0;
 		comando.append("SELECT SUM(Valor_Contas) as summ FROM contas a ");
 		comando.append("WHERE Id_Usuario = ? ");
 		comando.append("AND Status_Conta = 1 ");
@@ -374,7 +384,7 @@ public class JDBCContaDAO implements ContaDAO {
 			rs = p.executeQuery();
 
 			if (rs.next()) {
-				sum = rs.getInt("summ");
+				sum = rs.getDouble("summ");
 			}
 			sum += getBillsParcelsValues(userId, dates);
 			return sum;
@@ -401,7 +411,7 @@ public class JDBCContaDAO implements ContaDAO {
 			rs = p.executeQuery();
 			
 			while (rs.next()) {
-				balance += (int)rs.getInt("vlrConta");
+				balance += rs.getDouble("vlrConta");
 			}
 			
 			return balance;		
@@ -439,6 +449,7 @@ public class JDBCContaDAO implements ContaDAO {
 				newBill.setUserName(rs.getString("Name"));
 				newBill.setCategoriaName(rs.getString("Description"));
 				newBill.setFormatedDate(date.format(rs.getDate("billDate")).replace("-", "/"));
+				newBill.setFormatedTotalValue(nf.format(rs.getDouble("BillValue")));
 				
 				bills.add(newBill);
 			}

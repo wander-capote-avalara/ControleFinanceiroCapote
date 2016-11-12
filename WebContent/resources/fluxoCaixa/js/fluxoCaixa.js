@@ -28,8 +28,8 @@ iniciaFluxoCaixa = function() {
                             data: "description",
                             className: "center"
                         }, {
-                            data: "totalValue",
-                            className: "center",
+                            data: "formatedTotalValue",
+                            className: "text-right",
                         }]
                         // # sourceURL=sourcees.coffeee
                 });
@@ -58,8 +58,8 @@ iniciaFluxoCaixa = function() {
                         data: "description",
                         className: "center"
                     }, {
-                        data: "totalValue",
-                        className: "center",
+                        data: "formatedTotalValue",
+                        className: "text-right",
                     }]
                 });
 
@@ -151,7 +151,8 @@ iniciaFluxoCaixa = function() {
                                 $("#dateGraph").html(
                                     firstDate + " até " +
                                     secondDate);
-                                $("#showttvalue").html(rent - income);
+                                var ballance = rent - income;
+                                $("#showttvalue").html(ballance.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'));
                                 tableConta.ajax.url("../rest/conta/getBillsPerDate/" + getTypedDate(true));
                                 tableConta.ajax.reload(null, true);
                                 tableRenda.ajax.url("../rest/renda/getIncomesPerDate/" + getTypedDate(true));

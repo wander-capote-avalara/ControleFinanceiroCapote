@@ -5,10 +5,12 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.commons.collections.ListUtils;
 
@@ -25,6 +27,7 @@ import br.com.ControleFinanceiroCapote.validacao.ValidaRenda;
 public class JDBCRendaDAO implements RendaDAO {
 
 	private Connection conexao;
+	NumberFormat nf = NumberFormat.getCurrencyInstance();
 
 	public JDBCRendaDAO(Connection conexao) {
 		this.conexao = conexao;
@@ -34,6 +37,7 @@ public class JDBCRendaDAO implements RendaDAO {
 	
 	@Override
 	public void inserir(Renda renda) throws ValidationException {
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		if (renda.getId() == 0) {
 			validar.insertValidation(renda);
 			StringBuilder comando = new StringBuilder();
@@ -152,7 +156,7 @@ public class JDBCRendaDAO implements RendaDAO {
 		double math = ((parcelValue * times) - totalValue);
 		boolean hasDifference = (parcelValue * times) - totalValue != 0;
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(startDate);
+		cal.setLenient(false);
 		
 		StringBuilder comando = new StringBuilder();
 		comando.append("INSERT INTO parcela_renda");
@@ -161,12 +165,14 @@ public class JDBCRendaDAO implements RendaDAO {
 		comando.append("(?,?,?,?)");
 
 		PreparedStatement p;
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
 		try {
 			p = this.conexao.prepareStatement(comando.toString());
 
 			for (int x = 0; x < times; x++) {
-				cal.add(Calendar.MONTH, 1);
+				cal.setTime(startDate);
+				cal.add(Calendar.MONTH, 1+x);
 				p.setInt(1, incomeId);
 				p.setDouble(2, hasDifference ? parcelValue - math : parcelValue);
 				p.setInt(3, 1);
@@ -220,19 +226,22 @@ public class JDBCRendaDAO implements RendaDAO {
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
 			ResultSet rs = stmt.executeQuery(comando.toString());
+
 			while (rs.next()) {
 				income = new Renda();
 
 				income.setId(rs.getInt("id"));
 				income.setCategoria(rs.getInt("categoryId"));
 				income.setDescription(rs.getString("descr"));
-				income.setTotalValue(rs.getInt("totalValue"));
 				income.setStatus(rs.getInt("status"));
 				income.setStartDate(rs.getDate("endDate"));
+				income.setTotalValue(rs.getDouble("totalValue"));
 				income.setIsFixed(rs.getInt("isFixed"));
 				income.setTimes(rs.getInt("x"));
 				income.setFormatedDate(date.format(rs.getDate("endDate")).replace("-", "/"));
 				income.setCategoriaName(rs.getString("categ"));
+				income.setFormatedTotalValue(nf.format(rs.getDouble("totalValue")));
+				income.setTotalValueString(rs.getString("totalValue"));
 
 				incomeList.add(income);
 			}
@@ -275,6 +284,7 @@ public class JDBCRendaDAO implements RendaDAO {
 				income.setStatus(rs.getInt("status"));
 				income.setCategoriaName(rs.getString("descr"));
 				income.setDescription(rs.getString("dcs"));
+				income.setFormatedTotalValue(nf.format(rs.getDouble("vlrRenda")));
 				
 				incomes.add(income);
 			}
@@ -308,6 +318,7 @@ public class JDBCRendaDAO implements RendaDAO {
 				parcel.setPaymentDate(rs.getDate("paymentDate"));
 				parcel.setDueDate(rs.getDate("dueDate"));
 				parcel.setFormatedDate(date.format(rs.getDate("dueDate")).replace("-", "/"));
+				parcel.setParcelValueFormated(nf.format(rs.getDouble("parcelValue")));
 
 				parcelList.add(parcel);
 			}
@@ -357,9 +368,9 @@ public class JDBCRendaDAO implements RendaDAO {
 		}
 	}
 
-	public int getTotalValueIncome(RangeDTO dates, int userId) throws ValidationException {
+	public double getTotalValueIncome(RangeDTO dates, int userId) throws ValidationException {
 		StringBuilder comando = new StringBuilder();
-		int sum = 0;
+		double sum = 0;
 
 		comando.append("SELECT SUM(Valor_Rendas) as summ FROM rendas a ");
 		comando.append("WHERE Id_Usuario = ? ");
@@ -377,7 +388,7 @@ public class JDBCRendaDAO implements RendaDAO {
 			rs = p.executeQuery();
 
 			if (rs.next()) {
-				sum = rs.getInt("summ");
+				sum = rs.getDouble("summ");
 			}
 			
 			sum += getIncomesParcelsValues(userId, dates);
@@ -405,7 +416,7 @@ public class JDBCRendaDAO implements RendaDAO {
 			rs = p.executeQuery();
 			
 			while (rs.next()) {
-				balance += (int)rs.getInt("vlrRenda");
+				balance += rs.getDouble("vlrRenda");
 			}
 			
 			return balance;		
@@ -442,6 +453,7 @@ public class JDBCRendaDAO implements RendaDAO {
 				newIncome.setUserName(rs.getString("Name"));
 				newIncome.setCategoriaName(rs.getString("Description"));
 				newIncome.setFormatedDate(date.format(rs.getDate("incomeDate")).replace("-", "/"));
+				newIncome.setFormatedTotalValue(nf.format(rs.getDouble("incomeValue")));
 
 				incomes.add(newIncome);
 			}

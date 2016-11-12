@@ -78,4 +78,14 @@
             }
         })
     })
+    
+    $("#initialDate").keypress(function(){
+		if(this.value.length == 2)
+			this.value += "/";
+	})
+	
+	$("#finalDate").keypress(function(){
+		if(this.value.length == 2)
+			this.value += "/";
+	})
 </script>

@@ -19,6 +19,8 @@ public class Usuario implements Serializable{
 	private double saldoAtual; 
 	private double saldoProx; 
 	private String next;
+	private String currentBallanceFormated;
+	private String nextBallanceFormated;
 	
 	public double getSaldoAtual() {
 		return saldoAtual;
@@ -91,5 +93,17 @@ public class Usuario implements Serializable{
 	}
 	public void setId_familia(int id_familia) {
 		this.id_familia = id_familia;
+	}
+	public String getCurrentBallanceFormated() {
+		return currentBallanceFormated;
+	}
+	public void setCurrentBallanceFormated(String currentBallanceFormated) {
+		this.currentBallanceFormated = currentBallanceFormated;
+	}
+	public String getNextBallanceFormated() {
+		return nextBallanceFormated;
+	}
+	public void setNextBallanceFormated(String nextBallanceFormated) {
+		this.nextBallanceFormated = nextBallanceFormated;
 	}
 }

@@ -105,11 +105,11 @@ $(document).ready(
 					success : function(userInfo) {
 						$("#username").html(userInfo.usuario);
 						$("#actualbalance").html(
-								"Saldo Atual(R$): " + userInfo.saldoAtual);
+								"Saldo Atual: " + userInfo.currentBallanceFormated);
 						$("#family").html(userInfo.nomeFamilia);
 						$("#next").html("Próx. conta: " + userInfo.next);
 						$("#nextbalance").html(
-								"Saldo próx. mês(R$): " + userInfo.saldoProx)
+								"Saldo posterior: " + userInfo.nextBallanceFormated)
 					},
 					error : function(e) {
                     	CFINAC.Message(e.responseText, "error");

@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -294,7 +295,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		return getActualRentsById(id, next) - getActualBillsById(id, next);
 	}
 
-	private int getActualBillsById(int id, boolean next) throws ValidationException {
+	private double getActualBillsById(int id, boolean next) throws ValidationException {
 		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
 		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2;
@@ -303,13 +304,13 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 		comando.append(next ? " AND MONTH(a.Data_Vencimento) = " + nextMonth+" AND YEAR(a.Data_Vencimento) = YEAR(NOW())"
 				: " AND a.Data_Vencimento <= NOW()");
 
-		int balance = 0;
+		double balance = 0;
 		try {
 			java.sql.Statement stmt = conexao.createStatement();
 			ResultSet rs = stmt.executeQuery(comando.toString());
 
 			while (rs.next()) {
-				balance += (int) rs.getInt("vlrConta");
+				balance += rs.getDouble("vlrConta");
 			}
 
 			balance += getBillsParcelsValues(id, next);
@@ -335,7 +336,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			ResultSet rs = stmt.executeQuery(comando.toString());
 
 			while (rs.next()) {
-				balance += (int) rs.getInt("vlrConta");
+				balance += rs.getDouble("vlrConta");
 			}
 
 			return balance;

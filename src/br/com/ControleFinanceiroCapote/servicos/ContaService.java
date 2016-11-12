@@ -62,12 +62,12 @@ public class ContaService {
 		return parcelList;
 	}
 
-	public int getBillsTotalValue(RangeDTO datas, int userId) throws ValidationException {
+	public double getBillsTotalValue(RangeDTO datas, int userId) throws ValidationException {
 
 		Conexao conec = new Conexao();
 		Connection conexao = conec.abrirConexao();
 		JDBCContaDAO jdbcContadao = new JDBCContaDAO(conexao);
-		int billsValue = jdbcContadao.getBillsTotalValue(datas, userId);
+		double billsValue = jdbcContadao.getBillsTotalValue(datas, userId);
 		conec.fecharConexao();
 
 		return billsValue;

@@ -1,25 +1,27 @@
 package br.com.ControleFinanceiroCapote.objetos;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
 
 public class Conta implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
-	int id;
-	String description;
-	int times;
-	double totalValue;
-	java.sql.Date startDate;
-	String formatedDate;
-	int hasDeadline;
-	int categoria;
-	String categoriaName;
-	int userId;
-	String userName;
-	int status;
-	double parcelValue;
+	private int id;
+	private String description;
+	private int times;
+	private double totalValue;
+	private Date startDate;
+	private String formatedDate;
+	private int hasDeadline;
+	private int categoria;
+	private String categoriaName;
+	private int userId;
+	private String userName;
+	private int status;
+	private double parcelValue;
+	private String formatedTotalValue;
+	private String totalValueString;
 	
 
 	public String getFormatedDate() {
@@ -98,7 +100,19 @@ public class Conta implements Serializable{
 	public Date getStartDate() {
 		return startDate;
 	}
-	public void setStartDate(java.sql.Date startDate) {
+	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
+	}
+	public String getFormatedTotalValue() {
+		return formatedTotalValue;
+	}
+	public void setFormatedTotalValue(String formatedTotalValue) {
+		this.formatedTotalValue = formatedTotalValue;
+	}
+	public String getTotalValueString() {
+		return totalValueString;
+	}
+	public void setTotalValueString(String totalValueString) {
+		this.totalValueString = totalValueString;
 	}
 }
