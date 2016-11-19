@@ -54,7 +54,7 @@ var iniciaProjecao = function() {
 			}
 		}
 		var ballance = incomesTtValue - billsTtValue
-		$("#showttvalue").html(ballance.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'));
+		$("#showttvalue").html(ballance.toFixed(2).replace(".", ",").replace(/(\d)(?=(\d{3})+\,)/g, '$1.'));
 	}
 
 	function showBillsAndIncomes(list, type) {
@@ -132,7 +132,7 @@ var iniciaProjecao = function() {
 	CFINAC.projecao.add = function(type) {
 		var desc = $(type == 0 ? "#billsForm #description" : "#incomesForm #description").val(), 
 			value = $(type == 0 ? "#billsForm #value" : "#incomesForm #value").val();
-			fValue = value.replace(/,/g, "");
+			fValue = value.replace(/\./g, "").replace(/,/g, ".");
 		if (desc == "" || desc == null || !+fValue) {
         	CFINAC.Message("Preencha os campos corretamentes!", "error");
 			return false;

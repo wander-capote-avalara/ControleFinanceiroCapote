@@ -152,7 +152,7 @@ iniciaFluxoCaixa = function() {
                                     firstDate + " até " +
                                     secondDate);
                                 var ballance = rent - income;
-                                $("#showttvalue").html(ballance.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'));
+                                $("#showttvalue").html(ballance.toFixed(2).replace(".", ",").replace(/(\d)(?=(\d{3})+\,)/g, '$1.'));
                                 tableConta.ajax.url("../rest/conta/getBillsPerDate/" + getTypedDate(true));
                                 tableConta.ajax.reload(null, true);
                                 tableRenda.ajax.url("../rest/renda/getIncomesPerDate/" + getTypedDate(true));

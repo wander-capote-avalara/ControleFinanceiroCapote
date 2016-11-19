@@ -22,7 +22,7 @@ iniciaConta = function() {
 
     var changes = function() {
         if (+$("#inputParcels").val()) {
-        	var noMask = $("#inputTotalValue").val().replace(/,/g, ""),
+        	var noMask = $("#inputTotalValue").val().replace(/\./g, "").replace(/,/g, "."),
             value = noMask / $("#inputParcels").val();
             $("#inputParcelValue").val(value.toFixed(2));
         } else {
@@ -240,7 +240,7 @@ iniciaConta = function() {
                         hasDeadline = $(
                             "#hasDeadline").val(),
                         totalValue = $(
-                            "#inputTotalValue").val().replace(/,/g, ""),
+                            "#inputTotalValue").val().replace(/\./g, "").replace(/,/g, "."),
                         times = $(
                             "#inputParcels").val(),
                         id = $("#id").val()

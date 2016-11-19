@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -398,8 +397,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 	private double getRentsParcelsValues(int id, boolean next) throws ValidationException {
 		valid.userValidation(id);
 		StringBuilder comando = new StringBuilder();
-		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2,
-				thisMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+		int nextMonth = Calendar.getInstance().get(Calendar.MONTH) + 2;
 		comando.append("SELECT SUM(Valor_Parcela) as vlrRenda FROM parcela_renda a ");
 		comando.append("WHERE a.Status_Parcela = 1 AND a.Id_Renda IN ");
 		comando.append("(SELECT c.Id_Rendas FROM rendas c WHERE c.Id_Usuario = "+ id +")");

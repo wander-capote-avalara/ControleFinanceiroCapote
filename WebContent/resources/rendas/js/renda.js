@@ -8,7 +8,7 @@ iniciaRenda = function() {
             	$("#inputParcelValue").maskMoney();
             	var changes = function() {
                     if (+$("#inputTimes").val()) {
-                    	var noMask = $("#inputTotalValue").val().replace(/,/g, ""),
+                    	var noMask = $("#inputTotalValue").val().replace(/\./g, "").replace(/,/g, "."),
                         value = noMask / $("#inputTimes").val();
                         $("#inputParcelValue").val(value.toFixed(2));
                     } else {
@@ -219,10 +219,10 @@ iniciaRenda = function() {
                         isFixed = $(
                             "#isFixed").val(),
                         totalValue = $(
-                            "#inputTotalValue").val().replace(/,/g, ""),
+                            "#inputTotalValue").val().replace(/\./g, "").replace(/,/g, "."),
                         times = $(
                             "#inputTimes").val(),
-                        value = $("#inputTotalValue").val() / $("#inputTimes").val();
+                        value = totalValue / $("#inputTimes").val();
                     parcelValue = value.toFixed(2),
                         id = $("#id").val();
 

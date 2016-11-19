@@ -4,16 +4,11 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import com.google.gson.Gson;
 
 import br.com.ControleFinanceiroCapote.bd.conexao.Conexao;
 import br.com.ControleFinanceiroCapote.excecao.ValidationException;
@@ -42,8 +37,6 @@ public class AuthUser extends HttpServlet {
 			JDBCUsuarioDAO jdbcContato = new JDBCUsuarioDAO(conexao);
 			Usuario userExists = jdbcContato.authUser(user);
 			conec.fecharConexao();
-			Map<String, String> msg = new HashMap<String, String>();
-
 			if (userExists != null) {
 
 				HttpSession sessao = request.getSession();
