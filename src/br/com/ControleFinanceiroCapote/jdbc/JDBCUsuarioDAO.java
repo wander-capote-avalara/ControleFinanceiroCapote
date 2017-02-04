@@ -311,7 +311,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 			while (rs.next()) {
 				balance += rs.getDouble("vlrConta");
 			}
-
+			
 			balance += getBillsParcelsValues(id, next);
 
 		} catch (SQLException e) {

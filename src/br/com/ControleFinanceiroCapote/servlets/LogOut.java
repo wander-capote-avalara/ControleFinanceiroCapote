@@ -21,6 +21,7 @@ public class LogOut extends HttpServlet {
 	        response.sendRedirect(request.getContextPath() + "/Login.html");
 		} catch (Exception e) {
 			// TODO: handle exception
+			e.printStackTrace();
 		}
 		
 	}
